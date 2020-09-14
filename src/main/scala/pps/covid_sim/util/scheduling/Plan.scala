@@ -1,12 +1,21 @@
 package pps.covid_sim.util.scheduling
 
 import pps.covid_sim.model.places.Locations.Location
+import pps.covid_sim.util.scheduling.Planning.DayPlan
 import pps.covid_sim.util.time.Time.Day.Day
 import pps.covid_sim.util.time.{DaysInterval, HoursInterval}
 
 trait Plan[T <: Location] extends Schedule {
 
   type P <: Plan[T]
+
+  /**
+   * Get the plan for the specified day
+   *
+   * @param day the desired day
+   * @return the plan for the specified day
+   */
+  def dayPlan(day: Day): DayPlan[T, P]
 
   /**
    * Get the location at the specified day and hour.
@@ -53,5 +62,7 @@ trait Plan[T <: Location] extends Schedule {
    * @return the current plan with all changes properly saved
    */
   def commit(): P
+
+  private[scheduling] def commit[A <: Plan[T]](dayPlan: DayPlan[T, A]): A
 
 }
