@@ -61,6 +61,7 @@ case class TimeTable(period: MonthsInterval = MonthsInterval.ALL_YEAR,
     current
   }
 
+  import pps.covid_sim.util.time.TimeIntervalsImplicits._
   /**
    * Get the dates interval, contained in the specified dates interval, on which time table is defined.
    *
@@ -69,11 +70,21 @@ case class TimeTable(period: MonthsInterval = MonthsInterval.ALL_YEAR,
    * @return the optional dates interval, contained in the specified one, respecting
    *         the above constraint
    */
-  def get(datesInterval: DatesInterval): Option[DatesInterval] = datesInterval.find(isDefinedAt) match {
-    case Some(time) => timeTable(time.day)
-      .find(_.contains(time.hour))
-      .map(hours => DatesInterval(time, time + hours.size))
-    case _ => None
+  def get(datesInterval: DatesInterval): Option[DatesInterval] = {
+    def _get(datesInterval: DatesInterval, take: Int): Option[DatesInterval] = {
+      if(take == 0) return None
+      datesInterval.find(isDefinedAt) match {
+        case Some(time) => timeTable(time.day)
+          .find(_.contains(time.hour))
+          .map(hours => {
+            val until = time + HoursInterval(time.hour, hours.until).size
+            DatesInterval(time, until +
+              (if(until.hour == 0) _get(until -> datesInterval.until, take - 1).map(_.size).getOrElse(0); else 0))
+          })
+        case _ => None
+      }
+    }
+    _get(datesInterval, 2)
   }
 
   /**

@@ -2,6 +2,7 @@ package pps.covid_sim.util.time
 
 import java.util.Calendar
 
+import pps.covid_sim.util.scheduling.TimeTable
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
 /**
@@ -29,6 +30,23 @@ case class DatesInterval(override val from: Calendar,
     this.from,
     Seq(this.until, this.from + hours).min
   )
+
+  /**
+   * Clips current dates interval at the begin and/or at the end, in such way that the
+   * specified time table is defined for each time inside the obtained dates interval.
+   * @param timeTable                 a time table enabled and defined at least one hour
+   *                                  inside the current dates interval
+   * @return                          a new dates interval, obtained from current one by
+   *                                  clipping at the start and/or at the end, such that
+   *                                  the time table is defined for each time inside the
+   *                                  returned dates interval
+   * @throws NoSuchElementException   if the specified timeTable is never defined inside
+   *                                  the current interval
+   */
+  def clipToTimeTable(timeTable: TimeTable): DatesInterval = {
+    val openingHours = timeTable.get(this).get // it is assumed that we are here only if we know timeTable is defined
+    DatesInterval(openingHours.from, Seq(openingHours.until, this.until).min)
+  }
 
   override def compare(that: DatesInterval): Int = this.from.compareTo(that.from)
 

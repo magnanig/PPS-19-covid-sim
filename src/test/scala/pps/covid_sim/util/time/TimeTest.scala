@@ -4,6 +4,7 @@ import java.util.Calendar
 
 import org.junit.Assert._
 import org.junit.Test
+import pps.covid_sim.util.scheduling.TimeTable
 import pps.covid_sim.util.time.Time.{Day, Month, ScalaCalendar}
 
 class TimeTest {
@@ -157,6 +158,28 @@ class TimeTest {
       assert(current >= from && current < until)
     }
     assert(current == until - 1)
+  }
+
+  @Test
+  def testClipToTimeTable(): Unit = {
+    import TimeIntervalsImplicits._
+
+    val timeTable = TimeTable()
+      .add(Day.MONDAY, 8 -> 12, 15 -> 18, 20 -> 22)
+      .add(Day.SATURDAY, 22 -> 4)
+
+    /*var datesInterval = ScalaCalendar(2020, 9, 14) -> ScalaCalendar(2020, 9, 15) // Mon 14 Sep
+    assertEquals(ScalaCalendar(2020, 9, 14, 8) -> ScalaCalendar(2020, 9, 14, 12),
+      datesInterval.clipToTimeTable(timeTable))
+
+    datesInterval = ScalaCalendar(2020, 9, 14, 16) -> ScalaCalendar(2020, 9, 15) // Mon 14 Sep after 16.00
+    assertEquals(ScalaCalendar(2020, 9, 14, 16) -> ScalaCalendar(2020, 9, 14, 18),
+      datesInterval.clipToTimeTable(timeTable))*/
+
+    val datesInterval = ScalaCalendar(2020, 9, 19, 23) -> ScalaCalendar(2020, 9, 20, 6) // Sat 19 Sep after 16.00
+    assertEquals(ScalaCalendar(2020, 9, 19, 23) -> ScalaCalendar(2020, 9, 20, 4),
+      datesInterval.clipToTimeTable(timeTable))
+
   }
 
 }
