@@ -51,14 +51,14 @@ class LineTest {
     var means4: Option[PublicTransports.PublicTransport] = busLine.tryUse(gianmarco,time)
     assertTrue(means4.get.isInstanceOf[Bus])
 
-    means4.get.exit(gianmarco);
+    //means4.get.exit(gianmarco);
 
     means4 = busLine.tryUse(gianmarco,time)
     assertTrue(means4.get.isInstanceOf[Bus])
 
 
-    //means4 = busLine.tryUse(gianmarco,time)
-    //assertTrue(means4.get.isInstanceOf[Bus]) //TODO da problemi perché l'enter di magno non gestise il fatto che se la location è full e fai la enter di una persona gia dentro dovrebbe ritornare la location invece torna None
+    means4 = busLine.tryUse(gianmarco,time)
+    assertTrue(means4.get.isInstanceOf[Bus]) //TODO da problemi perché l'enter di magno non gestise il fatto che se la location è full e fai la enter di una persona gia dentro dovrebbe ritornare la location invece torna None
 
   }
 

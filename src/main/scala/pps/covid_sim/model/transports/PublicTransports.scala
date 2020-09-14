@@ -80,9 +80,9 @@ object PublicTransports {
 
     val trainSet: Seq[Train] = (1 to trains) map (_ => Train(carriages))
 
-    def isReachable(location: Place): Boolean = {
+    /*def isReachable(location: Place): Boolean = {
       _coveredCities.contains(location.city)
-    }
+    }*/
 
     //def isReachable(location: Province): Boolean = ??? //probabilmente bisogna avere anche il set di provincie raggiungibili che poi sono tutte quelle di una regione quindi magari basta avere solo la regione di riferimento, possiamo passargliela alla creazione dalla line
 
