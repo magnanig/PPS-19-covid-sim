@@ -86,7 +86,7 @@ object Locations {
     final def exit(group: Group): Unit = synchronized {
       if(currentGroups.contains(group)) {
         preExit(group)
-        //println(s"${group.leader} Exited from ${getClass.getSimpleName}!")
+        println(s"${group.leader} Exited from ${getClass.getSimpleName}!")
         _currentGroups -= group
         _numCurrentPeople = _numCurrentPeople - group.size
       }
