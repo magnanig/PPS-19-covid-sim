@@ -8,7 +8,6 @@ import pps.covid_sim.model.people.PeopleGroup.Single
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.transports.PrivateTransports.Car
 import pps.covid_sim.model.transports.PublicTransports.{Bus, Carriage, Train}
-import pps.covid_sim.util.time.HoursInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
 class TransportsTest {
@@ -74,7 +73,7 @@ class TransportsTest {
   @Test
   def testDuplicateEntriesInCar(): Unit = {
     assertEquals(Option(car), car.enter(lorenzo, time))
-    assertEquals(Option(car), car.enter(lorenzo, time))
+    assertEquals(None, car.enter(lorenzo, time))
     assertEquals(Option(car), car.enter(gianmarco, time))
     assertEquals(None, car.enter(nicolas, time))
   }

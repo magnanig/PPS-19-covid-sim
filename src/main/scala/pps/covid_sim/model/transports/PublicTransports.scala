@@ -20,16 +20,17 @@ object PublicTransports {
       _coveredCities = newSet
     }
 
-    def tryUse(group: Group, time:Calendar): Option[PublicTransport]
+    def tryUse(group: Group, time:Calendar): Any
 
     def isOpen(hour: Int): Boolean = {
-      if(0>=hour && hour <24) {
+      if (0 >= hour && hour < 24) {
         scheduledTime.contains(hour)
       }
       false
     }
 
-    def reach(location: Place): Boolean = {
+    def isReachable(location: Place): Boolean = {
+      println(location.city)
       _coveredCities.contains(location.city)
     }
 
@@ -42,9 +43,9 @@ object PublicTransports {
     val busSet: Set[Bus] = ((0 to buses) map (_ => Bus(capacity))).toSet
 
     override def tryUse(group: Group, time:Calendar): Option[PublicTransport] =  {
-      if(this.isOpen(time.getTime.getHours)){
-        val availableBuses = busSet.filter(b => b.capacity-b.numCurrentPeople >= group.size)
-        if( !availableBuses.isEmpty){
+      if (this.isOpen(time.getTime.getHours)) {
+        val availableBuses = busSet.filter(b => b.capacity - b.numCurrentPeople >= group.size)
+        if (!availableBuses.isEmpty) {
           availableBuses.head.enter(group, time)
           return Some(availableBuses.head)
         }
@@ -59,7 +60,24 @@ object PublicTransports {
 
     val trainSet: Set[Train] = ((0 to trains) map (_ => Train(carriages))).toSet
 
-    override def tryUse(group: Group, time: Calendar): Option[PublicTransport] = ???
+    /**
+     *
+     * @param group
+     * @param time
+     * @return a pair consisting of the train and carriage available
+     */
+    override def tryUse(group: Group, time: Calendar): (Option[PublicTransport], Option[Transport]) = {
+      if (this.isOpen(time.getTime.getHours)) {
+        val availableTrains = trainSet.filter(t => t.capacity - t.numCurrentPeople >= group.size)
+        if (!availableTrains.isEmpty) {
+          availableTrains.head.enter(group, time)
+          val availableCarriage = Some(availableTrains.head.carriageList.filter(c => c.capacity - c.numCurrentPeople >= group.size).head)
+          val availableTrain = Some(availableTrains.head)
+          return (availableTrain, availableCarriage)
+        }
+      }
+      (None, None)
+    }
   }
 
   trait PublicTransport extends Transport {
