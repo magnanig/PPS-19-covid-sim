@@ -50,13 +50,11 @@ object Locations {
     final def enter(group: Group, time: Calendar): Option[Location] = synchronized {
       if (_currentGroups.contains(group)) {
         println(s"WARNING: ${group.leader} Already entered in the ${getClass.getSimpleName}!")
+      } else if(canEnter(group, time)) preEnter(group, time) match {
+        case location @ Some(_) => onEntered(group); return location
+        case _ => println(s"WARNING: $group cannot enter to the ${getClass.getSimpleName} at ${time.getTime}")
       }
-      if(canEnter(group, time)) preEnter(group, time) match {
-        case location @ Some(_) => onEntered(group); location
-        case _ => println(s"WARNING: $group cannot enter to the ${getClass.getSimpleName} at ${time.getTime}"); None
-      } else {
-        None
-      }
+      None
     }
 
     /**
@@ -86,10 +84,12 @@ object Locations {
      * @param group   the group that wants to exit
      */
     final def exit(group: Group): Unit = synchronized {
-      preExit(group)
-      //println(s"${group.leader} Exited from ${getClass.getSimpleName}!")
-      _currentGroups -= group
-      _numCurrentPeople = _numCurrentPeople - group.size
+      if(currentGroups.contains(group)) {
+        preExit(group)
+        //println(s"${group.leader} Exited from ${getClass.getSimpleName}!")
+        _currentGroups -= group
+        _numCurrentPeople = _numCurrentPeople - group.size
+      }
     }
 
     /**
