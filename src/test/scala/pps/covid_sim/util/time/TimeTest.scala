@@ -168,15 +168,15 @@ class TimeTest {
       .add(Day.MONDAY, 8 -> 12, 15 -> 18, 20 -> 22)
       .add(Day.SATURDAY, 22 -> 4)
 
-    /*var datesInterval = ScalaCalendar(2020, 9, 14) -> ScalaCalendar(2020, 9, 15) // Mon 14 Sep
+    var datesInterval = ScalaCalendar(2020, 9, 14) -> ScalaCalendar(2020, 9, 15) // Mon 14 Sep
     assertEquals(ScalaCalendar(2020, 9, 14, 8) -> ScalaCalendar(2020, 9, 14, 12),
       datesInterval.clipToTimeTable(timeTable))
 
     datesInterval = ScalaCalendar(2020, 9, 14, 16) -> ScalaCalendar(2020, 9, 15) // Mon 14 Sep after 16.00
     assertEquals(ScalaCalendar(2020, 9, 14, 16) -> ScalaCalendar(2020, 9, 14, 18),
-      datesInterval.clipToTimeTable(timeTable))*/
+      datesInterval.clipToTimeTable(timeTable))
 
-    val datesInterval = ScalaCalendar(2020, 9, 19, 23) -> ScalaCalendar(2020, 9, 20, 6) // Sat 19 Sep after 16.00
+    datesInterval = ScalaCalendar(2020, 9, 19, 23) -> ScalaCalendar(2020, 9, 20, 6) // Sat 19 Sep after 16.00
     assertEquals(ScalaCalendar(2020, 9, 19, 23) -> ScalaCalendar(2020, 9, 20, 4),
       datesInterval.clipToTimeTable(timeTable))
 
