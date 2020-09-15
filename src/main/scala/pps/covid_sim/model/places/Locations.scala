@@ -2,6 +2,7 @@ package pps.covid_sim.model.places
 
 import java.util.Calendar
 
+import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.util.time.DatesInterval
 import pps.covid_sim.util.time.Time.Day.Day
@@ -118,6 +119,12 @@ object Locations {
      * @return        true if group can enter to location at time, false otherwise
      */
     protected[places] def canEnter(group: Group, time: Calendar): Boolean = true
+
+    /**
+     * The optional needed mask in current location.
+     * @return  the optional needed mask
+     */
+    def mask: Option[Mask] = None
 
     /**
      * Clear current location, removing all groups.
