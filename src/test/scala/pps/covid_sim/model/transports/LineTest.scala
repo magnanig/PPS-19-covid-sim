@@ -9,7 +9,7 @@ import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple, Single}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{City, Province, Region}
 import pps.covid_sim.model.places.{Locality, Place}
-import pps.covid_sim.model.transports.PublicTransports.{Bus, BusLine, Line, TrainLine}
+import pps.covid_sim.model.transports.PublicTransports.{Bus, BusLine, Carriage, Line, Train, TrainLine}
 import pps.covid_sim.util.time.HoursInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
@@ -24,7 +24,7 @@ class LineTest {
   val busLine: BusLine = BusLine(2, 2, HoursInterval(8, 20))
   busLine.setCoveredCities(Set(cityTest))
 
-  val trainLine: TrainLine = TrainLine(2, 2, Locality.Region.EMILIA_ROMAGNA, HoursInterval(15, 16))
+  val trainLine: TrainLine = TrainLine(1, 2, Locality.Region.EMILIA_ROMAGNA, HoursInterval(15, 16))
   trainLine.setCoveredCities(Set(cityTest))
 
   // Dummy Person implementations, used for testing purposes only
@@ -93,20 +93,20 @@ class LineTest {
     assertTrue(trainLine.isReachable(place))
     val train = trainLine.tryUse(marco, time)
     enterPeopleFromList(0, commuters.size - 1, commuters, trainLine)
-    assertEquals(None, trainLine.tryUse(lorenzo, time)) // the train is full
+    assertEquals((None,None), trainLine.tryUse(lorenzo, time)) // the train is full
   }
 
   @Test
   def testTrainLineGroupUsage(): Unit = {
-    assertEquals(Some(Bus(2)), trainLine.tryUse(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(2, false))), time))
-    assertEquals(None, busLine.tryUse(Multiple(TestPerson(3, false), Set(TestPerson(3, false), TestPerson(2, false))), time))
+    assertEquals((Some(Train(2)),Some(Carriage(20))), trainLine.tryUse(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(2, false))), time))
+    assertEquals(Some(Bus(2)), busLine.tryUse(Multiple(TestPerson(3, false), Set(TestPerson(3, false), TestPerson(2, false))), time))
     assertEquals(None, busLine.tryUse(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(3, false))), time))
     assertEquals(None, busLine.tryUse(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(3, false))), time))
   }
 
   @Test
   def testInfectionsInBus(): Unit = {
-    val busLine: BusLine = BusLine(2, 10, HoursInterval(8, 20))
+    val busLine: BusLine = BusLine(1, 10, HoursInterval(8, 20))
     busLine.setCoveredCities(Set(cityTest))
 
     val bus = busLine.tryUse(marco, time)
@@ -115,7 +115,7 @@ class LineTest {
     enterPeopleFromList(0, 9, commuters, busLine)
 
     // The bus is full
-    assertEquals(None, bus.get.enter(lorenzo, time))
+    assertEquals(None, bus.get.enter(lorenzo, time))//lui non entra ed è infetto, come fa a propagarsi??
     println(bus.get.numCurrentPeople)
 
     println("People who have been infected:")
@@ -130,7 +130,7 @@ class LineTest {
     enterPeopleFromList(0, commuters.size - 1, commuters, trainLine)
 
     // The train is full
-    assertEquals(None, trainLine.tryUse(lorenzo, time))
+    assertEquals((None,None), trainLine.tryUse(lorenzo, time))
     //println(train._2.get.numCurrentPeople)
 
     println("People who have been infected:")

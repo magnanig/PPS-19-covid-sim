@@ -72,13 +72,10 @@ object PublicTransports {
       None
     }
 
-    def isOneMemberAlreadyIn(group: Group): Boolean = { //TODO
-      val peopleUsingLine = busList.flatMap(bus => bus.currentGroups.toList).flatMap(group => group.people.toList).toList
-      println(peopleUsingLine)
-      //peopleUsingLine.contains(group.people)
-      group.exists(person => peopleUsingLine.contains(person))
-      //group.exists(person => busList.exists(bus => bus.currentGroups.contains(person)))
-      //busList.exists(bus => bus.currentGroups.contains(group))
+    def isOneMemberAlreadyIn(group: Group): Boolean = {
+      //val peopleUsingLine = busList.flatMap(bus => bus.currentGroups.toList).flatMap(group => group.people.toList).toList
+      //group.exists(person => peopleUsingLine.contains(person))
+      group.exists(person => busList.flatMap(bus => bus.currentGroups.toList).flatMap(group => group.people.toList).toList.contains(person))
     }
   }
 
@@ -100,12 +97,12 @@ object PublicTransports {
         val availableTrains = trainList.filter(t => t.capacity - t.numCurrentPeople >= group.size)
         if (availableTrains.nonEmpty) {
 
-          availableTrains.head.enter(group, time)
-
-          //TODO forse bisognerebbe fare l'enter anche del carriage e togliere l'auto enter del treno da riga 107.. lascio valutare a te ma mi sembra la cosa migliore.
-          val availableCarriages = availableTrains.head.carriageList.filter(c => c.capacity - c.numCurrentPeople >= group.size)
-          val selectedCarriage: Carriage = availableCarriages min Ordering[Int].on[Carriage] (_.numCurrentPeople);
           val availableTrain = Some(availableTrains.head)
+          availableTrain.get.enter(group, time)
+
+          //vado a trovare dove è stato inserito il gruppo:
+          val selectedCarriage = availableTrain.get.carriageList.filter(c => c.currentGroups.contains(group)).head
+
           return (availableTrain, Some(selectedCarriage))
         }
       }
