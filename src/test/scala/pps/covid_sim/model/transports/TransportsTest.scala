@@ -42,6 +42,9 @@ class TransportsTest {
 
   val commuters: List[Single] = (1 to 40).map(i => Single(TestPerson(i, false))).toList
 
+  val groupCommuters: List[Group] = (1 to 39 by 2).map(s => Multiple(TestPerson(s, false),
+                                                       Set(TestPerson(s, false), TestPerson(s + 1, false)))).toList
+
   val marco: Single = Single(TestPerson(41, false))
   val lorenzo: Single = Single(TestPerson(42, true))
   val gianmarco: Single = Single(TestPerson(43, true))
@@ -56,13 +59,29 @@ class TransportsTest {
     assertEquals(Option(bus), bus.enter(gianmarco, time))
     bus.exit(lorenzo)
     assertEquals(Option(bus), bus.enter(nicolas, time))
+    // The bus is full
     assertEquals(None, bus.enter(lorenzo, time))
   }
 
   @Test
   def testBusGroupTurnout(): Unit = {
-    assertEquals(Option(bus), bus.enter(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(2, false))), time))
-    assertEquals(None, bus.enter(Multiple(TestPerson(3, false), Set(TestPerson(3, false), TestPerson(4, false))), time))
+    assertEquals(Option(bus), bus.enter(Multiple(TestPerson(1, false),
+                                        Set(TestPerson(1, false), TestPerson(2, false))), time))
+    // The bus has only one seat available: the group cannot enter
+    assertEquals(None, bus.enter(Multiple(TestPerson(3, false),
+                                        Set(TestPerson(3, false), TestPerson(4, false))), time))
+    assertEquals(2, bus.numCurrentPeople)
+    assertEquals(Option(bus), bus.enter(marco, time))
+    assertEquals(3, bus.numCurrentPeople)
+    // A person entered in group cannot exit alone
+    bus.exit(Single(TestPerson(1, false)))
+    assertEquals(3, bus.numCurrentPeople)
+    // A group that has not entered together cannot exit together
+    bus.exit(Multiple(TestPerson(1, false), Set(TestPerson(1, false), marco.leader)))
+    assertEquals(3, bus.numCurrentPeople)
+    // Exit of a group
+    bus.exit(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(2, false))))
+    assertEquals(1, bus.numCurrentPeople)
   }
 
   @Test
@@ -71,6 +90,7 @@ class TransportsTest {
     assertEquals(Option(bus), bus.enter(marco, time))
     assertEquals(Option(bus), bus.enter(nicolas, time))
     assertEquals(Option(bus), bus.enter(lorenzo, time))
+    // The bus is full
     assertEquals(None, bus.enter(gianmarco, time))
   }
 
@@ -78,18 +98,31 @@ class TransportsTest {
   def testDuplicateEntriesInBus(): Unit = {
     assertEquals(Option(bus), bus.enter(marco, time))
     assertEquals(Option(bus), bus.enter(lorenzo, time))
+    // Lorenzo is already in: this entry is ignored
     assertEquals(Option(bus), bus.enter(lorenzo, time))
+    assertEquals(2, bus.numCurrentPeople)
     assertEquals(Option(bus), bus.enter(gianmarco, time))
+    // The bus is full
     assertEquals(None, bus.enter(nicolas, time))
   }
 
   @Test
   def testDuplicateGroupEntriesInBus(): Unit = {
-    assertEquals(Option(bus), bus.enter(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(2, false))), time))
-    assertEquals(Option(bus), bus.enter(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(2, false))), time))
-    assertEquals(None, bus.enter(Multiple(TestPerson(3, false), Set(TestPerson(3, false), TestPerson(1, false))), time))
+    assertEquals(Option(bus), bus.enter(Multiple(TestPerson(1, false),
+                                        Set(TestPerson(1, false), TestPerson(2, false))), time))
+    // The group has already entered: the operation has no effect
+    assertEquals(Option(bus), bus.enter(Multiple(TestPerson(1, false),
+                                        Set(TestPerson(1, false), TestPerson(2, false))), time))
+    assertEquals(2, bus.numCurrentPeople)
+    // The bus has only one seat available: the group cannot enter
+    assertEquals(None, bus.enter(Multiple(TestPerson(3, false),
+                                        Set(TestPerson(3, false), TestPerson(1, false))), time))
+    assertEquals(2, bus.numCurrentPeople)
     assertEquals(Option(bus), bus.enter(gianmarco, time))
+    assertEquals(3, bus.numCurrentPeople)
+    // The bus is full
     assertEquals(None, bus.enter(nicolas, time))
+    assertEquals(3, bus.numCurrentPeople)
   }
 
   @Test
@@ -98,13 +131,26 @@ class TransportsTest {
     assertEquals(Option(car), car.enter(lorenzo, time))
     car.exit(lorenzo)
     assertEquals(Option(car), car.enter(nicolas, time))
+    // The car is full
     assertEquals(None, car.enter(lorenzo, time))
   }
 
   @Test
   def testCarGroupTurnout(): Unit = {
-    assertEquals(Option(car), car.enter(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(2, false))), time))
+    assertEquals(Option(car), car.enter(Multiple(TestPerson(1, false),
+                                        Set(TestPerson(1, false), TestPerson(2, false))), time))
+    // The car is full
     assertEquals(None, car.enter(marco, time))
+    assertEquals(2, car.numCurrentPeople)
+    // A person entered in group cannot exit alone
+    car.exit(Single(TestPerson(1, false)))
+    assertEquals(2, car.numCurrentPeople)
+    // A group that has not entered together cannot exit together
+    car.exit(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(3, false))))
+    assertEquals(2, car.numCurrentPeople)
+    // Exit of a group
+    car.exit(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(2, false))))
+    assertEquals(0, car.numCurrentPeople)
   }
 
   @Test
@@ -112,22 +158,32 @@ class TransportsTest {
     car.exit(lorenzo)
     assertEquals(Option(car), car.enter(marco, time))
     assertEquals(Option(car), car.enter(nicolas, time))
+    // The car is full
     assertEquals(None, car.enter(gianmarco, time))
   }
 
   @Test
   def testDuplicateEntriesInCar(): Unit = {
     assertEquals(Option(car), car.enter(lorenzo, time))
+    // Lorenzo is already in: this entry is ignored
     assertEquals(Option(car), car.enter(lorenzo, time))
+    assertEquals(1, car.numCurrentPeople)
     assertEquals(Option(car), car.enter(gianmarco, time))
+    // The car is full
     assertEquals(None, car.enter(nicolas, time))
   }
 
   @Test
   def testDuplicateGroupEntriesInCar(): Unit = {
-    assertEquals(Option(car), car.enter(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(2, false))), time))
-    assertEquals(Option(car), car.enter(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(2, false))), time))
-    assertEquals(None, car.enter(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(3, false))), time))
+    assertEquals(Option(car), car.enter(Multiple(TestPerson(1, false),
+                                        Set(TestPerson(1, false), TestPerson(2, false))), time))
+    // The group has already entered: the operation has no effect
+    assertEquals(Option(car), car.enter(Multiple(TestPerson(1, false),
+                                        Set(TestPerson(1, false), TestPerson(2, false))), time))
+    // The car has no more seats available: the group cannot enter
+    assertEquals(None, car.enter(Multiple(TestPerson(1, false),
+                                        Set(TestPerson(1, false), TestPerson(3, false))), time))
+    assertEquals(2, car.numCurrentPeople)
   }
 
   @Test
@@ -137,25 +193,35 @@ class TransportsTest {
     assertEquals(Option(Carriage(20)), train.enter(lorenzo, time))
     train.exit(lorenzo)
     assertEquals(Option(Carriage(20)), train.enter(nicolas, time))
+    // The train is full
     assertEquals(None, train.enter(lorenzo, time))
   }
 
   @Test
   def testTrainGroupTurnout(): Unit = {
-    enterPeopleFromList(0, commuters.size - 4, commuters, train)
-    assertEquals(Option(Carriage(20)), train.enter(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(2, false))), time))
-    assertEquals(Option(Carriage(20)), train.enter(Multiple(TestPerson(3, false), Set(TestPerson(3, false), TestPerson(4, false))), time))
-    assertEquals(None, train.enter(marco, time))
-    train.exit(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(2, false))))
-    assertEquals(Option(Carriage(20)), train.enter(marco, time))
+    enterPeopleFromList(0, groupCommuters.size - 1, groupCommuters, train)
     assertEquals(Option(Carriage(20)), train.enter(nicolas, time))
-    assertEquals(None, train.enter(lorenzo, time))
+    // The train has only one seat available: the group cannot enter
+    assertEquals(None, train.enter(Multiple(marco.leader, Set(marco.leader, gianmarco.leader)), time))
+    assertEquals(39, train.numCurrentPeople)
+    assertEquals(Option(Carriage(20)), train.enter(marco, time))
+    // Now the train is full
+    assertEquals(40, train.numCurrentPeople)
+    // A person entered in group cannot exit alone
+    train.exit(Single(TestPerson(1, false)))
+    assertEquals(40, train.numCurrentPeople)
+    // A group that has not entered together cannot exit together
+    train.exit(Multiple(TestPerson(3, false), Set(TestPerson(3, false), TestPerson(1, false))))
+    assertEquals(40, train.numCurrentPeople)
+    // Exit of a group
+    train.exit(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(2, false))))
+    assertEquals(38, train.numCurrentPeople)
   }
 
   @Test
   def testExitFromTrainWithNoOneInside(): Unit = {
     train.exit(lorenzo)
-    enterPeopleFromList(0, commuters.size-2, commuters,train)
+    enterPeopleFromList(0, commuters.size - 2, commuters, train)
     assertEquals(Option(Carriage(20)), train.enter(marco, time))
     assertEquals(Option(Carriage(20)), train.enter(lorenzo, time))
     train.exit(marco)
@@ -165,17 +231,21 @@ class TransportsTest {
   @Test
   def testDuplicateEntriesInTrain(): Unit = {
     assertEquals(Option(Carriage(20)), train.enter(lorenzo, time))
+    // Lorenzo is already in: this entry is ignored
     assertEquals(Option(train), train.enter(lorenzo, time))
+    assertEquals(1, train.numCurrentPeople)
     assertEquals(Option(Carriage(20)), train.enter(gianmarco, time))
-    assertEquals(Option(train), train.enter(gianmarco, time))
+    assertEquals(2, train.numCurrentPeople)
   }
 
   @Test
   def testDuplicateGroupEntriesInTrain(): Unit = {
-    val c = train.enter(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(2, false))), time)
-    val t =  train.enter(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(2, false))), time)
-    val n = train.enter(Multiple(TestPerson(1, false), Set(TestPerson(1, false), TestPerson(3, false))), time)
-    println("CIAO")
+    assertEquals(Option(Carriage(20)), train.enter(Multiple(TestPerson(1, false),
+                                                   Set(TestPerson(1, false), TestPerson(2, false))), time))
+    // The group has already entered: the operation has no effect
+    assertEquals(Option(train), train.enter(Multiple(TestPerson(1, false),
+                                            Set(TestPerson(1, false), TestPerson(2, false))), time))
+    assertEquals(2, train.numCurrentPeople)
   }
 
   def enterPeopleFromList(from: Int, until: Int, listPeople: List[Group], means: Transport ): Unit = {

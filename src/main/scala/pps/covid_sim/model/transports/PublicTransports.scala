@@ -3,10 +3,8 @@ package pps.covid_sim.model.transports
 import java.util.Calendar
 
 import pps.covid_sim.model.people.PeopleGroup.Group
-import pps.covid_sim.model.people.{PeopleGroup, Person}
-import pps.covid_sim.model.places.Locality.{City, Province, Region}
+import pps.covid_sim.model.places.Locality.{City, Region}
 import pps.covid_sim.model.places.{Locations, Place}
-import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.util.time.HoursInterval
 
 object PublicTransports {
@@ -100,7 +98,7 @@ object PublicTransports {
           val availableTrain = Some(availableTrains.head)
           availableTrain.get.enter(group, time)
 
-          //vado a trovare dove è stato inserito il gruppo:
+          // Looking for the carriage in which the group has been placed
           val selectedCarriage = availableTrain.get.carriageList.filter(c => c.currentGroups.contains(group)).head
 
           return (availableTrain, Some(selectedCarriage))

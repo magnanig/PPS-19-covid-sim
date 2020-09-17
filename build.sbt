@@ -11,3 +11,5 @@ libraryDependencies ++= Seq(
 
 // https://mvnrepository.com/artifact/org.scalanlp/breeze-viz
 libraryDependencies += "org.scalanlp" %% "breeze-viz" % "1.0"
+
+libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.1.1"
