@@ -3,6 +3,7 @@ package pps.covid_sim.model.places
 import java.util.Calendar
 
 import pps.covid_sim.model.clinical.Masks.Mask
+import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.util.time.DatesInterval
 import pps.covid_sim.util.time.Time.Day.Day
@@ -41,6 +42,7 @@ object Locations {
      * @return                true if location is open between the dates interval, false otherwise
      */
     def isOpen(datesInterval: DatesInterval): Boolean = true
+
 
     /**
      * Lets the specified group enter to current location at the specified time, if it is possible.
@@ -110,7 +112,49 @@ object Locations {
      * @param time  current time
      * @param place current place
      */
-    def propagateVirus(time: Calendar, place: Place): Unit = { /* TODO */ }
+    def propagateVirus(time: Calendar, place: Place): Unit = synchronized {
+      _currentGroups
+        .foreach(group => {
+          if (group.size > 1) inGroupVirusPropagation(group, place, time)
+          lookForFriends(group, place, time)
+        })
+    }
+
+    /**
+     * Propagates virus inside a group, trying to infect each pair of people.
+     * @param group   the group inside to which propagate virus
+     * @param place   the place where virus propagation takes place
+     * @param time    the infection time
+     */
+    protected def inGroupVirusPropagation(group: Group, place: Place, time: Calendar): Unit = synchronized {
+      group.toList
+        .combinations(2)
+        .foreach(pair => VirusPropagation.tryInfect(pair.head, pair.last, place, time))
+    }
+
+    /**
+     * Looks for friends of each person inside the specified group and try to infect he or she
+     * with each friend that is in current location too.
+     * @param group   the group whose members look for their friend
+     * @param place   the place where virus propagation takes place
+     * @param time    the infection time
+     */
+    protected def lookForFriends(group: Group, place: Place, time: Calendar): Unit = synchronized {
+      group
+        .foreach(person => person.friends
+          .intersect((_currentGroups - group).flatMap(_.people))
+          .foreach(VirusPropagation.tryInfect(person, _, place, time)))
+    }
+
+    /**
+     * Looks for friends of each person of each group and try to infect each person with
+     * each friend that is in current location too.
+     * @param place   the place where virus propagation takes place
+     * @param time    the infection time
+     */
+    protected def lookForFriends(place: Place, time: Calendar): Unit = synchronized {
+      _currentGroups.foreach(lookForFriends(_, place, time))
+    }
 
     /**
      * Checks whether group can enter to current location at the specified time.

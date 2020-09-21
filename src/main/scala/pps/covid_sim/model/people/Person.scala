@@ -7,11 +7,19 @@ import pps.covid_sim.model.places.Place
 
 trait Person {
 
+  def friends: Set[Person] = Set()
+
   /**
    * Get the mask worn by current person.
    * @return  the worn mask
    */
   def wornMask: Option[Mask]
+
+  /**
+   * Get the social distance that this person is keeping.
+   * @return  the actual social distance, in meters
+   */
+  def socialDistance: Double = 0.5
 
   /**
    * Checks whether current person can infect other people.
