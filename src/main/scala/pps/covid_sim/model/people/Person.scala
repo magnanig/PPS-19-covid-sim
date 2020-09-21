@@ -1,11 +1,26 @@
 package pps.covid_sim.model.people
 
-import java.util.Calendar
-
+import pps.covid_sim.model.clinical.CovidInfection
+import pps.covid_sim.util.time.Time.ScalaCalendar
+import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.places.Place
 
+import java.util.Calendar
+
 trait Person {
+
+  val residence: City
+
+  val birthDate: Calendar
+
+  val age: Int = Calendar.getInstance() -- birthDate
+
+  private val covidInfection: Option[CovidInfection] = None
+
+  def infectionPlaceInstance: Option[Place] = covidInfection.map(_.at)
+
+  def infectionPlace: Option[Class[_ <: Place]] = infectionPlaceInstance.map(_.getClass)
 
   def friends: Set[Person] = Set()
 
@@ -70,3 +85,4 @@ trait Person {
   def metInfectedPerson(person: Person): Unit
 
 }
+
