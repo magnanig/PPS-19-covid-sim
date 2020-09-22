@@ -83,6 +83,5 @@ trait Person {
    * @param person  the infected person to be added
    */
   def metInfectedPerson(person: Person): Unit = ???
-
 }
 
