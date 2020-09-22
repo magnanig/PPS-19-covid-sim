@@ -10,9 +10,9 @@ import java.util.Calendar
 
 trait Person {
 
-  val residence: City
+  val residence: City = ???
 
-  val birthDate: Calendar
+  val birthDate: Calendar = ???
 
   val age: Int = Calendar.getInstance() -- birthDate
 
@@ -28,7 +28,7 @@ trait Person {
    * Get the mask worn by current person.
    * @return  the worn mask
    */
-  def wornMask: Option[Mask]
+  def wornMask: Option[Mask] = ???
 
   /**
    * Get the social distance that this person is keeping.
@@ -42,7 +42,7 @@ trait Person {
    * he is infected (i.e. he hasn't done tampon yet).
    * @return  true if current person can infect, false otherwise
    */
-  def canInfect: Boolean
+  def canInfect: Boolean = ???
 
   /**
    * Checks whether current person is been certified to be positive
@@ -70,19 +70,19 @@ trait Person {
    * @param place   the place where infection has happened
    * @param time    the time when infection has happened
    */
-  def infects(place: Place, time: Calendar): Unit
+  def infects(place: Place, time: Calendar): Unit = ???
 
   /**
    * Get the set of infected people that current person has met.
    * @return  the set of infected people met by current person
    */
-  def infectedPeopleMet: Set[Person]
+  def infectedPeopleMet: Set[Person] = ???
 
   /**
    * Add the specified infected person to the set of infected people met.
    * @param person  the infected person to be added
    */
-  def metInfectedPerson(person: Person): Unit
+  def metInfectedPerson(person: Person): Unit = ???
 
 }
 
