@@ -10,11 +10,11 @@ import java.util.Calendar
 
 trait Person {
 
-  val residence: City = ???
+  val residence: City = null
 
-  val birthDate: Calendar = ???
+  val birthDate: Calendar = null
 
-  val age: Int = Calendar.getInstance() -- birthDate
+  val age: Int = 0 //Calendar.getInstance() -- birthDate
 
   private val covidInfection: Option[CovidInfection] = None
 

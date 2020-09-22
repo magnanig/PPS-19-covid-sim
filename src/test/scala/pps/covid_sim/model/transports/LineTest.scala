@@ -4,7 +4,7 @@ import java.util.Calendar
 
 import org.junit.Assert._
 import org.junit.Test
-import pps.covid_sim.model.clinical.Masks
+import pps.covid_sim.model.clinical.{CovidInfection, Masks}
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple, Single}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{City, Province}
@@ -29,6 +29,18 @@ class LineTest {
 
   // Dummy Person implementations, used for testing purposes only
   case class TestPerson(idCode: Int, infected: Boolean) extends Person  {
+
+    override val residence: City = null
+
+    override val birthDate: Calendar = null
+
+    override val age: Int = 0
+
+    override def infectionPlaceInstance: Option[Place] = ???
+
+    override def infectionPlace: Option[Class[_ <: Place]] = ???
+
+    override def friends: Set[Person] = Set()
 
     val id: Int = idCode
 
