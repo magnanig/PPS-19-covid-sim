@@ -68,7 +68,6 @@ object Placement {
     val itemGroups: Seq[T]
   }
 
-
   /**
    * The item group, where groups can be assigned to.
    */

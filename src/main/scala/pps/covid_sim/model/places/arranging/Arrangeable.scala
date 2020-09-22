@@ -4,6 +4,7 @@ import java.util.Calendar
 
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.arranging.Placement.{Arrangement, ItemGroup, Placeholder}
+import pps.covid_sim.model.places.rooms.Room
 import pps.covid_sim.model.places.{DelimitedSpace, Place}
 
 /**
