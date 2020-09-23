@@ -1,8 +1,9 @@
 package pps.covid_sim.util.scheduling
 
+import pps.covid_sim.model.places.Education.Classroom
 import pps.covid_sim.model.places.Locations.Location
-import pps.covid_sim.util.time.Time.Day
 import pps.covid_sim.util.time.Time.Day.Day
+import pps.covid_sim.util.time.Time.{Day, Month}
 import pps.covid_sim.util.time.{DaysInterval, HoursInterval, MonthsInterval}
 
 object Planning {
@@ -125,6 +126,11 @@ object Planning {
 
     override def iterator: Iterator[(HoursInterval, T)] = scheduling.iterator
   }
+
+  import pps.covid_sim.util.time.TimeIntervalsImplicits._
+
+  case class StudentPlan(override val period: MonthsInterval = Month.SEPTEMBER -> Month.MAY)
+    extends PlanMap[Classroom, StudentPlan](() => StudentPlan(period))
 
   case class WorkPlan[T <: Location](override val period: MonthsInterval = MonthsInterval.ALL_YEAR)
     extends PlanMap[T, WorkPlan[T]](() => WorkPlan(period))
