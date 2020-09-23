@@ -1,3 +1,5 @@
 package pps.covid_sim.model.places
 
-trait WorkPlace extends Place
+import pps.covid_sim.model.places.Locations.Location
+
+trait WorkPlace[T <: Location] extends Place
