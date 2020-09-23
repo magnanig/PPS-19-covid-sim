@@ -2,6 +2,7 @@ package pps.covid_sim.model.places
 
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.clinical.Masks.Mask
+import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.util.RandomGeneration
 import pps.covid_sim.util.geometry.{Coordinates, Dimension, MovementFunctions}
@@ -13,7 +14,8 @@ object OpenPlaces {
     override lazy val entranceCoords: Coordinates = Coordinates.randomOnBorder(dimension)
 
     // must be lazy since dimension will be defined after this trait initialization
-    protected override lazy val movement: Coordinates => Coordinates = MovementFunctions.randomPath(dimension)
+    protected override lazy val movement: (Coordinates, Set[Person]) => Coordinates =
+      MovementFunctions.randomPath(dimension, Set.empty)
 
     override def mask: Option[Mask] = if(dimension.surface / numCurrentPeople < 0) //Parameters.safeSurfacePerPerson) TODO
       Some(Masks.Surgical) else None

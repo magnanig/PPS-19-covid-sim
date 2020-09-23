@@ -4,27 +4,26 @@ import java.util.Calendar
 
 import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.PeopleGroup.Group
-import pps.covid_sim.util.geometry.{Coordinates, Movement}
+import pps.covid_sim.model.people.Person
+import pps.covid_sim.util.geometry.Coordinates
 
 trait MovementSpace extends DelimitedSpace {
 
   /**
    * A function that updates the position starting from the current one and velocity.
    */
-  protected val movement: Coordinates => Coordinates
+  protected val movement: (Coordinates, Set[Person]) => Coordinates
+
+  /**
+   * Move all people according to the current place movement function.
+   */
+  def move(): Unit = currentGroups.flatten
+    .foreach(person => person.position = movement(person.position, currentGroups.flatten - person))
 
   /**
    * The coordinates of the location entrance.
    */
   val entranceCoords: Coordinates
-
-  /**
-   * Generate a fresh movement instance to be assigned to people when enter to the
-   * current location.
-   * @return  a new movement instance, starting from the entrance
-   * @note    each person must have his own movement instance, in order to properly move
-   */
-  def freshMovement: Movement = Movement(movement)
 
   override protected def onEntered(group: Group): Unit = {
     group.foreach(_.position = Coordinates.random(dimension)) // TODO

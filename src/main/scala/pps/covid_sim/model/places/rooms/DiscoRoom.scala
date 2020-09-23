@@ -2,6 +2,7 @@ package pps.covid_sim.model.places.rooms
 
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.clinical.Masks.Mask
+import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.{DelimitedSpace, MovementSpace}
 import pps.covid_sim.util.RandomGeneration
 import pps.covid_sim.util.geometry.{Coordinates, Dimension, MovementFunctions}
@@ -15,5 +16,6 @@ case class DiscoRoom(override val capacity: Int) extends Room with MovementSpace
 
   override val mask: Option[Mask] = Some(Masks.Surgical)
 
-  override protected val movement: Coordinates => Coordinates = MovementFunctions.randomPath(dimension)
+  override protected val movement: (Coordinates, Set[Person]) => Coordinates =
+    MovementFunctions.randomPath(dimension, Set.empty)
 }
