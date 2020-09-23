@@ -7,6 +7,7 @@ import org.junit.Test
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple, Single}
 import pps.covid_sim.model.people.Person
+import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.transports.PrivateTransports.Car
 import pps.covid_sim.model.transports.PublicTransports.{Bus, Carriage, Train}
@@ -21,7 +22,9 @@ class TransportsTest {
   // Dummy Person implementations, used for testing purposes only
   case class TestPerson(idCode: Int, infected: Boolean) extends Person  {
 
-    val id: Int = idCode
+    override val birthDate: Calendar = ScalaCalendar(1997, 1, 1)
+
+    override val residence: City = null
 
     override def wornMask: Option[Masks.Mask] = ???
 
