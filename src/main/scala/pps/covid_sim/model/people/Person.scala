@@ -21,7 +21,7 @@ trait Person {
 
   val residence: City
   val birthDate: Calendar
-  val age: Int = Calendar.getInstance() -- birthDate
+  lazy val age: Int = Calendar.getInstance() -- birthDate
 
   def habitation: Habitation = _habitation
 
@@ -116,6 +116,11 @@ trait Person {
 
   def clearInfectedPeopleMet(): Unit = {
     _infectedPeopleMet = Set.empty
+  }
+
+  override def equals(obj: Any): Boolean = obj match {
+    case person: Person => this eq person
+    case _ => false
   }
 
   private[model] def hourTick(time: Calendar): Unit = {

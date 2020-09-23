@@ -4,12 +4,12 @@ import java.util.Calendar
 
 import org.junit.Assert._
 import org.junit.Test
-import pps.covid_sim.model.clinical.{CovidInfection, Masks}
+import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple, Single}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{City, Province}
 import pps.covid_sim.model.places.{Locality, Place}
-import pps.covid_sim.model.transports.PublicTransports.{Bus, BusLine, Carriage, Line, Train, TrainLine}
+import pps.covid_sim.model.transports.PublicTransports._
 import pps.covid_sim.util.time.HoursInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
@@ -34,7 +34,7 @@ class LineTest {
 
     override val birthDate: Calendar = null
 
-    override val age: Int = 0
+    override lazy val age: Int = 0
 
     override def infectionPlaceInstance: Option[Place] = ???
 
