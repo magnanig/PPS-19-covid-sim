@@ -1,6 +1,7 @@
-package pps.covid_sim.util.geometry
+package pps.covid_sim.model.movements
 
 import pps.covid_sim.model.people.Person
+import pps.covid_sim.util.geometry.{Coordinates, Dimension, Rectangle, Speed}
 
 object MovementFunctions {
 
@@ -8,14 +9,25 @@ object MovementFunctions {
 
   def randomPath(dimension: Dimension,
                  obstacles: Set[Rectangle],
+                 speed: Speed = Speed.MIDDLE): Coordinates => Set[Seq[Map[Person, Seq[Int]]]] = {
+    coords => {
+      // TODO
+      //Coordinates.random(dimension)
+    }
+  }
+
+  def linearPath(dimension: Dimension,
+                 obstacles: Set[Rectangle],
                  speed: Speed = Speed.MIDDLE): (Coordinates, Set[Person]) => Coordinates = {
+    // TODO: implement something like wall following (see https://en.wikipedia.org/wiki/Maze_solving_algorithm) and/or
+    //  https://link.springer.com/chapter/10.1007/978-3-319-62533-1_7
     (coords, people) => {
       // TODO
       Coordinates.random(dimension)
     }
   }
 
-  def linearPath(dimension: Dimension,
+  def linearPathWithWallFollowing(dimension: Dimension,
                  obstacles: Set[Rectangle],
                  speed: Speed = Speed.MIDDLE): (Coordinates, Set[Person]) => Coordinates = {
     // TODO: implement something like wall following (see https://en.wikipedia.org/wiki/Maze_solving_algorithm) and/or

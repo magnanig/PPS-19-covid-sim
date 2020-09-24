@@ -11,11 +11,13 @@ import pps.covid_sim.util.scheduling.TimeTable
 object OpenPlaces {
 
   trait OpenPlace extends Place with MovementSpace {
-    override lazy val entranceCoords: Coordinates = Coordinates.randomOnBorder(dimension)
+    //override lazy val entranceCoords: Coordinates = Coordinates.randomOnBorder(dimension)
 
     // must be lazy since dimension will be defined after this trait initialization
+    /*
     protected override lazy val movement: (Coordinates, Set[Person]) => Coordinates =
       MovementFunctions.randomPath(dimension, Set.empty)
+    */
 
     override def mask: Option[Mask] = if(dimension.surface / numCurrentPeople < 0) //Parameters.safeSurfacePerPerson) TODO
       Some(Masks.Surgical) else None

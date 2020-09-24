@@ -2,14 +2,28 @@ package pps.covid_sim.model.places
 
 import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.util.RandomGeneration
-import pps.covid_sim.util.geometry.Dimension
+import pps.covid_sim.util.geometry.{Dimension, Rectangle}
 
 trait DelimitedSpace extends Location {
 
   /**
-   * Tha dimension of current space.
+   * The dimension of current space.
    */
   val dimension: Dimension
+  val obstacles: Set[Rectangle]
+
+  /**
+   * Get the groups that have entered into current location.
+   * @return  the set of group inside the current location
+   */
+  def spaceDimension: Dimension = dimension
+
+  /**
+   *
+   * @param dimension the dimension of current space
+   * @return
+   */
+  def placeObstacles(dimension: Dimension): Set[Rectangle]
 
 }
 

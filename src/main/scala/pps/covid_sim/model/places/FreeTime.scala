@@ -17,21 +17,36 @@ object FreeTime {
   case class Restaurant(override val city: City,
                         override val timeTable: TimeTable,
                         private var rooms: Seq[TablesRoom] = Seq())
-    extends MultiRoom[TablesRoom](city, rooms) with FreeTimePlace[Restaurant]{
+    extends MultiRoom[TablesRoom](city, rooms) with FreeTimePlace[Restaurant] {
+    override val dimension: Dimension = (
+      RandomGeneration.randomIntInRange(10, 20),
+      RandomGeneration.randomIntInRange(10, 20)
+    )
+
     override val mask: Option[Mask] = None
   }
 
   case class Bar(override val city: City,
                  override val timeTable: TimeTable,
                  private var rooms: Seq[TablesRoom] = Seq())
-    extends MultiRoom[TablesRoom](city, rooms) with FreeTimePlace[Bar]{
+    extends MultiRoom[TablesRoom](city, rooms) with FreeTimePlace[Bar] {
+    override val dimension: Dimension = (
+      RandomGeneration.randomIntInRange(10, 20),
+      RandomGeneration.randomIntInRange(10, 20)
+    )
+
     override val mask: Option[Mask] = None
   }
 
   case class Disco(override val city: City,
                    override val timeTable: TimeTable,
                    private var rooms: Seq[DiscoRoom] = Seq())
-    extends MultiRoom[DiscoRoom](city, rooms) with FreeTimePlace[Disco]{
+    extends MultiRoom[DiscoRoom](city, rooms) with FreeTimePlace[Disco] {
+    override val dimension: Dimension = (
+      RandomGeneration.randomIntInRange(10, 20),
+      RandomGeneration.randomIntInRange(10, 20)
+    )
+
     override val mask: Option[Mask] = Some(Masks.Surgical)
   }
 

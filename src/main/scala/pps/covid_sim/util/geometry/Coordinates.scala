@@ -8,7 +8,7 @@ case class Coordinates(x: Double, y: Double) extends GeometryEntity {
   /**
    * Check whether current point is on the border of the specified dimension.
    * @param dimension   the desired dimension
-   * @return            true if current point if on the border, false otherwise
+   * @return            true if current point is on the border, false otherwise
    */
   def onBorder(dimension: Dimension): Boolean = nearBorder(dimension)(0)
 
@@ -16,7 +16,7 @@ case class Coordinates(x: Double, y: Double) extends GeometryEntity {
    * Check whether current point is near the border, within a max distance, of the specified dimension.
    * @param dimension     the desired dimension
    * @param maxDistance   the max allowed distance from border
-   * @return              true if current point if near the border, false otherwise
+   * @return              true if current point is near the border, false otherwise
    */
   def nearBorder(dimension: Dimension)(implicit maxDistance: Double): Boolean = x >= 0 && x <= dimension.width &&
     y >= 0 && y <= dimension.length && (x <= maxDistance || x >= dimension.width - maxDistance ||
