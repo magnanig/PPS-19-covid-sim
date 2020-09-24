@@ -30,5 +30,7 @@ object CovidInfectionParameters {
 
   val notRespectingIsolationMaxProbability = 0.4
 
+  val lockDownStart = 0.1 // population percentage
+  val lockDownEnd = 0.8 // percentage respect with last max infections
 
 }

@@ -10,6 +10,16 @@ object Locality {
 
   case class Region(id: Int, name: String, numResidents: Int)
 
+  object Province extends  Enumeration {
+    type Province = Value
+
+    val TORINO: Locality.Province = Province(1272,"Torino", "AB", Region.EMILIA_ROMAGNA)
+    val BOLOGNA: Locality.Province = Province(2312,"Bologna", "BO", Region.EMILIA_ROMAGNA)
+
+    val MILANO: Locality.Province = Province(5535,"Milano", "MI", Region.FRIULI_VENEZIA_GIULIA)
+    val ROMA: Locality.Province = Province(7657,"Roma", "RO", Region.FRIULI_VENEZIA_GIULIA)
+  }
+
   object Region extends Enumeration {
 
     type Region = Value

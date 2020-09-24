@@ -4,10 +4,10 @@
 	<info
 		organisation="covid-sim"
 		module="covid-sim$sources"
-		revision="0.1.0-SNAPSHOT"
+		revision="0.1"
 		conf="provided"
 		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, pom, scala-tool"
-		date="20200924204518"/>
+		date="20200924232418"/>
 	<dependencies>
 	</dependencies>
 </ivy-report>

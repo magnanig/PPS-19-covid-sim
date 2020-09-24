@@ -4,7 +4,7 @@
 		module="covid-sim$sources"
 		revision="0.1"
 		status="integration"
-		publication="20200922220309"
+		publication="20200924232418"
 	/>
 	<configurations>
 		<conf name="compile" visibility="public" description=""/>

@@ -1,6 +1,7 @@
 ThisBuild / useCoursier := false // to solve some cache problems (from https://stackoverflow.com/a/58456468)
 
 name := "covid-sim"
+version := "0.1"
 
 scalaVersion := "2.12.10"
 
