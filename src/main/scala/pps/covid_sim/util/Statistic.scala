@@ -94,8 +94,9 @@ object Statistic {
  */
 case class Statistic(people: Seq[Person]) {
 
-  /*
+  /**
    * Calculate the average age of currently positive people
+   *
    * @return average age of currently positive people
    */
   def middleAgeCurrentPositive(): Int = {
@@ -109,18 +110,18 @@ case class Statistic(people: Seq[Person]) {
    * @return a map that associates, for each type of place where the virus has spread,
    *         the number of people who have been infected
    */
-  def getInfectionsPerPlace: mutable.Map[Class[_ <: Place], Int] = {
+  def getInfectionsPerPlace: Map[Class[_ <: Place], Int] = {
     val _return: mutable.Map[Class[_ <: Place], Int] = mutable.Map().withDefaultValue(0)
     people.filter(p => p.isInfected || p.isRecovered).foreach(p => _return(p.infectionPlace.get) += 1)
-    _return
+    _return.toMap
   }
 
   /**
    * Calculates the total number of currently positive people within a specific province
    *
    * @param p the province in which the number of currently positive people
-   *                 is calculated
-   * @return number of currently positive people within a province
+   *          is calculated
+   * @return  number of currently positive people within a province
    */
   def numCurrentPositive(p: Province): Int = people.par.count(
     person => person.residence.province == p && person.isInfected)
@@ -129,8 +130,8 @@ case class Statistic(people: Seq[Person]) {
    * Calculates the total number of currently positive people within a specific region
    *
    * @param r the region in which the number of currently positive people is
-   *               calculated
-   * @return number of currently positive people within a region
+   *          calculated
+   * @return  number of currently positive people within a region
    */
   def numCurrentPositive(r: Region): Int = people.par.count(p => p.residence.province.region == r && p.isInfected)
 
@@ -145,8 +146,8 @@ case class Statistic(people: Seq[Person]) {
    * Calculates the number of people recovered from the virus within a specific province
    *
    * @param p province in which to calculate the number of people recovered from
-   *                 the virus
-   * @return number of people recovered from the virus within a specific province
+              the virus
+   * @return  number of people recovered from the virus within a specific province
    */
   def numRecovered(p: Province): Int = people.par.count(person => person.residence.province == p && person.isRecovered)
 
@@ -154,8 +155,8 @@ case class Statistic(people: Seq[Person]) {
    * Calculates the number of people recovered from the virus within a specific region
    *
    * @param r region in which to calculate the number of people recovered from
-   *               the virus
-   * @return number of people recovered from the virus within a specific region
+   *          the virus
+   * @return  number of people recovered from the virus within a specific region
    */
   def numRecovered(r: Region): Int = people.par.count(p => p.residence.province.region == r && p.isRecovered)
 
@@ -170,9 +171,9 @@ case class Statistic(people: Seq[Person]) {
    * Calculate the number of people who have died from the virus within a specific province
    *
    * @param p province in which to calculate the number of people who have died from
-   *                 the virus
-   * @return number of people who have died from the virus within a specific
-   *         province
+   *          the virus
+   * @return  number of people who have died from the virus within a specific
+   *          province
    */
   def numDeaths(p: Province): Int = people.par.count(person => person.residence.province == p && person.isDeath)
 
@@ -180,9 +181,9 @@ case class Statistic(people: Seq[Person]) {
    * Calculate the number of people who have died from the virus within a specific region
    *
    * @param r region in which to calculate the number of people who have died from
-   *               the virus
-   * @return number of people who have died from the virus within a specific
-   *         region
+   *          the virus
+   * @return  number of people who have died from the virus within a specific
+   *          region
    */
   def numDeaths(r: Region): Int = people.par.count(person => person.residence.province.region == r && person.isDeath)
 
@@ -199,7 +200,7 @@ case class Statistic(people: Seq[Person]) {
    * in the province and the number of people who died from the virus within the province
    *
    * @param p province in which to calculate the number of confirmed covid cases
-   * @return number of confirmed cases of covid at the province level
+   * @return  number of confirmed cases of covid at the province level
    */
   def numConfirmedCases(p: Province): Int = numCurrentPositive(p) + numRecovered(p) + numDeaths(p)
 
@@ -208,8 +209,8 @@ case class Statistic(people: Seq[Person]) {
    * the number of people currently positive in the region, the number of people recovered
    * in the region and the number of people who have died from the virus within a region
    *
-   * @param r  region in which to calculate the number of confirmed covid cases
-   * @return number of confirmed cases of covid at the regional level
+   * @param r   region in which to calculate the number of confirmed covid cases
+   * @return    number of confirmed cases of covid at the regional level
    */
   def numConfirmedCases(r: Region): Int = numCurrentPositive(r) + numRecovered(r) + numDeaths(r)
 
@@ -221,4 +222,5 @@ case class Statistic(people: Seq[Person]) {
    * @return total number of confirmed cases of covid nationwide
    */
   def numConfirmedCases(): Int = numCurrentPositive() + numRecovered() + numDeaths()
+
 }

@@ -67,7 +67,6 @@ project/plugins/project/
 
 # End of https://www.toptal.com/developers/gitignore/api/sbt,intellij
 
-.idea/
 bin/
 *.class
 *.csv
