@@ -42,7 +42,7 @@ object Coordinates {
   /**
    * Generate a random point on the border of the specified dimension.
    * @param dimension   the desired dimension
-   * @return            a random point on the border
+   * @return            a random point on the border, with at least a margin of 0.5 meters from any corner
    */
   def randomOnBorder(dimension: Dimension): Coordinates = RandomGeneration.randomIntInRange(0, 3) match {
     case 0 => (RandomGeneration.randomDoubleInRange(margin, dimension.width - margin), 0.0)
@@ -54,7 +54,7 @@ object Coordinates {
   /**
    * Generate a random point inside the specified dimension
    * @param dimension   the dimension inside which generate a random point
-   * @return            a random point inside dimension
+   * @return            a random point inside dimension, with at least a margin of 0.5 meters from any border
    */
   def random(dimension: Dimension): Coordinates = Coordinates(
     RandomGeneration.randomDoubleInRange(margin, dimension.width - margin),
