@@ -6,8 +6,8 @@ import scala.collection.mutable
 
 // TODO: Check - Scala Doc
 /**
- * Represents a singleton object, unique in the whole program. Through this object
- * you can get the whole list of cities.
+ * Represents a singleton object, unique in the whole program.
+ * Through this object you can get the whole list of cities.
  */
 object CitiesCreation {
 
