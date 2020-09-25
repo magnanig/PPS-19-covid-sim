@@ -4,7 +4,6 @@ import pps.covid_sim.model.places.Locality.{City, Province, Region}
 
 import scala.collection.mutable
 
-// TODO: Check - Scala Doc
 /**
  * Represents a singleton object, unique in the whole program.
  * Through this object you can get the whole list of cities.
@@ -13,30 +12,31 @@ object CitiesCreation {
 
   private var cities: Set[City] = Set()
 
+  /**
+   * If this method is invoked multiple times, cities are created
+   * only once, only on the first call of the method. All
+   * subsequent calls to this method do not cause new creations.
+   *
+   * @return a set of all cities
+   */
   def create(region: Region): Set[City] = { if (cities.isEmpty) cities = new CitiesCreation(region).create()
     cities
   }
 
-  /**
-   * When the set of all cities is requested, the composition of this list occurs only once,
-   * only at the first call of the method. All subsequent calls to this method do not cause
-   * the creation of a new list.
-   *
-   * @return a set of all cities
-   */
   def getCities: Set[City] =  cities
 
   /**
    * Get all cities that are in a specific province
    *
-   * @param provinceAbbreviation abbreviation code of the province of which you want all the cities
-   * @return all cities that are in a specific province
+   * @param provinceAbbreviation  abbreviation code of the province
+   *                              of which you want all the cities
+   * @return                      all cities that are in a specific province
    */
   def getCities(provinceAbbreviation: String): Set[City] =
     cities.filter(_.province.abbreviation.equals(provinceAbbreviation))
 
   /**
-   * Get all the provinces of a specific region
+   * Get all the provinces of this region
    *
    * @return all the provinces
    */

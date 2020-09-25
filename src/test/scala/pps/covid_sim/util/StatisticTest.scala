@@ -135,8 +135,4 @@ class StatisticTest {
 
   }
 
-  /*
-   * TODO
-   *  Manca solo da testare il metodo getInfectionsPerPlace della classe Statistic
-   */
 }
