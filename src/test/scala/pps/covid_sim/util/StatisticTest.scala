@@ -7,7 +7,7 @@ import org.junit.Assert.assertEquals
 import pps.covid_sim.util
 import pps.covid_sim.util.time.Time.ScalaCalendar
 import pps.covid_sim.model.people.{Person, PersonTmp}
-import pps.covid_sim.model.creation.CitiesObject
+import pps.covid_sim.model.creation.toTest.CitiesObject
 import pps.covid_sim.model.places.Locality._
 import pps.covid_sim.model.places.samples.Cities
 

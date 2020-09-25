@@ -1,16 +1,13 @@
-package pps.covid_sim.model.creation
+package pps.covid_sim.model.creation.test
 
+import pps.covid_sim.model.places.Locality
 import pps.covid_sim.model.places.Locality.{City, Province, Region}
 
 import scala.collection.mutable
 
-/**
- * Represents a singleton object, unique in the whole program.
- * Through this object you can get the whole list of cities.
- */
-object CitiesObject {
+object CitiesAosta {
 
-  private val citiesCreation: CitiesObject = new CitiesObject()
+  private val citiesCreation: CitiesAosta = new CitiesAosta()
 
   /**
    * When the set of all cities is requested, the composition of this list occurs only once,
@@ -68,7 +65,7 @@ object CitiesObject {
 
 }
 
-private class CitiesObject {
+private class CitiesAosta {
 
   private var provinces: mutable.Map[String, Province] = mutable.Map[String, Province]() // province_abbreviation -> Province
   private var regions: mutable.Map[Int, Region] = mutable.Map[Int, Region]() // id_region -> Region
@@ -80,7 +77,9 @@ private class CitiesObject {
     val bufferedSource = io.Source.fromFile("res/italy_cities.csv")
     for (line <- bufferedSource.getLines) {
       val Array(istat, name, abbreviation, _, _, _, num_residents) = line.split(";")
-      cities += City(istat.toInt, name, num_residents.toInt, provinces(abbreviation))
+      if (abbreviation.equals("AO")) {
+        cities += City(istat.toInt, name, num_residents.toInt, provinces(abbreviation))
+      }
     }
     bufferedSource.close
     cities
@@ -90,7 +89,9 @@ private class CitiesObject {
     val bufferedSource = io.Source.fromFile("res/italy_regions.csv")
     for (line <- bufferedSource.getLines) {
       val Array(id_region, name, _, num_residents, _, _) = line.split(";")
-      regions += (id_region.toInt -> Region(id_region.toInt, name, num_residents.toInt))
+      if (name.equals(Locality.Region.VALLE_DAOSTA.name)) {
+        regions += (id_region.toInt -> Region(id_region.toInt, name, num_residents.toInt))
+      }
     }
     bufferedSource.close
   }
@@ -99,7 +100,9 @@ private class CitiesObject {
     val bufferedSource = io.Source.fromFile("res/italy_provinces.csv")
     for (line <- bufferedSource.getLines) {
       val Array(abbreviation, istat, name, id_region) = line.split(";")
-      provinces += (abbreviation -> Province(istat.toInt, name, abbreviation, regions(id_region.toInt)))
+      if (abbreviation.equals("AO")) {
+        provinces += (abbreviation -> Province(istat.toInt, name, abbreviation, regions(id_region.toInt)))
+      }
     }
     bufferedSource.close
   }
