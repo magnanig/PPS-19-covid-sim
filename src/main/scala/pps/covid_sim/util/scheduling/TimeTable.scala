@@ -1,5 +1,7 @@
 package pps.covid_sim.util.scheduling
 
+import java.util.Calendar
+
 import pps.covid_sim.util.time.Time.Day.Day
 import pps.covid_sim.util.time.Time.{Day, ScalaCalendar}
 import pps.covid_sim.util.time.{DatesInterval, DaysInterval, HoursInterval, MonthsInterval}
@@ -99,6 +101,16 @@ case class TimeTable(period: MonthsInterval = MonthsInterval.ALL_YEAR,
 
   override def isDefinedOn(day: Day, hoursInterval: HoursInterval): Boolean = timeTable.get(day)
     .exists(_.exists(_.overlaps(hoursInterval)))
+
+  /**
+   * Check whether current place is opened at specified time.
+   * @param time the current time
+   * @return true if place is open when desired, false otherwise
+   */
+  def isDefined(time: Calendar): Boolean = timeTable.get(time.day) match {
+    case Some(hourIntervals) => hourIntervals.count(_.contains(time.hour)) > 0
+    case _ => false
+  }
 
   override def clear(day: Day): TimeTable = TimeTable(period, timeTable - day)
 

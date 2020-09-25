@@ -25,6 +25,7 @@ trait Person {
 
   def habitation: Habitation = _habitation
 
+
   /**
    * Get all friends.
    *

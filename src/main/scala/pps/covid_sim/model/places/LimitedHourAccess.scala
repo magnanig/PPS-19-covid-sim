@@ -21,4 +21,5 @@ trait LimitedHourAccess extends Location {
 
   override protected[places] def canEnter(group: Group, time: Calendar): Boolean = timeTable.isDefinedAt(time)
 
+
 }
