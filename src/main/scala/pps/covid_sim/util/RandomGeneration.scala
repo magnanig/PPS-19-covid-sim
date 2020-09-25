@@ -1,7 +1,11 @@
 package pps.covid_sim.util
 
+import pps.covid_sim.parameters.CreationParameters
+
 import scala.annotation.tailrec
 import scala.util.Random
+
+import java.util.Calendar
 
 object RandomGeneration {
 
@@ -50,5 +54,18 @@ object RandomGeneration {
   def randomIntFromGaussian(avg: Int, stdDev: Int, min: Int = 0, random: Random = new Random()): Int = Math.round(
     Math.max(min, randomDoubleFromGaussian(avg, stdDev, random))
   ).toInt
+
+  /**
+   * Generates a random date of birth between 0 and 100 years.
+   *
+   * @param random  an optional Random object to be used to generate a random number
+   * @return        a random date of birth between 0 and 100 years
+   */
+  def randomBirthDate(random: Random = new Random()): Calendar = {
+    val maxAge: Int = 100
+    val birthDate: Calendar = Calendar.getInstance()
+    birthDate.add(Calendar.DAY_OF_MONTH, -randomIntInRange(0, (maxAge + 1) * CreationParameters.daysInYear, random))
+    birthDate
+  }
 
 }
