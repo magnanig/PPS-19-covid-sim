@@ -25,7 +25,7 @@ case class Habitation(override val city: City,
                       leaderElection: Set[Person] => Person = people => Random.shuffle(people)
                        .find(_.age >= 18)
                        .getOrElse(people.maxBy(_.age))) extends ClosedPlace with Iterable[Person] {
-  override val dimension: Dimension = (
+  val dimension: Dimension = (
     RandomGeneration.randomIntInRange(10, 20),
     RandomGeneration.randomIntInRange(10, 20)
   )

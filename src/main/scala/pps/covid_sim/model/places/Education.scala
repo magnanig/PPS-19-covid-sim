@@ -11,7 +11,7 @@ import pps.covid_sim.model.places.arranging.Arrangeable
 import pps.covid_sim.model.places.arranging.SchoolDesks.{Desk, DeskGroup, DesksArrangement}
 import pps.covid_sim.model.places.rooms.{MultiRoom, Room}
 import pps.covid_sim.util.RandomGeneration
-import pps.covid_sim.util.geometry.Dimension
+import pps.covid_sim.util.geometry.{Dimension, Rectangle}
 import pps.covid_sim.util.scheduling.Planning.StudentPlan
 import pps.covid_sim.util.scheduling.TimeTable
 import pps.covid_sim.util.time.Time.ScalaCalendar
@@ -55,6 +55,16 @@ object Education {
       RandomGeneration.randomIntInRange(6, 20)
     )
 
+    override val obstacles: Set[Rectangle] = placeObstacles(dimension)
+
+    /**
+     * In Classroom obstacles (i.e. desks) are not considered explicitly,
+     * since people motion is not implemented (it is assumed that people remain mostly at their desk).
+     * @param dimension the dimension of current space
+     * @return          an empty Set
+     */
+    override def placeObstacles(dimension: Dimension): Set[Rectangle] = Set.empty
+
     override val mask: Option[Mask] = Some(Masks.Surgical)
 
     def getStudentDesk(student: Student): Option[Desk] = arrangement.desks.find(_.assignee.contains(student))
@@ -90,6 +100,7 @@ object Education {
     override protected[places] def findAccommodation(group: Group): Option[(Room, Seq[Desk])] = Some(
       (this, arrangement.desks.filter(_.isFree).take(group.size))
     )
+
   }
 
 }

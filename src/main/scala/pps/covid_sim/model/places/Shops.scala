@@ -4,18 +4,19 @@ import java.util.Calendar
 
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.clinical.Masks.Mask
+import pps.covid_sim.model.movements.MovementFunctions
+import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.people.{PeopleGroup, Person}
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.rooms.Room
 import pps.covid_sim.util.RandomGeneration
-import pps.covid_sim.util.geometry.{Coordinates, Dimension}
+import pps.covid_sim.util.geometry.Rectangle.{generalObstacle, shelfObstacle}
+import pps.covid_sim.util.geometry.{Coordinates, Dimension, Rectangle}
 import pps.covid_sim.util.scheduling.TimeTable
 
 object Shops {
 
   sealed trait Shop extends Room with ClosedWorkPlace[Shop] with LimitedHourAccess with MovementSpace {
-
-    override protected val movement: (Coordinates, Set[Person]) => (Coordinates) = ??? // TODO
 
     override val entranceCoords: Coordinates = Coordinates.randomOnBorder(dimension)
 
@@ -32,6 +33,29 @@ object Shops {
                          override val timeTable: TimeTable) extends Shop {
     override val dimension: Dimension = DelimitedSpace.randomDimension(capacity,
       RandomGeneration.randomDoubleInRange(5, 20), 2000)
+
+    /**
+     * Defines the supermarket obstacles, representing the shelves for goods.
+     * @param dimension the dimension of the current space
+     * @return          the set of obstacles of the room
+     */
+    override def placeObstacles(dimension: Dimension): Set[Rectangle] = {
+      var shelves: Set[Rectangle] = Set()
+      val numOfShelves: Int = (dimension.width / 2).toInt
+
+      (0 until numOfShelves).foreach(n => shelves += shelfObstacle(dimension, n))
+
+      shelves
+    }
+
+    override val obstacles: Set[Rectangle] = placeObstacles(dimension)
+
+    override val entranceCoords: Coordinates = Coordinates.randomOnBorder(dimension)
+
+    override val mask: Option[Mask] = Some(Masks.Surgical)
+
+    override protected val pathSampling: Set[Coordinates] => Set[Seq[Map[Group, Seq[Coordinates]]]] =
+      MovementFunctions.linearPath(dimension, obstacles)
   }
 
   case class ClothesShop(override val city: City,
@@ -39,6 +63,29 @@ object Shops {
                          override val timeTable: TimeTable) extends Shop {
     override val dimension: Dimension = DelimitedSpace.randomDimension(capacity,
       RandomGeneration.randomDoubleInRange(5, 20), 1000)
+
+    /**
+     * Defines the shop obstacles, representing the shelves for goods.
+     * @param dimension the dimension of the current space
+     * @return          the set of obstacles of the room
+     */
+    override def placeObstacles(dimension: Dimension): Set[Rectangle] = {
+      var shelves: Set[Rectangle] = Set()
+      val numOfShelves: Int = (dimension.width / 2).toInt
+
+      (0 until numOfShelves).foreach(n => shelves += shelfObstacle(dimension, n))
+
+      shelves
+    }
+
+    override val obstacles: Set[Rectangle] = placeObstacles(dimension)
+
+    override val entranceCoords: Coordinates = Coordinates.randomOnBorder(dimension)
+
+    override val mask: Option[Mask] = Some(Masks.Surgical)
+
+    override protected val pathSampling: Set[Coordinates] => Set[Seq[Map[Group, Seq[Coordinates]]]] =
+      MovementFunctions.linearPath(dimension, obstacles)
   }
 
 }

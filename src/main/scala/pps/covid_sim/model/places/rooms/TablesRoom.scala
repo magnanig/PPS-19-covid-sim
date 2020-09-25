@@ -7,7 +7,7 @@ import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.arranging.Arrangeable
 import pps.covid_sim.model.places.arranging.Tables.{TablesArrangement, TablesGroup}
 import pps.covid_sim.model.places.{DelimitedSpace, Place}
-import pps.covid_sim.util.geometry.Dimension
+import pps.covid_sim.util.geometry.{Dimension, Rectangle}
 
 case class TablesRoom(private val minCapacity: Int,
                       maxTableGroupCapacity: Int,
@@ -67,6 +67,17 @@ case class TablesRoom(private val minCapacity: Int,
       Some(this)
     } else None
   }
+
+  override val obstacles: Set[Rectangle] = placeObstacles(dimension)
+
+  /**
+   * In TablesRoom obstacles (i.e. tables) are not considered explicitly,
+   * since people motion is not implemented (it is assumed that people remain mostly at their table).
+   * @param dimension the dimension of current space
+   * @return          an empty Set
+   */
+  override def placeObstacles(dimension: Dimension): Set[Rectangle] = Set.empty
+
 }
 
 object TablesRoom {

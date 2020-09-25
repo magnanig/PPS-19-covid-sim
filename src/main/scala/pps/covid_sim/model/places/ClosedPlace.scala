@@ -1,3 +1,3 @@
 package pps.covid_sim.model.places
 
-trait ClosedPlace extends MovementSpace with Place
+trait ClosedPlace extends Place

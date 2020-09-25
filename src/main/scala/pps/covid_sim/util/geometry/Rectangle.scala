@@ -35,8 +35,7 @@ object Rectangle {
   }
 
   /**
-   *  Generates the coordinates of an obstacle (e.g. a shelf) according to the obstacles
-   *  already inserted in the room.
+   *  Generates the coordinates of an obstacle (e.g. a shelf) according to the dimension of the room.
    * @param roomDimension the dimension of the room
    * @param position      the n-th shelf to be inserted inside the room
    * @return              a Rectangle representing a shelf in a shop or supermarket
@@ -46,6 +45,20 @@ object Rectangle {
     val topLeftY = RandomGeneration.randomDoubleInRange(1.0, roomDimension.length - 1.0)
     val bottomRightX = topLeftX + 1.0
     val bottomRightY = RandomGeneration.randomDoubleInRange(topLeftY + 1.0, roomDimension.length)
+    Rectangle((topLeftX, topLeftY), (bottomRightX, bottomRightY))
+  }
+
+  /**
+   * Generates the coordinates of a square obstacle (e.g. an umbrella, a tree) filling the place.
+   * @param rowPos    the row position of the obstacle
+   * @param columnPos the column position of the obstacle
+   * @return
+   */
+  def squareObstacle(rowPos: Int, columnPos: Int): Rectangle = {
+    val topLeftX = (columnPos * 2) + 1.0
+    val topLeftY = (rowPos * 2) + 1.0
+    val bottomRightX = topLeftX + 1.0
+    val bottomRightY = topLeftY + 1.0
     Rectangle((topLeftX, topLeftY), (bottomRightX, bottomRightY))
   }
 

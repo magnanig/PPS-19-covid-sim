@@ -4,7 +4,6 @@ import java.util.Calendar
 
 import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.PeopleGroup.Group
-import pps.covid_sim.model.people.Person
 import pps.covid_sim.util.geometry.Coordinates
 
 trait MovementSpace extends DelimitedSpace {
@@ -13,13 +12,7 @@ trait MovementSpace extends DelimitedSpace {
    * A function that generates a sampling of the path of a person inside the place,
    * starting from the current position and velocity.
    */
-  protected val pathSampling: Coordinates => Set[Seq[Map[Person, Seq[Int]]]]
-
-  /**
-   * Move all people according to the current place movement function.
-   */
-  //def move(): Unit = currentGroups.flatten
-  //  .foreach(person => person.position = movement(person.position, currentGroups.flatten - person))
+  protected val pathSampling: Set[Coordinates] => Set[Seq[Map[Group, Seq[Coordinates]]]]
 
   /**
    * The coordinates of the location entrance.
@@ -31,12 +24,9 @@ trait MovementSpace extends DelimitedSpace {
    * They are randomly generated on the edges to prevent all people
    * starting from the same point at the same time or starting over an obstacle.
    */
-  val initialCoords: Coordinates = Coordinates.randomOnBorder(dimension)
-
   override protected def onEntered(group: Group): Unit = {
-    group.foreach(_.position = Coordinates.random(spaceDimension)) // TODO
+    group.foreach(_.position = Coordinates.randomOnBorder(dimension))
   }
-
 
   /**
    * Method that manages the spread of the virus in different places (both indoors and outdoors),
@@ -46,20 +36,30 @@ trait MovementSpace extends DelimitedSpace {
    */
   override def propagateVirus(time: Calendar, place: Place): Unit = {
     if (currentGroups.exists(group => group.people.exists(person => person.canInfect))) {
-      val sampling = pathSampling(initialCoords) // mi resituisce il mio tipo  Set(List(Map(persona -> [...])))
-      // se la distanza è inferiore alla soglia, faccio la tryInfect() tra le persone della stessa lista
-      sampling.foreach(timeSlot => timeSlot.foreach(person => checkForNotRespectedDistance))
+      super.propagateVirus(time, place)
+      // People from the same group follow the same path
+      val sampling = pathSampling(currentGroups.map(group => group.leader.position))
+      // Assigns the last coordinate of the sampling to the person
+      sampling.foreach(timeSlot => timeSlot.foreach(map => map.foreach(path => path._1.people
+        .foreach(person => person.position = path._2.last))))
+      // If two people inside the same time slot have not kept the safety distance, the contagion attempt occurs
+      sampling.foreach(timeSlot => timeSlot.foreach(map =>
+        // Attempt to avoid subsequent computations if there are no infected people within the same time slot
+        if (map.keys.exists(group => group.people.exists(person => person.canInfect)))
+          map.foreach(group => group._1.people.toList.combinations(2).foreach(pair =>
+            if (checkForNotMantainingSafetyDistance(pair.head.position, pair.last.position))
+              VirusPropagation.tryInfect(pair.head, pair.last, place, time)))))
     }
-    // pensare se far muovere i gruppi come se fossero una cosa sola, quindi uso il leader poi la nella tryInfect coinvolgo tutti
   }
 
-  /*
-  override def propagateVirus(time: Calendar, place: Place): Unit = {
-    super.propagateVirus(time, place)
-    currentGroups.flatMap(_.people).toList.combinations(2)
-      .map(pair => (pair, pair.head.position - pair.last.position))
-      .foreach(e => VirusPropagation.tryInfect(e._1.head, e._1.last, place, time)(e._2))
-  }
+  /**
+   *
+   * @param coord1 the coordinates of the first person of the pair
+   * @param coord2 the coordinates of the second person of the pair
+   * @return       true if the two people did not keep the safety distance, false otherwise
    */
+  private def checkForNotMantainingSafetyDistance(coord1: Coordinates, coord2: Coordinates): Boolean = {
+    coord1 - coord2 <= 1.0
+  }
 
 }
