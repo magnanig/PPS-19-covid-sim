@@ -69,7 +69,7 @@ object People {
   case class Teacher(override val birthDate: Calendar, override val residence: City) extends Employed {
     override def toString: String = "Teacher"
   }
-  
+
   case class Unemployed(override val birthDate: Calendar, override val residence: City) extends Person {
     override def toString: String = "Unemployed"
   }
