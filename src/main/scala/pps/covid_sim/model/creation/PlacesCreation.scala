@@ -1,13 +1,16 @@
 package pps.covid_sim.model.creation
 
+import pps.covid_sim.model.creation.FreeTimePlaces.FreeTimePlacesCreation
+import pps.covid_sim.model.creation.Hobbies.HobbyPlacesCreation
+import pps.covid_sim.model.creation.WorkPlace.WorkPlacesCreation
+
+import scala.util.Random
 import pps.covid_sim.util.Statistic
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.parameters.CreationParameters._
 import pps.covid_sim.model.places.Locality.{City, Region}
 import pps.covid_sim.model.people.People.{Student, Teacher, Worker}
-
-import scala.util.Random
 
 // TODO: Scala Doc
 
@@ -54,6 +57,22 @@ private class PlacesCreation(region: Region) {
 
     allPlace = allPlace ::: OpenPlacesCreation().create(entry._1)
 
+    //allPlace = allPlace ::: EducationPlacesCreation().create(entry._1, teachers, students)
+
+    allPlace = allPlace ::: WorkPlacesCreation().create(entry._1, workerPerPlace.slice(0, 3), workers)
+
+    allPlace = allPlace ::: HobbyPlacesCreation().create(entry._1,
+      workerPerHobbyPlace,
+      workers.slice(index, index + workerPerPlace(3) - 1), random)
+    index += workerPerPlace(3)
+
+    allPlace = allPlace ::: FreeTimePlacesCreation().create(entry._1,
+      workerPerFreeTimePlace,
+      workers.slice(index, index + workerPerPlace.last - 1), random)
+
+    allPlace = allPlace ::: HabitationsCreation().create(entry._1, entry._2)
+
+    allPlace.foreach(place => PlacesContainer.add(place.city, place))
     allPlace
   }
 
