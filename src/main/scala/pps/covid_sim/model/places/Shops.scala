@@ -18,8 +18,6 @@ object Shops {
 
   sealed trait Shop extends Room with ClosedWorkPlace[Shop] with LimitedHourAccess with MovementSpace {
 
-    override val entranceCoords: Coordinates = Coordinates.randomOnBorder(dimension)
-
     override val mask: Option[Mask] = Some(Masks.Surgical)
 
     override protected[places] def canEnter(group: PeopleGroup.Group, time: Calendar): Boolean = {
