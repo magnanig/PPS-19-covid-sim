@@ -18,13 +18,13 @@ case class HobbyPlacesCreation() {
     var index: Int = 0
 
     hobbyPlaces = hobbyPlaces ::: FootballTeamCreation().create(city,
-      workers.slice(index, index + workerPerHobbyPlace.head - 1),
+      workers.slice(index, index + workerPerHobbyPlace.head),
       fieldsRange = (2, 3),
       staffRange = (25, 42), random)
     index += workerPerHobbyPlace.head
 
     hobbyPlaces = hobbyPlaces ::: GymCreation().create(city,
-      workers.slice(index, index + workerPerHobbyPlace.last - 1),
+      workers.slice(index, index + workerPerHobbyPlace.last),
       roomsRange = (2, 6),
       capacityRange = (20, 90),
       staffRange = (4, 10), random)

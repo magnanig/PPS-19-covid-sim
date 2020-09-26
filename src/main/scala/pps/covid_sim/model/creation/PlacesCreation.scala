@@ -59,16 +59,19 @@ private class PlacesCreation(region: Region) {
 
     //allPlace = allPlace ::: EducationPlacesCreation().create(entry._1, teachers, students)
 
-    allPlace = allPlace ::: WorkPlacesCreation().create(entry._1, workerPerPlace.slice(0, 3), workers)
+    index += workerPerPlace.head + workerPerPlace(1) + workerPerPlace(2)
+    allPlace = allPlace ::: WorkPlacesCreation().create(entry._1,
+      workerPerPlace.slice(0, 3),
+      workers.slice(0, index))
 
     allPlace = allPlace ::: HobbyPlacesCreation().create(entry._1,
       workerPerHobbyPlace,
-      workers.slice(index, index + workerPerPlace(3) - 1), random)
+      workers.slice(index, index + workerPerPlace(3)), random)
     index += workerPerPlace(3)
 
     allPlace = allPlace ::: FreeTimePlacesCreation().create(entry._1,
       workerPerFreeTimePlace,
-      workers.slice(index, index + workerPerPlace.last - 1), random)
+      workers.slice(index, index + workerPerPlace.last), random)
 
     allPlace = allPlace ::: HabitationsCreation().create(entry._1, entry._2)
 
