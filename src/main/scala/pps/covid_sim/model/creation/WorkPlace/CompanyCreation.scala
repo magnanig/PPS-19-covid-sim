@@ -1,6 +1,7 @@
 package pps.covid_sim.model.creation.WorkPlace
 
 import pps.covid_sim.model.people.People.Worker
+import pps.covid_sim.model.places.Jobs.{Company, Office}
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.util.RandomGeneration.randomIntInRange
@@ -8,7 +9,6 @@ import pps.covid_sim.util.Statistic
 import pps.covid_sim.util.scheduling.Planning.WorkPlan
 import pps.covid_sim.util.time.Time.Day
 import pps.covid_sim.util.time.TimeIntervalsImplicits._
-import pps.covid_sim.model.places.Job.{Company, Office}
 
 import scala.util.Random
 

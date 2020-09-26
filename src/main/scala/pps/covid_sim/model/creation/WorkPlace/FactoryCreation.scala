@@ -1,7 +1,7 @@
 package pps.covid_sim.model.creation.WorkPlace
 
 import pps.covid_sim.model.people.People.Worker
-import pps.covid_sim.model.places.Job.{Factory, Office}
+import pps.covid_sim.model.places.Jobs.{Factory, Office}
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.util.RandomGeneration.randomIntInRange

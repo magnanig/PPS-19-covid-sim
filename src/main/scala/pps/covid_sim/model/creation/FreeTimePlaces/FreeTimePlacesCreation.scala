@@ -1,8 +1,6 @@
 package pps.covid_sim.model.creation.FreeTimePlaces
 
 import scala.util.Random
-
-import pps.covid_sim.model.creation.FreeTimePlaces.RestaurantCreation
 import pps.covid_sim.model.people.People.Worker
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
@@ -29,10 +27,9 @@ case class FreeTimePlacesCreation() {
       staffRange = (2, 6), random)
     index += workerPerFreeTimePlace(1)
 
-    val pubs = PubCreation().create(city,
+    freeTimePlaces = freeTimePlaces ::: PubCreation().create(city,
       worker.slice(index, index + workerPerFreeTimePlace(2) - 1),
       staffRange = (6, 20), random)
-    freeTimePlaces = freeTimePlaces ::: pubs
     index += workerPerFreeTimePlace(2)
 
     freeTimePlaces = freeTimePlaces ::: DiscoCreation().create(city,

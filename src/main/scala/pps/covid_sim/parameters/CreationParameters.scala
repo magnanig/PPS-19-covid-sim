@@ -33,6 +33,10 @@ object CreationParameters {
   val freeTimePlacePercentage = 20.0
 
   // the sum must be equal to 100
+  val superMarketPercentage = 30.0
+  val clothesShopPercentage = 70.0
+
+  // the sum must be equal to 100
   val gymPercentage = 40.0
   val footballTeamPercentage = 60.0
 
@@ -45,5 +49,7 @@ object CreationParameters {
 
   val teacherUniversityPercentage = 5 // un quinto dei teacher totali
   val studentUniversityPercentage = 5 // un quinto degli student totali
+
+  val maxNumShopPerWeek = 5
 
 }
