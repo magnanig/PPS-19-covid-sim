@@ -1,10 +1,10 @@
-package pps.covid_sim.model.creation
+package pps.covid_sim.model.creation.Hobbies
+
+import pps.covid_sim.model.people.People.Worker
+import pps.covid_sim.model.places.Locality.City
+import pps.covid_sim.model.places.Place
 
 import scala.util.Random
-
-import pps.covid_sim.model.places.Place
-import pps.covid_sim.model.places.Locality.City
-import pps.covid_sim.model.people.People.Worker
 
 //TODO scalaDoc
 case class HobbyPlacesCreation() {
