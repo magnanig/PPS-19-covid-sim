@@ -103,8 +103,8 @@ object Communication {
    */
   case class Stop()
 
-  case class GetPlacesByCity(city: Option[City],placeClass: Option[Class[_ <: Place]], datesInterval: Option[DatesInterval])
-  case class GetPlacesByProvince(Province: Option[Province],placeClass: Option[Class[_ <: Place]], datesInterval: Option[DatesInterval])
+  case class GetPlacesByCity(city: City,placeClass: Option[Class[_ <: Place]], datesInterval: Option[DatesInterval])
+  case class GetPlacesByProvince(Province: Province,placeClass: Option[Class[_ <: Place]], datesInterval: Option[DatesInterval])
   case class RequestedPlaces(places: List[Place])
 
   case class Lockdown(enabled: Boolean)
