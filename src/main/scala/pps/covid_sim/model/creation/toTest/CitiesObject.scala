@@ -31,6 +31,15 @@ object CitiesObject {
     getCities.filter(city => city.province.abbreviation.equals(provinceAbbreviation))
 
   /**
+   * Get all cities that are in a specific province
+   *
+   * @param province  the province of which you want all the cities
+   * @return          all cities that are in the specified province
+   */
+  def getCities(province: Province): Set[City] =
+    getCities.filter(city => city.province == province)
+
+  /**
    * Get all cities that are in a specific region
    *
    * @param region region of which you want all the cities
