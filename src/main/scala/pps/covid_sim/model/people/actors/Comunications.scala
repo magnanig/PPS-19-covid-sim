@@ -6,7 +6,7 @@ import akka.actor.ActorRef
 import pps.covid_sim.controller.actors.ActorsCoordination.RegionCoordinator
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.places.Locality.{Province, Region}
+import pps.covid_sim.model.places.Locality.{City, Province, Region}
 import pps.covid_sim.util.time.DatesInterval
 //import pps.covid_sim.util.time.Planning.Plan
 
@@ -52,9 +52,15 @@ object Communication {
 
   /**
    * The clock time, specifying that a new hour has been begun.
-   * This message must be sent one and only once every hour.
+   * This message must be sent one and only once every hour to the subordinate actors.
    */
   case class Tick(calendar: Calendar)
+
+  /**
+   * This message specify that virus have been propagate to people on transports. And now people is moving to places.
+   * This message must be sent one and only once every hour to the subordinate actors, some actors may not using transports.
+   */
+  case class InnerTick(calendar: Calendar)
 
   case class ActorsFriendsMap(friends: Map[Person, ActorRef])
 
@@ -79,7 +85,27 @@ object Communication {
 
   //case class ReplacePlan[T <: Location](oldPlan: Plan[T], newPlan: Plan[T] = null)
 
+  /**
+   * The acknowledge of actors who have ended their task and are waiting for the next Tick.
+   */
   case class Acknowledge()
+
+  /**
+   * The acknowledge of actors that were in some means and they are waiting for the next InnerTick.
+   * Those actors are the ones included in the transports propagate virus.
+   * (those who weren't in means send this ack immediately)
+   */
+  case class InnerAcknowledge()
+
+  /**
+   * The message that indicate the end of the simulation and the need to stop all actors.
+   * If an actor receive this, it must be propagated to subordinated actors if present, and stop himself
+   */
+  case class Stop()
+
+  case class GetPlacesByCity(city: Option[City],placeClass: Option[Class[_ <: Place]], datesInterval: Option[DatesInterval])
+  case class GetPlacesByProvince(Province: Option[Province],placeClass: Option[Class[_ <: Place]], datesInterval: Option[DatesInterval])
+  case class RequestedPlaces(places: List[Place])
 
   case class Lockdown(enabled: Boolean)
 

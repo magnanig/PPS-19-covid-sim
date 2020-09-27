@@ -52,9 +52,9 @@ abstract class PersonActor extends Actor {
   private implicit val actorName: String = self.toString()
 
   override def receive: Receive = {
-    case SetPerson(person) => this.coordinator = sender; this.person = person
+    case SetPerson(person) => this.coordinator = sender; this.person = person;
     case ActorsFriendsMap(friends) => this.friends = friends
-    //case Tick(time)
+    case Tick(time) =>  this.busy()//TODO its a test
     //case AddPlan(plan)
     //case ReplacePlan(oldPlan, null)
     //case ReplacePlan(oldPlan, newPlan)
@@ -64,7 +64,14 @@ abstract class PersonActor extends Actor {
       sender ! GoOutResponse(response = true, p)
       agenda.joinAppointment(Appointment(dateInterval, place))*/
     //case p @ GoOutProposal(dateInterval, place, leader)
-    //case msg:
+    case Stop() =>  this.endSimulation()
+    case msg => println(s"Not expected [Person]: $msg")
+  }
+
+  private def busy(): Unit = {
+    println(this.person)
+    Thread.sleep(2)
+    coordinator ! Acknowledge()
   }
 
   private def sendAckIfReady(): Unit = {
@@ -80,7 +87,7 @@ abstract class PersonActor extends Actor {
 
   //TODO NextAction :Unit
 
-//TODO NextCommitment: Unit
+  //TODO NextCommitment: Unit
 
   private def comeBack(): Unit = {
     isOut = false
@@ -123,4 +130,8 @@ abstract class PersonActor extends Actor {
   private def randomFriends: Seq[ActorRef] = Random.shuffle(person.friends)
     .take(RandomGeneration.randomIntFromGaussian(averageGoingOutFriends, 3, 1))
     .map(friends).toSeq
+
+  private def endSimulation():Unit = {
+    context.stop(self)
+  }
 }
