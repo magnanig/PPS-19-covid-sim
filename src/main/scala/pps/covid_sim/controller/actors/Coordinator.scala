@@ -1,11 +1,9 @@
 package pps.covid_sim.controller.actors
 
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.ActorRef
+import pps.covid_sim.controller.actors.ActorsCoordination.system
 
 import scala.collection.parallel.ParSet
-import pps.covid_sim.controller.ControllerImpl
-import pps.covid_sim.util.time.DatesInterval
-import pps.covid_sim.controller.actors.ActorsCoordination.{Init, Stop, system}
 
 trait Coordinator {
 

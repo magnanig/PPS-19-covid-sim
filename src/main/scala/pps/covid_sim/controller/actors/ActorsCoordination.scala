@@ -90,7 +90,7 @@ object ActorsCoordination {
       //checkLockdown(currentTime)
       //controller.tick(currentTime)
       println();println("---------------------------------------------------------------------------")
-      _subordinatedActors.foreach(_ ! Tick(currentTime))
+      _subordinatedActors.foreach(_ ! HourTick(currentTime))
       context.setReceiveTimeout(Duration.create(100, TimeUnit.MILLISECONDS))
       currentTime = currentTime + 1
     }
@@ -144,7 +144,7 @@ object ActorsCoordination {
       case SetRegion(region) => this._region = region
         this._myProvinces = controller.provinces.filter(p=>p.region==_region)
         this.createActors(this._myProvinces)
-      case Tick(currentTime) => this.spreadTick(_region,currentTime)
+      case HourTick(currentTime) => this.spreadTick(_region,currentTime)
       case Acknowledge() if this.waitingAck.contains(sender) => this.waitingAck -= sender
         if (this.waitingAck.isEmpty) sendAck()
       case ReceiveTimeout => sendAck(); println("WARNING: Timeout! Sono un sotto coordinatore: Region:"+_region)
@@ -173,7 +173,7 @@ object ActorsCoordination {
       // println(region)
       this.waitingAck = _subordinatedActors
       context.setReceiveTimeout(Duration.create(80, TimeUnit.MILLISECONDS))
-      this._subordinatedActors.foreach(s => s ! Tick(currentTime))
+      this._subordinatedActors.foreach(s => s ! HourTick(currentTime))
     }
 
     private def endSimulation():Unit = {
@@ -196,7 +196,7 @@ object ActorsCoordination {
         this.createActors(this._myPeople)
       case Acknowledge() if this.waitingAck.contains(sender) => this.waitingAck -= sender
         if (this.waitingAck.isEmpty) sendAck()
-      case Tick(currentTime) => this.spreadTick(_province, currentTime)
+      case HourTick(currentTime) => this.spreadTick(_province, currentTime)
       case ReceiveTimeout => sendAck(); println("WARNING: Timeout! Sono un sotto coordinatore: Province:" + _province)
       case Stop() => this.endSimulation()
       case GetPlacesByProvince(province: Province, placeClass, datesInterval) => this.genericGetPlaceByProvince(province, placeClass, datesInterval,sender)
@@ -231,7 +231,7 @@ object ActorsCoordination {
       this.waitingAck = _subordinatedActors
       context.setReceiveTimeout(Duration.create(60, TimeUnit.MILLISECONDS))
 
-      this._subordinatedActors.foreach(s => s ! Tick(currentTime))
+      this._subordinatedActors.foreach(s => s ! HourTick(currentTime))
     }
 
     private def genericGetPlaceByProvince(province: Province,placeClass: Option[Class[_ <: Place]], datesInterval: Option[DatesInterval],sender: ActorRef):Unit = {

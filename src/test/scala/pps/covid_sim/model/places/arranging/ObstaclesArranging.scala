@@ -69,7 +69,7 @@ class ObstaclesArranging {
 
   @Test
   def gymRoomObstaclesArranging(): Unit = {
-    val gymObstacles = gymRoom.placeObstacles(gymRoom.dimension)
+    val gymObstacles = gymRoom.obstacles
     println(gymRoom.dimension)
     println(gymObstacles)
     println("Number of obstacles: " + gymObstacles.size)

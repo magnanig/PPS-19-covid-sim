@@ -1,12 +1,11 @@
 package pps.covid_sim.model.creation.test
 
-import pps.covid_sim.model.creation.test.CitiesAosta
-import pps.covid_sim.util.Statistic
 import pps.covid_sim.model.people.People._
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.City
-import pps.covid_sim.util.RandomGeneration.randomBirthDate
 import pps.covid_sim.parameters.CreationParameters.{studentsPercentage, teachersPercentage, unemployedPercentage, workersPercentage}
+import pps.covid_sim.util.RandomGeneration.randomBirthDate
+import pps.covid_sim.util.Statistic
 
 object PeopleAosta {
 

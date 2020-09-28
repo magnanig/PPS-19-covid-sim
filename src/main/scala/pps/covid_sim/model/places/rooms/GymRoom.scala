@@ -10,6 +10,8 @@ import pps.covid_sim.util.RandomGeneration
 import pps.covid_sim.util.geometry.Rectangle.generalIndoorObstacle
 import pps.covid_sim.util.geometry.{Coordinates, Dimension, Rectangle}
 
+import scala.annotation.tailrec
+
 case class GymRoom(override val capacity: Int) extends Room with MovementSpace {
 
   override val dimension: Dimension = DelimitedSpace.randomDimension(capacity,
@@ -20,20 +22,21 @@ case class GymRoom(override val capacity: Int) extends Room with MovementSpace {
    * @param dimension the dimension of the current space
    * @return          the set of obstacles of the room
    */
-  override def placeObstacles(dimension: Dimension): Set[Rectangle] = {
+  override def placeObstacles(dimension: Dimension): Set[Rectangle] = { // TODO: make private (and remove from trait)
     var obstacles: Set[Rectangle] = Set()
-    val minObstacles: Int = (dimension.surface / minGymObstaclesFactor).toInt
-    val maxObstacles: Int = (dimension.surface / maxGymObstaclesFactor).toInt
-    val totObstacles = RandomGeneration.randomIntInRange(minObstacles, maxObstacles)
-
-    println("TOT OBSTACLE: " + totObstacles)
-
-    def _placeObstacles(): Unit = {
+    @tailrec
+    def _placeObstacle(): Unit = {
       val obstacle = generalIndoorObstacle(dimension)
-      if (obstacles.exists(r => r.vertexes.exists(c => c.inside(obstacle)))) {println("DUP"); _placeObstacles()}
+      if (obstacles.exists(r => r.vertexes.exists(c => c.inside(obstacle)))) {println("DUP"); _placeObstacle()}
       else {println("OBSTACLE INSERTED"); obstacles += obstacle }
     }
-    (0 until totObstacles).foreach(_ => _placeObstacles())
+    val minObstacles: Int = (dimension.surface / minGymObstaclesFactor).toInt
+    val maxObstacles: Int = (dimension.surface / maxGymObstaclesFactor).toInt
+
+    val totObstacles = RandomGeneration.randomIntInRange(minObstacles, maxObstacles)
+    println("TOT OBSTACLE: " + totObstacles)
+
+    (0 until totObstacles).foreach(_ => _placeObstacle())
 
     obstacles
   }

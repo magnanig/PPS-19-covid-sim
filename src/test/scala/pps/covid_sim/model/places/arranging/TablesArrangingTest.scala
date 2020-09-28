@@ -15,7 +15,7 @@ import pps.covid_sim.util.scheduling.TimeTable
 import pps.covid_sim.util.time.Time.{Day, ScalaCalendar}
 import pps.covid_sim.util.time.TimeIntervalsImplicits._
 
-class ArrangeableTest {
+class TablesArrangingTest {
 
   val tablesRoom: TablesRoom = TablesRoom(4, 2, new TablesArrangement(1, 2, 1, 1))
   val bar: Bar = Bar(Cities.CERVIA,
@@ -32,7 +32,7 @@ class ArrangeableTest {
 
   @Test
   def testCorrectAssignment(): Unit = {
-    import ArrangeableTest.locationToRoom
+    import TablesArrangingTest.locationToRoom
 
     val openTime = ScalaCalendar(2020, 1, 1, 12)
     var assignedRoom: TablesRoom = bar.enter(mario, openTime).get // note: optional must be defined at this time
@@ -66,6 +66,6 @@ class ArrangeableTest {
 
 }
 
-object ArrangeableTest {
+object TablesArrangingTest {
   implicit def locationToRoom[R <: Room](location: Location): R = location.asInstanceOf[R]
 }
