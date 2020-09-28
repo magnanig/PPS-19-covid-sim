@@ -32,6 +32,11 @@ object ActorsCoordination {
   private var simulation: Simulation = _
   private var currentTime: Calendar = _
 
+  /**
+   * method that allow to create all the hierarchy of coordinators
+   * @param controller that coordinators call to get useful data and run methods
+   * @param datesInterval that indicates the interval the user had insert for the simulation
+   */
   private[controller] def create(controller: ControllerImpl, datesInterval: DatesInterval): Unit = {
     system = ActorSystem.create()
     actorsCoordinator = system.actorOf(Props[ActorsCoordinator])

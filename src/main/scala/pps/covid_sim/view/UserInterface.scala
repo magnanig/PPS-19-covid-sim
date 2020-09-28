@@ -103,6 +103,14 @@ object UserInterface extends SimpleSwingApplication {
         renderer = ListView.Renderer(_.title)
       }
 
+      /**
+       * this panel contains the form that allow the user to insert specific parameters for the simulation
+       * - probabilità contagio al netto di mascherine e distanziamento sociale
+       * - tempo minio e massimo di guarigione dal virus
+       * - percentuale stimata di asintomatici per facie di età
+       * - percentuale di asintomatici che riescono ad accorgiersi di essere infetti
+       * - distanza ad di sopra della quale è garantito che il virus non può transitare da persona a persona
+       */
       val leftPanel: BoxPanel = new BoxPanel(Orientation.Vertical){
         contents += new BoxPanel(Orientation.Vertical) {
           border = CompoundBorder(TitledBorder(EtchedBorder, "Radio Buttons"), EmptyBorder(5, 5, 5, 10))
