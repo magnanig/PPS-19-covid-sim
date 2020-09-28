@@ -4,7 +4,7 @@ import pps.covid_sim.model.people.People.Worker
 import pps.covid_sim.model.places.Hobbies.Gym
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
-import pps.covid_sim.model.places.rooms.{BasicRoom, Room}
+import pps.covid_sim.model.places.rooms.GymRoom
 import pps.covid_sim.model.places.samples.Places
 import pps.covid_sim.util.RandomGeneration.randomIntInRange
 import pps.covid_sim.util.Statistic
@@ -28,9 +28,9 @@ case class GymCreation() {
     var numWorker: Int = 0
 
     while (numWorker < totalWorker) {
-      var rooms: List[Room] = List()
+      var rooms: List[GymRoom] = List()
       (1 to randomIntInRange(roomsRange._1, roomsRange._2, random)).foreach(_ => { // number of rooms
-        rooms = BasicRoom(randomIntInRange(capacityRange._1, capacityRange._2, random)) :: rooms
+        rooms = GymRoom(randomIntInRange(capacityRange._1, capacityRange._2, random)) :: rooms
       })
       val gym: Gym = Gym(city, Places.GYM_TIME_TABLE, rooms)
       for (room <- rooms) {
@@ -38,7 +38,7 @@ case class GymCreation() {
         val bound: Int = Statistic.getMin(numWorker + randomIntInRange(staffRange._1, staffRange._2, random), totalWorker)
         if (numWorker < totalWorker) {
           workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker
-            val plan: WorkPlan[Room] = WorkPlan()
+            val plan: WorkPlan[GymRoom] = WorkPlan()
               .add(room, Day.MONDAY -> Day.SATURDAY, 9 -> 20)
               .commit()
             gym.addWorkPlan(worker, plan)

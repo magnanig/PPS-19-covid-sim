@@ -16,7 +16,7 @@ import pps.covid_sim.util.time.Time.ScalaCalendar
 
 class LineTest {
 
-  val cityTest: City = City(1, "Forlì", 50, Province(3, "FC", "Forlì", Locality.Region.EMILIA_ROMAGNA))
+  val cityTest: City = City(1, "Forlì", 118000, Province(1, "FC", "Forlì", Locality.Region.EMILIA_ROMAGNA))
   val place: Place = new Place {
     override val city: City = cityTest
   }

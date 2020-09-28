@@ -15,11 +15,6 @@ trait MovementSpace extends DelimitedSpace {
   protected val pathSampling: Set[Coordinates] => Set[Seq[Map[Group, Seq[Coordinates]]]]
 
   /**
-   * The coordinates of the location entrance.
-   */
-  val entranceCoords: Coordinates
-
-  /**
    * The coordinates of the person before starting the movement.
    * They are randomly generated on the edges to prevent all people
    * starting from the same point at the same time or starting over an obstacle.
@@ -47,7 +42,7 @@ trait MovementSpace extends DelimitedSpace {
         // Attempt to avoid subsequent computations if there are no infected people within the same time slot
         if (map.keys.exists(group => group.people.exists(person => person.canInfect)))
           map.foreach(group => group._1.people.toList.combinations(2).foreach(pair =>
-            if (checkForNotMantainingSafetyDistance(pair.head.position, pair.last.position))
+            if (checkForNotMaintainingSafetyDistance(pair.head.position, pair.last.position))
               VirusPropagation.tryInfect(pair.head, pair.last, place, time)))))
     }
   }
@@ -58,7 +53,7 @@ trait MovementSpace extends DelimitedSpace {
    * @param coord2 the coordinates of the second person of the pair
    * @return       true if the two people did not keep the safety distance, false otherwise
    */
-  private def checkForNotMantainingSafetyDistance(coord1: Coordinates, coord2: Coordinates): Boolean = {
+  private def checkForNotMaintainingSafetyDistance(coord1: Coordinates, coord2: Coordinates): Boolean = {
     coord1 - coord2 <= 1.0
   }
 

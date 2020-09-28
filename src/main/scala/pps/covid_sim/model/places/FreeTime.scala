@@ -9,8 +9,9 @@ import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.OpenPlaces.OpenPlace
 import pps.covid_sim.model.places.rooms.{DiscoRoom, MultiRoom, TablesRoom}
+import pps.covid_sim.parameters.CreationParameters.{maxNumOpenDiscoObstacles, maxNumPubObstacles, minNumOpenDiscoObstacles, minNumPubObstacles}
 import pps.covid_sim.util.RandomGeneration
-import pps.covid_sim.util.geometry.Rectangle.generalObstacle
+import pps.covid_sim.util.geometry.Rectangle.generalIndoorObstacle
 import pps.covid_sim.util.geometry.{Coordinates, Dimension, Rectangle}
 import pps.covid_sim.util.scheduling.TimeTable
 
@@ -62,26 +63,25 @@ object FreeTime {
     )
 
     /**
-     * Defines up to three pub room's obstacles, representing for example the pub counter, the cash desk, etc...
+     * Defines the pub room's obstacles, representing for example the pub counter, the cash desk, etc...
      * @param dimension the dimension of the current space
      * @return          the set of obstacles of the room
      */
     override def placeObstacles(dimension: Dimension): Set[Rectangle] = {
       var obstacles: Set[Rectangle] = Set()
+      val totObstacles = RandomGeneration.randomIntInRange(minNumPubObstacles, maxNumPubObstacles)
 
       def _placeObstacles(): Unit = {
-        val obstacle = generalObstacle(dimension)
+        val obstacle = generalIndoorObstacle(dimension)
         if (obstacles.exists(r => r.vertexes.exists(c => c.inside(obstacle)))) _placeObstacles()
-        obstacles += obstacle
+        else obstacles += obstacle
       }
-      (0 until RandomGeneration.randomIntInRange(0, 3)).foreach(_ => _placeObstacles())
+      (0 until totObstacles).foreach(_ => _placeObstacles())
 
       obstacles
     }
 
     override val obstacles: Set[Rectangle] = placeObstacles(dimension)
-
-    override val entranceCoords: Coordinates = Coordinates.randomOnBorder(dimension)
 
     override val mask: Option[Mask] = Some(Masks.Surgical)
 
@@ -97,26 +97,25 @@ object FreeTime {
     )
 
     /**
-     * Defines up to ten open disco's obstacles, representing for example the bar counter, the cash desk, etc...
+     * Defines the open disco's obstacles, representing for example the bar counter, the cash desk, etc...
      * @param dimension the dimension of the current space
      * @return          the set of obstacles of the room
      */
     override def placeObstacles(dimension: Dimension): Set[Rectangle] = {
       var obstacles: Set[Rectangle] = Set()
+      val totObstacles = RandomGeneration.randomIntInRange(minNumOpenDiscoObstacles, maxNumOpenDiscoObstacles)
 
       def _placeObstacles(): Unit = {
-        val obstacle = generalObstacle(dimension)
+        val obstacle = generalIndoorObstacle(dimension)
         if (obstacles.exists(r => r.vertexes.exists(c => c.inside(obstacle)))) _placeObstacles()
-        obstacles += obstacle
+        else obstacles += obstacle
       }
-      (0 until RandomGeneration.randomIntInRange(0, 9)).foreach(_ => _placeObstacles())
+      (0 until totObstacles).foreach(_ => _placeObstacles())
 
       obstacles
     }
 
     override val obstacles: Set[Rectangle] = placeObstacles(dimension)
-
-    override val entranceCoords: Coordinates = Coordinates.randomOnBorder(dimension)
 
     override val mask: Option[Mask] = Some(Masks.Surgical)
 

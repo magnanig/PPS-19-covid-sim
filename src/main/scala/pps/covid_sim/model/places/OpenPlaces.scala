@@ -5,8 +5,9 @@ import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.movements.MovementFunctions
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.Locality.City
+import pps.covid_sim.parameters.CreationParameters.{beachFillFactor, maxParkObstaclesFactor, maxSquareObstaclesFactor, minParkObstaclesFactor, minSquareObstaclesFactor}
 import pps.covid_sim.util.RandomGeneration
-import pps.covid_sim.util.geometry.Rectangle.{generalObstacle, squareObstacle}
+import pps.covid_sim.util.geometry.Rectangle.{beachObstacle, calculateFilling, generalOutdoorObstacle}
 import pps.covid_sim.util.geometry.{Coordinates, Dimension, Rectangle}
 import pps.covid_sim.util.scheduling.TimeTable
 
@@ -38,17 +39,16 @@ object OpenPlaces {
      */
     override def placeObstacles(dimension: Dimension): Set[Rectangle] = {
       var umbrellas: Set[Rectangle] = Set()
-      val umbrellasColumns = (dimension.width / 2).toInt
-      val umbrellasRows = (dimension.length / 2).toInt
+      val umbrellasColumns = calculateFilling(dimension.width, beachFillFactor)
+      val umbrellasRows = calculateFilling(dimension.length, beachFillFactor)
 
-      (0 until umbrellasRows).foreach(r => (0 to umbrellasColumns).foreach(c => umbrellas += squareObstacle(r, c)))
+      (0 until umbrellasRows).foreach(r => (0 until umbrellasColumns)
+        .foreach(c => umbrellas += beachObstacle(r, c, beachFillFactor)))
 
       umbrellas
     }
 
     override val obstacles: Set[Rectangle] = placeObstacles(dimension)
-
-    override val entranceCoords: Coordinates = Coordinates.randomOnBorder(dimension)
 
     override protected val pathSampling: Set[Coordinates] => Set[Seq[Map[Group, Seq[Coordinates]]]] =
       MovementFunctions.randomPath(dimension, obstacles)
@@ -61,26 +61,27 @@ object OpenPlaces {
     )
 
     /**
-     * Defines up to ten square obstacles, representing for example a fountain, a bench, etc...
+     * Defines the square obstacles (e.g. benches, fountains, etc...).
      * @param dimension the dimension of the current space
-     * @return          the set of obstacles of the place
+     * @return          the set of obstacles of the square
      */
     override def placeObstacles(dimension: Dimension): Set[Rectangle] = {
       var obstacles: Set[Rectangle] = Set()
+      val minObstacles: Int = (dimension.surface / minSquareObstaclesFactor).toInt
+      val maxObstacles: Int = (dimension.surface / maxSquareObstaclesFactor).toInt
+      val totObstacles = RandomGeneration.randomIntInRange(minObstacles, maxObstacles)
 
       def _placeObstacles(): Unit = {
-        val obstacle = generalObstacle(dimension)
+        val obstacle = generalOutdoorObstacle(dimension)
         if (obstacles.exists(r => r.vertexes.exists(c => c.inside(obstacle)))) _placeObstacles()
-        obstacles += obstacle
+        else obstacles += obstacle
       }
-      (0 until RandomGeneration.randomIntInRange(0, 9)).foreach(_ => _placeObstacles())
+      (0 until totObstacles).foreach(_ => _placeObstacles())
 
       obstacles
     }
 
     override val obstacles: Set[Rectangle] = placeObstacles(dimension)
-
-    override val entranceCoords: Coordinates = Coordinates.randomOnBorder(dimension)
 
     override val mask: Option[Mask] = Some(Masks.Surgical)
 
@@ -95,23 +96,27 @@ object OpenPlaces {
     )
 
     /**
-     * Defines park obstacles, representing trees.
+     * Defines the park obstacles (e.g. trees, benches, fountains, etc...).
      * @param dimension the dimension of the current space
      * @return          the set of obstacles of the park
      */
     override def placeObstacles(dimension: Dimension): Set[Rectangle] = {
-      var trees: Set[Rectangle] = Set()
-      val treesColumns = (dimension.width / 2).toInt
-      val treesRows = (dimension.length / 2).toInt
+      var obstacles: Set[Rectangle] = Set()
+      val minObstacles: Int = (dimension.surface / minParkObstaclesFactor).toInt
+      val maxObstacles: Int = (dimension.surface / maxParkObstaclesFactor).toInt
+      val totObstacles = RandomGeneration.randomIntInRange(minObstacles, maxObstacles)
 
-      (0 until treesRows).foreach(r => (0 to treesColumns).foreach(c => trees += squareObstacle(r, c)))
+      def _placeObstacles(): Unit = {
+        val obstacle = generalOutdoorObstacle(dimension)
+        if (obstacles.exists(r => r.vertexes.exists(c => c.inside(obstacle)))) _placeObstacles()
+        else obstacles += obstacle
+      }
+      (0 until totObstacles).foreach(_ => _placeObstacles())
 
-      trees
+      obstacles
     }
 
     override val obstacles: Set[Rectangle] = placeObstacles(dimension)
-
-    override val entranceCoords: Coordinates = Coordinates.randomOnBorder(dimension)
 
     override protected val pathSampling: Set[Coordinates] => Set[Seq[Map[Group, Seq[Coordinates]]]] =
       MovementFunctions.randomPath(dimension, obstacles)
@@ -127,8 +132,6 @@ object OpenPlaces {
     override def placeObstacles(dimension: Dimension): Set[Rectangle] = Set.empty
 
     override val obstacles: Set[Rectangle] = placeObstacles(dimension)
-
-    override val entranceCoords: Coordinates = Coordinates.randomOnBorder(dimension)
 
     override protected val pathSampling: Set[Coordinates] => Set[Seq[Map[Group, Seq[Coordinates]]]] =
       MovementFunctions.randomPath(dimension, obstacles)
