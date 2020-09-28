@@ -1,4 +1,4 @@
-package pps.covid_sim.model.creation.toTest
+package pps.covid_sim.model.creation.test
 
 import pps.covid_sim.model.creation.test.CitiesAosta
 import pps.covid_sim.util.Statistic

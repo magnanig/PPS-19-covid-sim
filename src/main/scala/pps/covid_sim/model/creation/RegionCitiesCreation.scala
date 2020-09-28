@@ -8,7 +8,7 @@ import scala.collection.mutable
  * Represents a singleton object, unique in the whole program.
  * Through this object you can get the whole list of cities.
  */
-object CitiesCreation {
+object RegionCitiesCreation {
 
   private var cities: Set[City] = Set()
 
@@ -19,7 +19,7 @@ object CitiesCreation {
    *
    * @return a set of all cities
    */
-  def create(region: Region): Set[City] = { if (cities.isEmpty) cities = new CitiesCreation(region).create()
+  def create(region: Region): Set[City] = { if (cities.isEmpty) cities = new RegionCitiesCreation(region).create()
     cities
   }
 
@@ -54,7 +54,7 @@ object CitiesCreation {
 
 }
 
-private class CitiesCreation(val region: Region) {
+private class RegionCitiesCreation(val region: Region) {
 
   private var provinces: mutable.Map[String, Province] = mutable.Map[String, Province]() // province_abbreviation -> Province
   var cities: Set[City] = Set[City]()

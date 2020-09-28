@@ -2,12 +2,12 @@ package pps.covid_sim.model.creation
 
 import org.junit.Test
 import org.junit.Assert.assertEquals
-import pps.covid_sim.model.creation.toTest.CitiesObject
+import pps.covid_sim.model.creation.test.CitiesObject
 import pps.covid_sim.model.places.Locality.{City, Region}
 
 import scala.collection.mutable
 
-class CitiesCreationTest {
+class RegionCitiesCreationTest {
 
   val cities: Set[City] = CitiesObject.getCities
 
