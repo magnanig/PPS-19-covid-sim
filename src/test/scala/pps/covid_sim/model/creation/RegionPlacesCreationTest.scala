@@ -14,9 +14,9 @@ import pps.covid_sim.model.places.samples.Cities
 
 import scala.collection.mutable
 
-class PlacesCreationTest {
+class RegionPlacesCreationTest {
 
-  PlacesCreation.create(Region.VALLE_DAOSTA)
+  RegionPlacesCreation.create(Region.VALLE_DAOSTA)
 /*
   val squares: Int = PlacesContainer.getPlaces(classOf[Square]).size
   //val schools: List[School] = PlacesContainer.getPlaces(classOf[School]).map(_.asInstanceOf[School])

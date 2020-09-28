@@ -1,9 +1,7 @@
-package pps.covid_sim.model.creation.FreeTimePlaces
-
-import scala.util.Random
+package pps.covid_sim.model.creation.freetime
 
 import pps.covid_sim.model.people.People.Worker
-import pps.covid_sim.model.places.FreeTime.Pub
+import pps.covid_sim.model.places.FreeTime.OpenDisco
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.places.samples.Places
@@ -13,31 +11,35 @@ import pps.covid_sim.util.scheduling.Planning.WorkPlan
 import pps.covid_sim.util.time.Time.Day
 import pps.covid_sim.util.time.TimeIntervalsImplicits._
 
-case class PubCreation() {
+import scala.util.Random
 
-  def create(city: City, workers: List[Worker], staffRange: (Int, Int),
+case class OpenDiscoCreation() {
+
+  def create(city: City,
+             workers: List[Worker],
+             staffRange: (Int, Int),
              random: Random = new Random()): List[Place] = {
 
-    var pubs: List[Pub] = List()
+    var openDiscos: List[OpenDisco] = List()
     val totalWorker: Int = workers.size
     var numWorker: Int = 0
 
     while (numWorker < totalWorker) {
-      val pub: Pub = Pub(city, Places.PUB_TIME_TABLE)
-      // numero di persone lavoratrici che verranno assegnate al locale
+      val openDisco: OpenDisco = OpenDisco(city, Places.DISCO_TIME_TABLE)
+      // numero di persone lavoratrici che verranno assegnate al ristorante
       val bound: Int = Statistic.getMin(numWorker +
         randomIntInRange(staffRange._1, staffRange._2, random), totalWorker)
       workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker
-        val plan: WorkPlan[Pub] = WorkPlan()
-          .add(pub, Day.THURSDAY -> Day.SUNDAY, 18 -> 2)
+        val plan: WorkPlan[OpenDisco] = WorkPlan()
+          .add(openDisco, Day.FRIDAY -> Day.SATURDAY, 22 -> 6)
           .commit()
-        pub.addWorkPlan(worker, plan)
-        worker.setWorkPlace(pub)
+        openDisco.addWorkPlan(worker, plan)
+        worker.setWorkPlace(openDisco)
       })
       numWorker = bound
-      pubs = pub :: pubs
+      openDiscos = openDisco :: openDiscos
     }
-    pubs
+    openDiscos
   }
 
 }

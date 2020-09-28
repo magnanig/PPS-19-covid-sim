@@ -1,8 +1,8 @@
 package pps.covid_sim.model.creation
 
-import pps.covid_sim.model.creation.FreeTimePlaces.FreeTimePlacesCreation
-import pps.covid_sim.model.creation.Hobbies.HobbyPlacesCreation
-import pps.covid_sim.model.creation.WorkPlace.WorkPlacesCreation
+import pps.covid_sim.model.creation.freetime.FreeTimePlacesCreation
+import pps.covid_sim.model.creation.hobbies.HobbyPlacesCreation
+import pps.covid_sim.model.creation.work.WorkPlacesCreation
 
 import scala.util.Random
 import pps.covid_sim.util.Statistic
@@ -14,25 +14,27 @@ import pps.covid_sim.model.people.People.{Student, Teacher, Worker}
 
 // TODO: Scala Doc
 
-object PlacesCreation {
+object RegionPlacesCreation {
 
   private var places: List[Place] = List()
 
-  def create(region: Region): Unit = { if (places.isEmpty) places = new PlacesCreation(region).create() }
+  def create(region: Region): Unit = { if (places.isEmpty) places = new RegionPlacesCreation(region).create() }
 
 }
 
-private class PlacesCreation(region: Region) {
+private class RegionPlacesCreation(region: Region) {
 
-  private val people: List[Person] = PeopleCreation.create(region)
+  private val _people: List[Person] = RegionPeopleCreation.create(region)
   private val random: Random = new Random()
 
+
   def create(): List[Place] = {
-    val places = people
+    PeopleContainer.add(_people)
+    val places = _people
       .groupBy(person => person.residence)
       .flatMap(entry => createEntityFor(entry))
       .toList
-    PeopleCreation.checkAssignedWork()
+    RegionPeopleCreation.checkAssignedWork()
     places
   }
 

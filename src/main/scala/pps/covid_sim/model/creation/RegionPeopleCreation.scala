@@ -8,13 +8,15 @@ import pps.covid_sim.model.places.Locality.{City, Region}
 import pps.covid_sim.util.RandomGeneration.randomBirthDate
 import pps.covid_sim.model.people.People.{Student, Teacher, Unemployed, Worker}
 
-object PeopleCreation {
+object RegionPeopleCreation {
 
   private var people: List[Person] = List()
 
-  def create(region: Region): List[Person] = { if (people.isEmpty) people = new PeopleCreation(region).create()
+  def create(region: Region): List[Person] = { if (people.isEmpty) people = new RegionPeopleCreation(region).create()
     people
   }
+
+  def getPeople: List[Person] = people
 
   private[creation] def checkAssignedWork(): Unit = {
     people = people.filter(person => myFilter(person))
@@ -28,16 +30,17 @@ object PeopleCreation {
       true
   }
 
-  def getPeople: List[Person] = people
-
 }
 
-private class PeopleCreation(val region: Region) {
+private class RegionPeopleCreation(val region: Region) {
 
-  var people: List[Person] = List[Person]()
+  private val _cities: List[City] = RegionCitiesCreation.create(region).toList
+  var people: List[Person] = List()
 
   def create(): List[Person] = {
-    people = CitiesCreation.create(region).flatMap(city => createPeople(city)).toList; people
+    CitiesContainer.add(_cities)
+    people = _cities.flatMap(city => createPeople(city))
+    people
   }
 
   /**

@@ -1,10 +1,10 @@
-package pps.covid_sim.model.creation.Hobbies
+package pps.covid_sim.model.creation.hobbies
 
 import pps.covid_sim.model.people.People.Worker
-import pps.covid_sim.model.places.Hobbies.FootballTeam
+import pps.covid_sim.model.places.Hobbies.Gym
 import pps.covid_sim.model.places.Locality.City
-import pps.covid_sim.model.places.OpenPlaces.Field
 import pps.covid_sim.model.places.Place
+import pps.covid_sim.model.places.rooms.{BasicRoom, Room}
 import pps.covid_sim.model.places.samples.Places
 import pps.covid_sim.util.RandomGeneration.randomIntInRange
 import pps.covid_sim.util.Statistic
@@ -14,41 +14,42 @@ import pps.covid_sim.util.time.TimeIntervalsImplicits._
 
 import scala.util.Random
 
-case class FootballTeamCreation() {
+case class GymCreation() {
 
   def create(city: City,
              workers: List[Worker],
-             fieldsRange: (Int, Int),
+             roomsRange: (Int, Int),
+             capacityRange: (Int, Int),
              staffRange: (Int, Int),
              random: Random = new Random()): List[Place] = {
 
-    var teams: List[FootballTeam] = List()
+    var gyms: List[Gym] = List()
     val totalWorker: Int = workers.size
     var numWorker: Int = 0
 
     while (numWorker < totalWorker) {
-      var fields: Set[Field] = Set()
-      (1 to randomIntInRange(fieldsRange._1, fieldsRange._2, random)).foreach(_ => { // number of fields
-        fields += Field(city, Places.FOOTBALL_FIELD_PRIVATE_TIME_TABLE)
+      var rooms: List[Room] = List()
+      (1 to randomIntInRange(roomsRange._1, roomsRange._2, random)).foreach(_ => { // number of rooms
+        rooms = BasicRoom(randomIntInRange(capacityRange._1, capacityRange._2, random)) :: rooms
       })
-      val footballTeam: FootballTeam = FootballTeam(city, fields)
-      for (field <- fields) {
-        // numero di lavoratori che verranno assegnate al presente ufficio
+      val gym: Gym = Gym(city, Places.GYM_TIME_TABLE, rooms)
+      for (room <- rooms) {
+        // numero di lavoratori che verranno assegnati alla presente stanza di lavoro
         val bound: Int = Statistic.getMin(numWorker + randomIntInRange(staffRange._1, staffRange._2, random), totalWorker)
         if (numWorker < totalWorker) {
           workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker
-            val plan: WorkPlan[Field] = WorkPlan()
-              .add(field, Day.TUESDAY -> Day.FRIDAY, 9 -> 14)
+            val plan: WorkPlan[Room] = WorkPlan()
+              .add(room, Day.MONDAY -> Day.SATURDAY, 9 -> 20)
               .commit()
-            footballTeam.addWorkPlan(worker, plan)
-            worker.setWorkPlace(footballTeam)
+            gym.addWorkPlan(worker, plan)
+            worker.setWorkPlace(gym)
           })
         }
         numWorker = bound
       }
-      teams = footballTeam :: teams
+      gyms = gym :: gyms
     }
-    teams
+    gyms
   }
 
 }
