@@ -18,13 +18,6 @@ trait DelimitedSpace extends Location {
    */
   def spaceDimension: Dimension = dimension
 
-  /**
-   *
-   * @param dimension the dimension of current space
-   * @return
-   */
-  def placeObstacles(dimension: Dimension): Set[Rectangle]
-
 }
 
 object DelimitedSpace {

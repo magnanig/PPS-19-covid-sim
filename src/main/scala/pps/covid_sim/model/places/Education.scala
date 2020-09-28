@@ -63,7 +63,7 @@ object Education {
      * @param dimension the dimension of current space
      * @return          an empty Set
      */
-    override def placeObstacles(dimension: Dimension): Set[Rectangle] = Set.empty
+    private def placeObstacles(dimension: Dimension): Set[Rectangle] = Set.empty
 
     override val mask: Option[Mask] = Some(Masks.Surgical)
 

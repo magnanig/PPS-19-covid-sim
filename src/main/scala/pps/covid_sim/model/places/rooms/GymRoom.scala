@@ -22,19 +22,19 @@ case class GymRoom(override val capacity: Int) extends Room with MovementSpace {
    * @param dimension the dimension of the current space
    * @return          the set of obstacles of the room
    */
-  override def placeObstacles(dimension: Dimension): Set[Rectangle] = { // TODO: make private (and remove from trait)
+  private def placeObstacles(dimension: Dimension): Set[Rectangle] = {
     var obstacles: Set[Rectangle] = Set()
+    val minObstacles: Int = (dimension.surface / minGymObstaclesFactor).toInt
+    val maxObstacles: Int = (dimension.surface / maxGymObstaclesFactor).toInt
+    val totObstacles = RandomGeneration.randomIntInRange(minObstacles, maxObstacles)
+    println("TOT OBSTACLE: " + totObstacles)
+
     @tailrec
     def _placeObstacle(): Unit = {
       val obstacle = generalIndoorObstacle(dimension)
       if (obstacles.exists(r => r.vertexes.exists(c => c.inside(obstacle)))) {println("DUP"); _placeObstacle()}
       else {println("OBSTACLE INSERTED"); obstacles += obstacle }
     }
-    val minObstacles: Int = (dimension.surface / minGymObstaclesFactor).toInt
-    val maxObstacles: Int = (dimension.surface / maxGymObstaclesFactor).toInt
-
-    val totObstacles = RandomGeneration.randomIntInRange(minObstacles, maxObstacles)
-    println("TOT OBSTACLE: " + totObstacles)
 
     (0 until totObstacles).foreach(_ => _placeObstacle())
 

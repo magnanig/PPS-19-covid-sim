@@ -29,7 +29,7 @@ class ObstaclesArranging {
 
   @Test
   def discoRoomObstaclesArranging(): Unit = {
-    val discoObstacles = discoRoom.placeObstacles(discoRoom.dimension)
+    val discoObstacles = discoRoom.obstacles
     assertFalse(discoObstacles.toList.combinations(2).exists(pair => pair.head.vertexes.exists(c => c.inside(pair.last))))
     println(discoRoom.dimension)
     println(discoObstacles)
@@ -39,7 +39,7 @@ class ObstaclesArranging {
 
   @Test
   def pubObstaclesArranging(): Unit = {
-    val pubObstacles = pub.placeObstacles(pub.dimension)
+    val pubObstacles = pub.obstacles
     assertFalse(pubObstacles.toList.combinations(2).exists(pair => pair.head.vertexes.exists(c => c.inside(pair.last))))
     println(pub.dimension)
     println(pubObstacles)
@@ -49,7 +49,7 @@ class ObstaclesArranging {
 
   @Test
   def supermarketObstaclesArranging(): Unit = {
-    val supermarketShelves = supermarket.placeObstacles(supermarket.dimension)
+    val supermarketShelves = supermarket.obstacles
     assertFalse(supermarketShelves.toList.combinations(2).exists(pair => pair.head.vertexes.exists(c => c.inside(pair.last))))
     println(supermarket.dimension)
     println(supermarketShelves)
@@ -59,7 +59,7 @@ class ObstaclesArranging {
 
   @Test
   def clothesShopObstaclesArranging(): Unit = {
-    val clothesShopShelves = clothesShop.placeObstacles(clothesShop.dimension)
+    val clothesShopShelves = clothesShop.obstacles
     assertFalse(clothesShopShelves.toList.combinations(2).exists(pair => pair.head.vertexes.exists(c => c.inside(pair.last))))
     println(clothesShop.dimension)
     println(clothesShopShelves)
@@ -77,11 +77,9 @@ class ObstaclesArranging {
     assertFalse(gymObstacles.toList.combinations(2).exists(pair => pair.head.vertexes.exists(c => c.inside(pair.last))))
   }
 
-
-
   @Test
   def openDiscoObstaclesArranging(): Unit = {
-    val openDiscoObstacles = openDisco.placeObstacles(openDisco.dimension)
+    val openDiscoObstacles = openDisco.obstacles
     assertFalse(openDiscoObstacles.toList.combinations(2).exists(pair => pair.head.vertexes.exists(c => c.inside(pair.last))))
     println(openDisco.dimension)
     println(openDiscoObstacles)
@@ -91,7 +89,7 @@ class ObstaclesArranging {
 
   @Test
   def beachObstaclesArranging(): Unit = {
-    val beachObstacles = beach.placeObstacles(beach.dimension)
+    val beachObstacles = beach.obstacles
     assertFalse(beachObstacles.toList.combinations(2).exists(pair => pair.head.vertexes.exists(c => c.inside(pair.last))))
     println(beach.dimension)
     println(beachObstacles)
@@ -101,7 +99,7 @@ class ObstaclesArranging {
 
   @Test
   def squareObstaclesArranging(): Unit = {
-    val squareObstacles = square.placeObstacles(square.dimension)
+    val squareObstacles = square.obstacles
     assertFalse(squareObstacles.toList.combinations(2).exists(pair => pair.head.vertexes.exists(c => c.inside(pair.last))))
     println(square.dimension)
     println(squareObstacles)
@@ -111,7 +109,7 @@ class ObstaclesArranging {
 
   @Test
   def parkObstaclesArranging(): Unit = {
-    val parkObstacles = park.placeObstacles(park.dimension)
+    val parkObstacles = park.obstacles
     assertFalse(parkObstacles.toList.combinations(2).exists(pair => pair.head.vertexes.exists(c => c.inside(pair.last))))
     println(park.dimension)
     println(parkObstacles)

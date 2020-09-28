@@ -38,7 +38,7 @@ object Shops {
      * @param dimension the dimension of the current space
      * @return          the set of obstacles of the room
      */
-    override def placeObstacles(dimension: Dimension): Set[Rectangle] = {
+    private def placeObstacles(dimension: Dimension): Set[Rectangle] = {
       var shelves: Set[Rectangle] = Set()
       val numOfShelves: Int = calculateFilling(dimension.width, supermarketFillFactor)
 
@@ -66,7 +66,7 @@ object Shops {
      * @param dimension the dimension of the current space
      * @return          the set of obstacles of the room
      */
-    override def placeObstacles(dimension: Dimension): Set[Rectangle] = {
+    private def placeObstacles(dimension: Dimension): Set[Rectangle] = {
       var shelves: Set[Rectangle] = Set()
       val numOfShelves: Int = calculateFilling(dimension.width, clothesShopFillFactor)
 

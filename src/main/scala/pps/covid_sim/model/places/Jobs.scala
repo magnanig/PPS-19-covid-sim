@@ -44,7 +44,7 @@ object Jobs {
      * @param dimension the dimension of current space
      * @return
      */
-    override def placeObstacles(dimension: Dimension): Set[Rectangle] = Set.empty
+    private def placeObstacles(dimension: Dimension): Set[Rectangle] = Set.empty
   }
 
 }
