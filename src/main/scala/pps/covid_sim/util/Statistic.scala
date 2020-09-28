@@ -37,7 +37,6 @@ object Statistic {
    *
    * @param  list list of Int elements whose average value is to be calculated
    * @return      average of a list rounded and transformed into Int value
-   * @see         Resource: https://damieng.com/blog/2014/12/11/sequence-averages-in-scala
    */
   def avgInt(list: ParSeq[Int]): Int = { Math.round(avgDouble(list, 2).toFloat) }
 

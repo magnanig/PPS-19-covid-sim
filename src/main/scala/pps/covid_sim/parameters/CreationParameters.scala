@@ -52,4 +52,23 @@ object CreationParameters {
 
   val maxNumShopPerWeek = 5
 
+  // Obstacles generation parameters for the different places
+  val minNumDiscoObstacles = 1
+  val maxNumDiscoObstacles = 4
+  val minNumPubObstacles = 1
+  val maxNumPubObstacles = 4
+  val minNumOpenDiscoObstacles = 1
+  val maxNumOpenDiscoObstacles = 4
+
+  val minSquareObstaclesFactor = 3000 // an obstacle will be inserted on average every 2000 square meters
+  val maxSquareObstaclesFactor = 2000
+  val minParkObstaclesFactor = 1000
+  val maxParkObstaclesFactor = 500
+  val minGymObstaclesFactor = 10
+  val maxGymObstaclesFactor = 6
+
+  val beachFillFactor = 4
+  val supermarketFillFactor = 2
+  val clothesShopFillFactor = 2
+
 }

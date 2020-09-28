@@ -1,4 +1,4 @@
-package pps.covid_sim.model.creation.FreeTimePlaces
+package pps.covid_sim.model.creation.freetime
 
 import pps.covid_sim.model.people.People.Worker
 import pps.covid_sim.model.places.FreeTime.Restaurant

@@ -6,7 +6,7 @@ import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.{DelimitedSpace, MovementSpace}
 import pps.covid_sim.util.RandomGeneration
-import pps.covid_sim.util.geometry.Rectangle.generalObstacle
+import pps.covid_sim.util.geometry.Rectangle.generalIndoorObstacle
 import pps.covid_sim.util.geometry.{Coordinates, Dimension, Rectangle}
 
 case class BasicRoom(override val capacity: Int) extends Room with MovementSpace {
@@ -22,9 +22,9 @@ case class BasicRoom(override val capacity: Int) extends Room with MovementSpace
     var obstacles: Set[Rectangle] = Set()
 
     def _placeObstacles(): Unit = {
-      val obstacle = generalObstacle(dimension)
+      val obstacle = generalIndoorObstacle(dimension)
       if (obstacles.exists(r => r.vertexes.exists(c => c.inside(obstacle)))) _placeObstacles()
-      obstacles += obstacle
+      else obstacles += obstacle
     }
     (0 until RandomGeneration.randomIntInRange(0, 9)).foreach(_ => _placeObstacles())
 
@@ -32,8 +32,6 @@ case class BasicRoom(override val capacity: Int) extends Room with MovementSpace
   }
 
   override val obstacles: Set[Rectangle] = placeObstacles(dimension)
-
-  override val entranceCoords: Coordinates = Coordinates.randomOnBorder(dimension)
 
   override val mask: Option[Mask] = None
 

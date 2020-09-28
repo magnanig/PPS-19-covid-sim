@@ -1,4 +1,4 @@
-package pps.covid_sim.model.creation.FreeTimePlaces
+package pps.covid_sim.model.creation.freetime
 
 import scala.util.Random
 import pps.covid_sim.model.people.People.Worker

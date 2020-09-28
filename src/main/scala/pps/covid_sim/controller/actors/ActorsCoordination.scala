@@ -5,18 +5,19 @@ import java.util.concurrent.TimeUnit
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props, ReceiveTimeout}
 import pps.covid_sim.controller.ControllerImpl
+import pps.covid_sim.controller.actors.CoordinatorCommunication.{SetProvince, SetRegion}
 import pps.covid_sim.model.creation.PlacesContainer.getPlaces
 import pps.covid_sim.model.people.People.{Student, Worker}
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.simulation.Simulation
-import pps.covid_sim.util.time.DatesInterval
+import pps.covid_sim.model.people.actors.Communication._
+import pps.covid_sim.model.people.actors.{StudentActor, UnemployedActor, WorkerActor}
 import pps.covid_sim.model.places.Locality.{City, Province, Region}
 import pps.covid_sim.model.places.Place
-import pps.covid_sim.util.time.Time.ScalaCalendar
+import pps.covid_sim.model.simulation.Simulation
+import pps.covid_sim.parameters.CovidInfectionParameters
 import pps.covid_sim.util.Statistic
-import pps.covid_sim.parameters.{CovidInfectionParameters, CreationParameters}
-import pps.covid_sim.people.actors.Communication.{Acknowledge, GetPlacesByCity, GetPlacesByProvince, InnerAcknowledge, Lockdown, RequestedPlaces, SetPerson, SetProvince, SetRegion, Stop, Tick}
-import pps.covid_sim.people.actors.{PersonActor, StudentActor, UnemployedActor, WorkerActor}
+import pps.covid_sim.util.time.DatesInterval
+import pps.covid_sim.util.time.Time.ScalaCalendar
 
 import scala.concurrent.duration.Duration
 

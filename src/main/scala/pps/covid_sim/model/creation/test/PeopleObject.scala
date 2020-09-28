@@ -1,4 +1,4 @@
-package pps.covid_sim.model.creation.toTest
+package pps.covid_sim.model.creation.test
 
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.people.People._

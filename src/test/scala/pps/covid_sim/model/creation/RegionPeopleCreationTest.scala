@@ -7,10 +7,10 @@ import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality
 import pps.covid_sim.model.places.Locality.Region
 import pps.covid_sim.parameters.CreationParameters._
-import pps.covid_sim.model.creation.toTest.PeopleAosta
+import pps.covid_sim.model.creation.test.PeopleAosta
 import pps.covid_sim.model.people.People.{Student, Teacher, Unemployed, Worker}
 
-class PeopleCreationTest {
+class RegionPeopleCreationTest {
 
   val peopleAosta: List[Person] = PeopleAosta.people
 

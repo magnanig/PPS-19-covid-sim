@@ -1,7 +1,7 @@
-package pps.covid_sim.model.creation.WorkPlace
+package pps.covid_sim.model.creation.work
 
 import pps.covid_sim.model.people.People.Worker
-import pps.covid_sim.model.places.Jobs.{Company, Office}
+import pps.covid_sim.model.places.Jobs.{Factory, Office}
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.util.RandomGeneration.randomIntInRange
@@ -12,7 +12,7 @@ import pps.covid_sim.util.time.TimeIntervalsImplicits._
 
 import scala.util.Random
 
-case class CompanyCreation() {
+case class FactoryCreation() {
 
   def create(city: City,
              workers: List[Worker],
@@ -20,33 +20,33 @@ case class CompanyCreation() {
              capacityRange: (Int, Int),
              random: Random = new Random()): List[Place] = {
 
-    var companies: List[Company] = List()
+    var factories: List[Factory] = List()
     val totalWorker: Int = workers.size
     var numWorker: Int = 0
 
     while (numWorker < totalWorker) {
       var offices: List[Office] = List()
-      (1 to randomIntInRange(officesRange._1, officesRange._2, random)).foreach(_ => { // offices number
+      (1 to randomIntInRange(officesRange._1, officesRange._2, random)).foreach(_ => { // number of offices
         offices = Office(randomIntInRange(capacityRange._1, capacityRange._2, random)) :: offices
       })
-      val company: Company = Company(city, offices)
+      val factory: Factory = Factory(city, offices)
       for (office <- offices) {
-        // number of workers who will be assigned to this office
+        // numero di lavoratori che verranno assegnate al presente ufficio
         val bound: Int = Statistic.getMin(numWorker + office.capacity, totalWorker)
         if (numWorker < totalWorker) {
           workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker
             val plan: WorkPlan[Office] = WorkPlan()
               .add(office, Day.MONDAY -> Day.FRIDAY, 8 -> 12, 14 -> 18)
               .commit()
-            company.addWorkPlan(worker, plan)
-            worker.setWorkPlace(company)
+            factory.addWorkPlan(worker, plan)
+            worker.setWorkPlace(factory)
           })
         }
         numWorker = bound
       }
-      companies = company :: companies
+      factories = factory :: factories
     }
-    companies
+    factories
   }
 
 }

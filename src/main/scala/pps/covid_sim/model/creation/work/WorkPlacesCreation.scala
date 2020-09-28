@@ -1,4 +1,4 @@
-package pps.covid_sim.model.creation.WorkPlace
+package pps.covid_sim.model.creation.work
 
 import pps.covid_sim.model.people.People.Worker
 import pps.covid_sim.model.places.Locality.City

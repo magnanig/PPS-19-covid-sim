@@ -1,4 +1,4 @@
-package pps.covid_sim.model.creation.Hobbies
+package pps.covid_sim.model.creation.hobbies
 
 import pps.covid_sim.model.people.People.Worker
 import pps.covid_sim.model.places.Locality.City
