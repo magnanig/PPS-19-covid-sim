@@ -10,25 +10,7 @@ import pps.covid_sim.model.people.People.{Student, Teacher, Unemployed, Worker}
 
 object RegionPeopleCreation {
 
-  private var people: List[Person] = List()
-
-  def create(region: Region): List[Person] = { if (people.isEmpty) people = new RegionPeopleCreation(region).create()
-    people
-  }
-
-  def getPeople: List[Person] = people
-
-  private[creation] def checkAssignedWork(): Unit = {
-    people = people.filter(person => myFilter(person))
-  }
-
-  private def myFilter(person: Person): Boolean = {
-    if ((person.getClass == classOf[Worker] && person.asInstanceOf[Worker].workPlace == null) ||
-      person.getClass == classOf[Student] && person.asInstanceOf[Student].institute == null)
-      false
-    else
-      true
-  }
+  def create(region: Region): List[Person] = { new RegionPeopleCreation(region).create() }
 
 }
 
@@ -43,9 +25,6 @@ private class RegionPeopleCreation(val region: Region) {
     people
   }
 
-  /**
-   * Parameter values expressed as a percentage
-   */
   def createPeople(city: City): List[Person] = {
     var people: List[Person] = List()
     val number: List[Int] = computeProportions(city)

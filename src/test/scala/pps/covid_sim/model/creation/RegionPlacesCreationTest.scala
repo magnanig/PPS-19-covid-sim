@@ -2,29 +2,27 @@ package pps.covid_sim.model.creation
 
 import org.junit.Test
 import org.junit.Assert.assertEquals
-import pps.covid_sim.model.people.People.{Student, Teacher, Worker}
-import pps.covid_sim.model.places.Education.{School, University}
+import pps.covid_sim.model.people.People.Worker
 import pps.covid_sim.model.places.FreeTime.{Bar, Disco, OpenDisco, Pub, Restaurant}
 import pps.covid_sim.model.places.Hobbies.{FootballTeam, Gym}
 import pps.covid_sim.model.places.Jobs.{Company, Factory}
 import pps.covid_sim.model.places.Locality.Region
 import pps.covid_sim.model.places.OpenPlaces.{Field, Park, Square}
 import pps.covid_sim.model.places.Shops.Shop
-import pps.covid_sim.model.places.samples.Cities
 
 import scala.collection.mutable
 
 class RegionPlacesCreationTest {
 
   RegionPlacesCreation.create(Region.VALLE_DAOSTA)
-/*
+
   val squares: Int = PlacesContainer.getPlaces(classOf[Square]).size
   //val schools: List[School] = PlacesContainer.getPlaces(classOf[School]).map(_.asInstanceOf[School])
   //val universities: List[University] = PlacesContainer.getPlaces(classOf[University]).map(_.asInstanceOf[University])
   val companies: List[Company] = PlacesContainer.getPlaces(classOf[Company]).map(_.asInstanceOf[Company])
   val factories: List[Factory] = PlacesContainer.getPlaces(classOf[Factory]).map(_.asInstanceOf[Factory])
   val pubs: List[Pub] = PlacesContainer.getPlaces(classOf[Pub]).map(_.asInstanceOf[Pub])
-*/
+
   /**
    * Questo test certifica che tutti gli studenti di una provincia
    * vengono tutti assegnati correttamente ad un istituto scolastico.
@@ -58,9 +56,10 @@ class RegionPlacesCreationTest {
    */
   @Test
   def testPubAssignedToWorker(): Unit = {
-/*
+
+    PeopleContainer.checkAssignedWork()
     // Starting with the workers, I get the pubs where the workers work
-    val workers: List[Worker] = PeopleCreation.getPeople.filter(_.getClass == classOf[Worker]).map(_.asInstanceOf[Worker])
+    val workers: List[Worker] = PeopleContainer.getPeople.filter(_.getClass == classOf[Worker]).map(_.asInstanceOf[Worker])
     val workerPubs: mutable.Set[Pub] = mutable.Set()
     workers.map(_.workPlace).filter(_.getClass == classOf[Pub])
       .map(_.asInstanceOf[Pub]).foreach(pub => if (!workerPubs.contains(pub)) workerPubs += pub)
@@ -73,7 +72,7 @@ class RegionPlacesCreationTest {
 
     workerPubs.foreach(pub => assert(pubs.contains(pub)))
     pubs.foreach(pub => assert(workerPubs.contains(pub)))
-*/
+
   }
 
   /**
@@ -85,13 +84,13 @@ class RegionPlacesCreationTest {
    */
   @Test
   def testWorkerAssignmentToOfficesRun(): Unit = {
-    /*companies.foreach(company => assert(company.capacity >= company.workPlans.keySet.size))
-    factories.foreach(factory => assert(factory.capacity >= factory.workPlans.keySet.size))*/
+    companies.foreach(company => assert(company.capacity >= company.workPlans.keySet.size))
+    factories.foreach(factory => assert(factory.capacity >= factory.workPlans.keySet.size))
   }
 
   @Test
   def testPlacesCreation(): Unit = {
-    /*assertEquals(CitiesCreation.getCities.size, squares)
+    assertEquals(CitiesContainer.getCities.size, squares)
     println("Numero di Piazze create: " + squares)
     println("Numero di Parchi creati: " + PlacesContainer.getPlaces(classOf[Park]).size)
     println("Numero di Campi da calcio creati: " + PlacesContainer.getPlaces(classOf[Field]).size + "\n")
@@ -111,7 +110,7 @@ class RegionPlacesCreationTest {
     println("Numero di Bar creati: " + PlacesContainer.getPlaces(classOf[Bar]).size)
     println("Numero di Pub creati: " + pubs.size)
     println("Numero di Disco create: " + PlacesContainer.getPlaces(classOf[Disco]).size)
-    println("Numero di Open Disco create: " + PlacesContainer.getPlaces(classOf[OpenDisco]).size + "\n")*/
+    println("Numero di Open Disco create: " + PlacesContainer.getPlaces(classOf[OpenDisco]).size + "\n")
   }
 
 }

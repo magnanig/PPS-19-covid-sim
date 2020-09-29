@@ -22,6 +22,7 @@ object GenerateAll {
   def generateAll(): Unit = {
     regionsCreation()
     regions.values.foreach(RegionPlacesCreation.create)
+    PeopleContainer.checkAssignedWork()
   }
 
   private def regionsCreation(): Unit = {
