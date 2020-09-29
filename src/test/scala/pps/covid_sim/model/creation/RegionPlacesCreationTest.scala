@@ -2,6 +2,7 @@ package pps.covid_sim.model.creation
 
 import org.junit.Test
 import org.junit.Assert.assertEquals
+import pps.covid_sim.model.container.{CitiesContainer, PeopleContainer, PlacesContainer}
 import pps.covid_sim.model.people.People.Worker
 import pps.covid_sim.model.places.FreeTime.{Bar, Disco, OpenDisco, Pub, Restaurant}
 import pps.covid_sim.model.places.Hobbies.{FootballTeam, Gym}

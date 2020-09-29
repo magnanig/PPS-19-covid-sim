@@ -5,8 +5,8 @@ import java.util.Calendar
 import akka.actor.{Actor, ActorRef}
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.clinical.Masks.Mask
-import pps.covid_sim.model.creation.PlacesContainer
-import pps.covid_sim.model.creation.PlacesContainer.placesInCityOrElseInProvince
+import pps.covid_sim.model.container.PlacesContainer
+import PlacesContainer.placesInCityOrElseInProvince
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.people.actors.Communication._

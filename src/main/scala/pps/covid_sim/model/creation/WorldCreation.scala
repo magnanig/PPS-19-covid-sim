@@ -1,5 +1,6 @@
 package pps.covid_sim.model.creation
 
+import pps.covid_sim.model.container.PeopleContainer
 import pps.covid_sim.model.places.Locality.Region
 
 import scala.collection.mutable
@@ -12,7 +13,7 @@ import scala.collection.mutable
 // per ogni Regione, deve "lanciare" un'istanza di
 // mirate per ogni regione in modo rapido ed efficiente.
 
-object GenerateAll {
+object WorldCreation {
 
   private var regions: mutable.Map[Int, Region] = mutable.Map[Int, Region]() // id_region -> Region
 

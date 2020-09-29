@@ -1,5 +1,6 @@
 package pps.covid_sim.model.creation
 
+import pps.covid_sim.model.container.{PeopleContainer, PlacesContainer}
 import pps.covid_sim.model.creation.freetime.FreeTimePlacesCreation
 import pps.covid_sim.model.creation.hobbies.HobbyPlacesCreation
 import pps.covid_sim.model.creation.work.WorkPlacesCreation

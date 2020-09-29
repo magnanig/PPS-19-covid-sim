@@ -1,5 +1,6 @@
 package pps.covid_sim.model.creation
 
+import pps.covid_sim.model.container.CitiesContainer
 import pps.covid_sim.parameters.CreationParameters
 import pps.covid_sim.parameters.CreationParameters.{studentsPercentage, teachersPercentage, unemployedPercentage, workersPercentage}
 import pps.covid_sim.util.Statistic
@@ -16,12 +17,12 @@ object RegionPeopleCreation {
 
 private class RegionPeopleCreation(val region: Region) {
 
-  private val _cities: List[City] = RegionCitiesCreation.create(region).toList
+  private val _cities: Set[City] = RegionCitiesCreation.create(region)
   var people: List[Person] = List()
 
   def create(): List[Person] = {
     CitiesContainer.add(_cities)
-    people = _cities.flatMap(city => createPeople(city))
+    people = _cities.toList.flatMap(city => createPeople(city))
     people
   }
 
