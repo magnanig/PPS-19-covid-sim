@@ -1,4 +1,4 @@
-package pps.covid_sim.model.creation
+package pps.covid_sim.model.container
 
 import pps.covid_sim.model.places.Locality.{City, Province}
 import pps.covid_sim.model.places.Place
