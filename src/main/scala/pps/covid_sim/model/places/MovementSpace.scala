@@ -6,13 +6,16 @@ import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.util.geometry.Coordinates
 
+import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
+
 trait MovementSpace extends DelimitedSpace {
 
   /**
    * A function that generates a sampling of the path of a person inside the place,
    * starting from the current position and velocity.
    */
-  protected val pathSampling: Set[Coordinates] => Set[Seq[Map[Group, Seq[Coordinates]]]]
+  protected val pathSampling: Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]]
 
   /**
    * The coordinates of the person before starting the movement.
@@ -20,7 +23,8 @@ trait MovementSpace extends DelimitedSpace {
    * starting from the same point at the same time or starting over an obstacle.
    */
   override protected def onEntered(group: Group): Unit = {
-    group.foreach(_.position = Coordinates.randomOnBorder(dimension))
+    val initialPosition = Coordinates.randomOnBorder(dimension)
+    group.foreach(_.position = initialPosition)
   }
 
   /**
@@ -32,11 +36,11 @@ trait MovementSpace extends DelimitedSpace {
   override def propagateVirus(time: Calendar, place: Place): Unit = {
     if (currentGroups.exists(group => group.people.exists(person => person.canInfect))) {
       super.propagateVirus(time, place)
-      // People from the same group follow the same path
-      val sampling = pathSampling(currentGroups.map(group => group.leader.position))
-      // Assigns the last coordinate of the sampling to the person
+      // People from the same group will follow the same path
+      val sampling = pathSampling(currentGroups)
+      // Assigns the last coordinate of the sampling to the people
       sampling.foreach(timeSlot => timeSlot.foreach(map => map.foreach(path => path._1.people
-        .foreach(person => person.position = path._2.last))))
+        .foreach(person => person.position = path._2.last)))) // !!!!!!!!
       // If two people inside the same time slot have not kept the safety distance, the contagion attempt occurs
       sampling.foreach(timeSlot => timeSlot.foreach(map =>
         // Attempt to avoid subsequent computations if there are no infected people within the same time slot

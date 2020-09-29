@@ -12,8 +12,11 @@ import pps.covid_sim.model.places.rooms.Room
 import pps.covid_sim.parameters.CreationParameters.{clothesShopFillFactor, supermarketFillFactor}
 import pps.covid_sim.util.RandomGeneration
 import pps.covid_sim.util.geometry.Rectangle.{calculateFilling, generalIndoorObstacle, shopObstacle}
-import pps.covid_sim.util.geometry.{Coordinates, Dimension, Rectangle}
+import pps.covid_sim.util.geometry.{Coordinates, Dimension, Rectangle, Speed}
 import pps.covid_sim.util.scheduling.TimeTable
+
+import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 
 object Shops {
 
@@ -43,7 +46,6 @@ object Shops {
       val numOfShelves: Int = calculateFilling(dimension.width, supermarketFillFactor)
 
       (0 until numOfShelves).foreach(n => shelves += shopObstacle(dimension, n, supermarketFillFactor))
-
       shelves
     }
 
@@ -51,8 +53,8 @@ object Shops {
 
     override val mask: Option[Mask] = Some(Masks.Surgical)
 
-    override protected val pathSampling: Set[Coordinates] => Set[Seq[Map[Group, Seq[Coordinates]]]] =
-      MovementFunctions.linearPath(dimension, obstacles)
+    override protected val pathSampling: Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]] =
+      MovementFunctions.linearPath(dimension, obstacles, Speed.SLOW, 3)
   }
 
   case class ClothesShop(override val city: City,
@@ -71,7 +73,6 @@ object Shops {
       val numOfShelves: Int = calculateFilling(dimension.width, clothesShopFillFactor)
 
       (0 until numOfShelves).foreach(n => shelves += shopObstacle(dimension, n, clothesShopFillFactor))
-
       shelves
     }
 
@@ -79,8 +80,8 @@ object Shops {
 
     override val mask: Option[Mask] = Some(Masks.Surgical)
 
-    override protected val pathSampling: Set[Coordinates] => Set[Seq[Map[Group, Seq[Coordinates]]]] =
-      MovementFunctions.linearPath(dimension, obstacles)
+    override protected val pathSampling: Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]] =
+      MovementFunctions.linearPath(dimension, obstacles, Speed.SLOW, 4)
   }
 
 }

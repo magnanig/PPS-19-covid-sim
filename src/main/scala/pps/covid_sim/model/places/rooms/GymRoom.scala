@@ -8,9 +8,11 @@ import pps.covid_sim.model.places.{DelimitedSpace, MovementSpace}
 import pps.covid_sim.parameters.CreationParameters.{maxGymObstaclesFactor, minGymObstaclesFactor}
 import pps.covid_sim.util.RandomGeneration
 import pps.covid_sim.util.geometry.Rectangle.generalIndoorObstacle
-import pps.covid_sim.util.geometry.{Coordinates, Dimension, Rectangle}
+import pps.covid_sim.util.geometry.{Coordinates, Dimension, Rectangle, Speed}
 
 import scala.annotation.tailrec
+import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 
 case class GymRoom(override val capacity: Int) extends Room with MovementSpace {
 
@@ -28,7 +30,6 @@ case class GymRoom(override val capacity: Int) extends Room with MovementSpace {
     val maxObstacles: Int = (dimension.surface / maxGymObstaclesFactor).toInt
     val totObstacles = RandomGeneration.randomIntInRange(minObstacles, maxObstacles)
     println("TOT OBSTACLE: " + totObstacles)
-
     @tailrec
     def _placeObstacle(): Unit = {
       val obstacle = generalIndoorObstacle(dimension)
@@ -37,7 +38,6 @@ case class GymRoom(override val capacity: Int) extends Room with MovementSpace {
     }
 
     (0 until totObstacles).foreach(_ => _placeObstacle())
-
     obstacles
   }
 
@@ -45,7 +45,7 @@ case class GymRoom(override val capacity: Int) extends Room with MovementSpace {
 
   override val mask: Option[Mask] = Some(Masks.Surgical)
 
-  override protected val pathSampling: Set[Coordinates] => Set[Seq[Map[Group, Seq[Coordinates]]]] =
-    MovementFunctions.linearPath(dimension, obstacles)
+  override protected val pathSampling: Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]] =
+    MovementFunctions.linearPath(dimension, obstacles, Speed.SLOW, 2)
 
 }

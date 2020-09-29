@@ -17,13 +17,11 @@ object Jobs {
     override val mask: Option[Mask] = Some(Masks.FFP2WithoutValve)
   }
 
-
   case class Factory(override val city: City,
                      private var offices: Seq[Office] = Seq())
     extends MultiRoom[Office](city, offices) with ClosedWorkPlace[Office] {
     override val mask: Option[Mask] = Some(Masks.FFP2WithoutValve)
   }
-
 
   case class Office(override val capacity: Int) extends Room {
     override val dimension: Dimension = DelimitedSpace.randomDimension(capacity,
@@ -37,12 +35,12 @@ object Jobs {
       .combinations(2)
       .foreach(pair => VirusPropagation.tryInfect(pair.head, pair.last, place, time))
 
-    override val obstacles: Set[Rectangle] = Set.empty
+    override val obstacles: Set[Rectangle] = placeObstacles(dimension)
 
     /**
      *
      * @param dimension the dimension of current space
-     * @return
+     * @return          the set of obstacles of the office
      */
     private def placeObstacles(dimension: Dimension): Set[Rectangle] = Set.empty
   }

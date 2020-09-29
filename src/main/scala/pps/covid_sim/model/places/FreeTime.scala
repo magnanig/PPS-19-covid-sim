@@ -11,10 +11,12 @@ import pps.covid_sim.model.places.rooms.{DiscoRoom, MultiRoom, TablesRoom}
 import pps.covid_sim.parameters.CreationParameters.{maxNumOpenDiscoObstacles, maxNumPubObstacles, minNumOpenDiscoObstacles, minNumPubObstacles}
 import pps.covid_sim.util.RandomGeneration
 import pps.covid_sim.util.geometry.Rectangle.generalIndoorObstacle
-import pps.covid_sim.util.geometry.{Coordinates, Dimension, Rectangle}
+import pps.covid_sim.util.geometry.{Coordinates, Dimension, Rectangle, Speed}
 import pps.covid_sim.util.scheduling.TimeTable
 
 import scala.annotation.tailrec
+import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 
 object FreeTime {
 
@@ -71,15 +73,14 @@ object FreeTime {
     private def placeObstacles(dimension: Dimension): Set[Rectangle] = {
       var obstacles: Set[Rectangle] = Set()
       val totObstacles = RandomGeneration.randomIntInRange(minNumPubObstacles, maxNumPubObstacles)
-
       @tailrec
       def _placeObstacles(): Unit = {
         val obstacle = generalIndoorObstacle(dimension)
         if (obstacles.exists(r => r.vertexes.exists(c => c.inside(obstacle)))) _placeObstacles()
         else obstacles += obstacle
       }
-      (0 until totObstacles).foreach(_ => _placeObstacles())
 
+      (0 until totObstacles).foreach(_ => _placeObstacles())
       obstacles
     }
 
@@ -87,8 +88,8 @@ object FreeTime {
 
     override val mask: Option[Mask] = Some(Masks.Surgical)
 
-    override protected val pathSampling: Set[Coordinates] => Set[Seq[Map[Group, Seq[Coordinates]]]] =
-      MovementFunctions.randomPath(dimension, obstacles)
+    override protected val pathSampling: Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]] =
+      MovementFunctions.randomPath(dimension, obstacles, Speed.MIDDLE, 1)
   }
 
   case class OpenDisco(override val city: City,
@@ -106,15 +107,14 @@ object FreeTime {
     private def placeObstacles(dimension: Dimension): Set[Rectangle] = {
       var obstacles: Set[Rectangle] = Set()
       val totObstacles = RandomGeneration.randomIntInRange(minNumOpenDiscoObstacles, maxNumOpenDiscoObstacles)
-
       @tailrec
       def _placeObstacles(): Unit = {
         val obstacle = generalIndoorObstacle(dimension)
         if (obstacles.exists(r => r.vertexes.exists(c => c.inside(obstacle)))) _placeObstacles()
         else obstacles += obstacle
       }
-      (0 until totObstacles).foreach(_ => _placeObstacles())
 
+      (0 until totObstacles).foreach(_ => _placeObstacles())
       obstacles
     }
 
@@ -122,8 +122,8 @@ object FreeTime {
 
     override val mask: Option[Mask] = Some(Masks.Surgical)
 
-    override protected val pathSampling: Set[Coordinates] => Set[Seq[Map[Group, Seq[Coordinates]]]] =
-      MovementFunctions.randomPath(dimension, obstacles)
+    override protected val pathSampling: Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]] =
+      MovementFunctions.randomPath(dimension, obstacles, Speed.FAST, 1)
   }
 
 }
