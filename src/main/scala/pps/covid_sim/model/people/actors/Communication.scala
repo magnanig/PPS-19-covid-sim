@@ -73,7 +73,7 @@ object Communication {
    * @param plan  the plan to be removed
    * @tparam T    the type of location used in plan
    */
-  case class ReplacePlan[T <: Location](plan: Plan[T])
+  case class RemovePlan[T <: Location](plan: Plan[T])
 
   /**
    * Communicates a new lockdown status change.
