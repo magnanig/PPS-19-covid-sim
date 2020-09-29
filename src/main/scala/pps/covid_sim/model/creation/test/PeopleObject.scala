@@ -32,10 +32,13 @@ private class PeopleObject() {
   def createPeople(city: City, workers: Double, teachers: Double, students: Double, unemployed: Double): List[Person] = {
     var people: List[Person] = List()
     val number: List[Int] = Statistic.totalPercentageToInt(city.numResidents, workers, teachers, students, unemployed)
-    (1 to number.head).foreach(_ => people = people :+ Worker(randomBirthDate(), city))
-    (1 to number(1)).foreach(_ => people = people :+ Teacher(randomBirthDate(), city))
-    (1 to number(2)).foreach(_ => people = people :+ Student(randomBirthDate(), city))
-    (1 to number(3)).foreach(_ => people = people :+ Unemployed(randomBirthDate(), city))
+    val childrenAndElderly: List[Int] = Statistic.totalPercentageToInt(number(3), 50, 50)
+
+    (1 to number.head).foreach(_ => people = people :+ Worker(randomBirthDate(23, 68), city))
+    (1 to number(1)).foreach(_ => people = people :+ Teacher(randomBirthDate(28, 68), city))
+    (1 to number(2)).foreach(_ => people = people :+ Student(randomBirthDate(6, 24), city))
+    (1 to childrenAndElderly.head).foreach(_ => people = people :+ Unemployed(randomBirthDate(0, 5), city))
+    (1 to childrenAndElderly.last).foreach(_ => people = people :+ Unemployed(randomBirthDate(69, 100), city))
     people
   }
 
