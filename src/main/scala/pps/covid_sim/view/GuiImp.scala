@@ -1,11 +1,12 @@
 package pps.covid_sim.view
-import scala.swing.BorderPanel.Position.Center
+import pps.covid_sim.controller.Controller
+
 import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}
 import scala.swing.TabbedPane.Page
 import scala.swing.event.{ButtonClicked, EditDone, SelectionChanged}
-import scala.swing.{Action, BorderPanel, BoxPanel, Button, ButtonGroup, CheckBox, CheckMenuItem, FlowPanel, Frame, Label, ListView, MainFrame, Menu, MenuBar, MenuItem, Orientation, PasswordField, RadioButton, RadioMenuItem, Separator, SplitPane, Swing, TabbedPane, TextField}
+import scala.swing.{Action, BorderPanel, BoxPanel, Button, ButtonGroup, CheckBox, CheckMenuItem, FlowPanel, Frame, Label, ListView, MainFrame, Menu, MenuBar, MenuItem, Orientation, RadioButton, RadioMenuItem, Separator, SplitPane, Swing, TabbedPane, TextField}
 
-class GuiImp extends View {
+class GuiImp(controller: Controller) extends View {
   override val tabs: TabbedPane = new TabbedPane {
     import TabbedPane._
     //aggiunta dei diversi grafici
@@ -13,33 +14,29 @@ class GuiImp extends View {
       new BoxPanel(Orientation.Vertical) {
         contents += new Label("In attesa della simulazione..")
       })
-    pages += new Page("Split Panes" ,
-      new SplitPane(Orientation.Vertical, new Button("Hello"), new Button("World")) {
-        continuousLayout = true
-      })
-
-    val password: FlowPanel = new FlowPanel {
-      contents += new Label("Enter your secret password here ")
-      val field = new PasswordField(10)
-      contents += field
-      val label = new Label(field.text)
-      contents += label
-      listenTo(field)
-      reactions += {
-        case EditDone(`field`) => label.text = field.password.mkString
-      }
-    }
-
-    pages += new Page("Password", password, "Password tooltip")
   }
 
-  override def insertTab(page: TabbedPane.Page): Unit = ???
 
-  override def substituteTabe(page: TabbedPane.Page): Unit = ???
+  override def insertTab(page: TabbedPane.Page): Unit = {
+    if(tabs.pages.forall(p=>p.title!= page.title)){
+      tabs.pages += page
+    }
+  }
 
-  override def remuveTab(title: String): Unit = ???
+  override def substituteTab(page: TabbedPane.Page): Unit = {
+    if(tabs.pages.exists(p=>p.title== page.title)){
+      this.removeTab(page.title)
+      tabs.pages += page
+    }
+  }
 
-  override def clearTabs(): Unit = ???
+  override def removeTab(title: String): Unit = {
+    tabs.pages.filter(p=> p.title != title)
+  }
+
+  override def clearTabs(): Unit = {
+    tabs.pages.clear()
+  }
 
   override def top: Frame = new MainFrame {
     title = "PPS-19-Covid-Sim"
@@ -242,15 +239,6 @@ class GuiImp extends View {
         contents += new BoxPanel(Orientation.Vertical) {
           border = CompoundBorder(TitledBorder(EtchedBorder, "Quali locali e strutture chiudere"), EmptyBorder(5, 5, 5, 10))
           contents ++= Seq(beachCheckbox,squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox, barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox,companyCheckbox,factoryCheckbox , shopCheckbox, fieldCheckbox,gymCheckbox)
-          listenTo(beachCheckbox, squareCheckbox, parkCheckbox)
-          reactions += {
-            case ButtonClicked(`beachCheckbox`) =>
-              println(beachCheckbox.selected)
-            case ButtonClicked(`squareCheckbox`)=>
-              println(squareCheckbox.selected)
-            case ButtonClicked(`parkCheckbox`) =>
-              println(parkCheckbox.selected)
-          }
         }
 
         contents +=  new BorderPanel {
