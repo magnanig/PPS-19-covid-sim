@@ -63,10 +63,10 @@ class LineTest {
 
   var people: Seq[Person] = (0 to 40).map(i => TestPerson(i, false))
 
-  val commuters: List[Single] = (1 to 40).map(s => if (s % 2 == 0) Single(people(s))
+  val commuters: Seq[Single] = (1 to 40).map(s => if (s % 2 == 0) Single(people(s))
                                                    else Single(people(s))).toList
 
-  val groupCommuters: List[Group] = (1 to 39 by 2).map(s => Multiple(people(s),
+  val groupCommuters: Seq[Group] = (1 to 39 by 2).map(s => Multiple(people(s),
                                                        Set(people(s), people(s + 1)))).toList
 
   println(groupCommuters)
@@ -184,7 +184,7 @@ class LineTest {
     train.get.propagateVirus(time, place)
   }
 
-  def enterPeopleFromList(from: Int, until: Int, listPeople: List[Group], line: Line): Unit = {
+  def enterPeopleFromList(from: Int, until: Int, listPeople: Seq[Group], line: Line): Unit = {
     listPeople.slice(from, until).foreach(p =>
       line.tryUse(p, time))
   }

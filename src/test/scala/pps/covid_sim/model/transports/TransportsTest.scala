@@ -45,9 +45,9 @@ class TransportsTest {
 
   var people: Seq[Person] = (0 to 40).map(i => TestPerson(i, false))
 
-  val commuters: List[Single] = (1 to 40).map(i => Single(people(i))).toList
+  val commuters: Seq[Single] = (1 to 40).map(i => Single(people(i))).toList
 
-  val groupCommuters: List[Group] = (1 to 39 by 2).map(s => Multiple(people(s),
+  val groupCommuters: Seq[Group] = (1 to 39 by 2).map(s => Multiple(people(s),
                                                        Set(people(s), people(s + 1)))).toList
 
   val marco: Single = Single(TestPerson(41, false))
@@ -253,7 +253,7 @@ class TransportsTest {
     assertEquals(2, train.numCurrentPeople)
   }
 
-  def enterPeopleFromList(from: Int, until: Int, listPeople: List[Group], means: Transport ): Unit = {
+  def enterPeopleFromList(from: Int, until: Int, listPeople: Seq[Group], means: Transport ): Unit = {
     listPeople.slice(from, until) foreach(p => means.enter(p, time))
   }
 

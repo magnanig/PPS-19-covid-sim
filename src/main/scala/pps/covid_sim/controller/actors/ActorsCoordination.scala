@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit
 import akka.actor.{Actor, ActorRef, ActorSystem, Props, ReceiveTimeout}
 import pps.covid_sim.controller.ControllerImpl
 import pps.covid_sim.controller.actors.CoordinatorCommunication.{SetProvince, SetRegion}
-import pps.covid_sim.model.creation.PlacesContainer.getPlaces
+import pps.covid_sim.model.container.PlacesContainer.getPlaces
 import pps.covid_sim.model.people.People.{Student, Worker}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.people.actors.Communication._

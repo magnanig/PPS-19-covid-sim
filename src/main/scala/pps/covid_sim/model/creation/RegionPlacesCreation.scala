@@ -1,5 +1,6 @@
 package pps.covid_sim.model.creation
 
+import pps.covid_sim.model.container.{PeopleContainer, PlacesContainer}
 import pps.covid_sim.model.creation.freetime.FreeTimePlacesCreation
 import pps.covid_sim.model.creation.hobbies.HobbyPlacesCreation
 import pps.covid_sim.model.creation.work.WorkPlacesCreation
@@ -16,9 +17,7 @@ import pps.covid_sim.model.people.People.{Student, Teacher, Worker}
 
 object RegionPlacesCreation {
 
-  private var places: List[Place] = List()
-
-  def create(region: Region): Unit = { if (places.isEmpty) places = new RegionPlacesCreation(region).create() }
+  def create(region: Region): Unit = { new RegionPlacesCreation(region).create() }
 
 }
 
@@ -27,14 +26,13 @@ private class RegionPlacesCreation(region: Region) {
   private val _people: List[Person] = RegionPeopleCreation.create(region)
   private val random: Random = new Random()
 
-
   def create(): List[Place] = {
     PeopleContainer.add(_people)
     val places = _people
       .groupBy(person => person.residence)
       .flatMap(entry => createEntityFor(entry))
       .toList
-    RegionPeopleCreation.checkAssignedWork()
+    //PeopleContainer.checkAssignedWork()
     places
   }
 

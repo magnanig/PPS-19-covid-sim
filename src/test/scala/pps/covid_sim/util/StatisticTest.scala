@@ -14,20 +14,37 @@ import pps.covid_sim.model.places.samples.Cities
 class StatisticTest {
 
   @Test
+  def testRandomBirthDate(): Unit = {
+    var ages: List[Int] = List()
+    (0 until 1000).foreach( _ => {
+      val currentTime: Long = System.currentTimeMillis()
+      val birthDay: Calendar = Calendar.getInstance()
+      val now: Calendar = Calendar.getInstance()
+      birthDay.setTimeInMillis(RandomGeneration.randomBirthDate(0, 100).getTimeInMillis)
+      now.setTimeInMillis(currentTime)
+
+      //effective years
+      ages = now.get(Calendar.YEAR) - birthDay.get(Calendar.YEAR) :: ages
+    })
+
+    println("Min: " + ages.min + "; Max: " + ages.max)
+  }
+
+  @Test
   def testMiddleAgeCurrentPositive(): Unit = {
     var age: List[Int] = List()
     var people: List[Person] = List()
 
     // these people must participate in the calculation of the average age as they are currently positive
     (1 to 10000).foreach(_ => {
-      val date: Calendar = RandomGeneration.randomBirthDate()
+      val date: Calendar = RandomGeneration.randomBirthDate(0, 100)
       people = PersonTmp(date, Cities.CERVIA, infected = true) :: people
       age = (Calendar.getInstance() -- date) :: age
     })
 
     // add another 100 non-positive people, who must not participate in the calculation of the average age
     (1 to 100).foreach(_ => {
-      people = PersonTmp(RandomGeneration.randomBirthDate(), Cities.CERVIA) :: people
+      people = PersonTmp(RandomGeneration.randomBirthDate(0, 100), Cities.CERVIA) :: people
     })
 
     assertEquals(Math.round((age.sum.toDouble / 10000.0).toFloat), Statistic(people).middleAgeCurrentPositive())

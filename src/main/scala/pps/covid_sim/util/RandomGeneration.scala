@@ -61,10 +61,9 @@ object RandomGeneration {
    * @param random  an optional Random object to be used to generate a random number
    * @return        a random date of birth between 0 and 100 years
    */
-  def randomBirthDate(random: Random = new Random()): Calendar = {
-    val maxAge: Int = 100
+  def randomBirthDate(min: Int, max: Int, random: Random = new Random()): Calendar = {
     val birthDate: Calendar = Calendar.getInstance()
-    birthDate.add(Calendar.DAY_OF_MONTH, -randomIntInRange(0, (maxAge + 1) * CreationParameters.daysInYear, random))
+    birthDate.add(Calendar.DAY_OF_MONTH, -randomIntInRange(min, max * CreationParameters.daysInYear, random))
     birthDate
   }
 
