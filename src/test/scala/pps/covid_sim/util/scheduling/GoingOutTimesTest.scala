@@ -58,9 +58,10 @@ class GoingOutTimesTest {
                                   daysInterval: DaysInterval,
                                   expectedProbability: Double)
                                   (implicit goingOutTimes: GoingOutTimes = maxGoingOutTimes): Unit = {
+    val tolerance = 0.001
     for(month <- monthsInterval; day <- daysInterval)
       assertEquals(s"Failed $monthsInterval, $daysInterval (expected times: $expectedProbability)",
-        expectedProbability, goingOutTimes.probability(month, day))
+        expectedProbability, goingOutTimes.probability(month, day), tolerance)
   }
 
 }

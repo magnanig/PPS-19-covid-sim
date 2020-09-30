@@ -1,11 +1,11 @@
 package pps.covid_sim.model.creation
 
-import org.junit.Test
 import org.junit.Assert.assertEquals
+import org.junit.Test
 import pps.covid_sim.model.container.PlacesContainer
 import pps.covid_sim.model.creation.test.CitiesObject
 import pps.covid_sim.model.places.FreeTime.{Bar, Restaurant}
-import pps.covid_sim.model.places.samples.{Cities, Places, Provinces}
+import pps.covid_sim.model.samples.{Cities, Places, Provinces}
 import pps.covid_sim.util.scheduling.TimeTable
 import pps.covid_sim.util.time.Time.Day
 

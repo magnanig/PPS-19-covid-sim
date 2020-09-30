@@ -4,7 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import pps.covid_sim.model.people.People.{Student, Teacher}
 import pps.covid_sim.model.places.Education.{Classroom, School}
-import pps.covid_sim.model.places.samples.Cities
+import pps.covid_sim.model.samples.Cities
 import pps.covid_sim.util.scheduling.Planning.{StudentPlan, WorkPlan}
 import pps.covid_sim.util.scheduling.TimeTable
 import pps.covid_sim.util.time.Time.{Day, ScalaCalendar}

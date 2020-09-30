@@ -1,14 +1,14 @@
 package pps.covid_sim.model.places
 
-import org.junit.Test
 import org.junit.Assert.assertEquals
+import org.junit.Test
 import pps.covid_sim.model.people.People.{Student, Unemployed, Worker}
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.FreeTime.Restaurant
 import pps.covid_sim.model.places.arranging.Tables.TablesArrangement
 import pps.covid_sim.model.places.rooms.TablesRoom
-import pps.covid_sim.model.places.samples.Cities
+import pps.covid_sim.model.samples.Cities
 import pps.covid_sim.util.scheduling.TimeTable
 import pps.covid_sim.util.time.Time.{Day, ScalaCalendar}
 import pps.covid_sim.util.time.TimeIntervalsImplicits._
