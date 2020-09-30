@@ -1,21 +1,47 @@
 package pps.covid_sim.view
-
-import java.io.File
-import java.text.NumberFormat
-
-import javax.swing.text.NumberFormatter
-
-import scala.swing.ListView._
-import scala.swing.Swing._
+import scala.swing.BorderPanel.Position.Center
+import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}
 import scala.swing.TabbedPane.Page
-import scala.swing.{TextField, _}
-import scala.swing.event._
+import scala.swing.event.{ButtonClicked, EditDone, SelectionChanged}
+import scala.swing.{Action, BorderPanel, BoxPanel, Button, ButtonGroup, CheckBox, CheckMenuItem, FlowPanel, Frame, Label, ListView, MainFrame, Menu, MenuBar, MenuItem, Orientation, PasswordField, RadioButton, RadioMenuItem, Separator, SplitPane, Swing, TabbedPane, TextField}
 
-object UserInterface extends SimpleSwingApplication {
+class GuiImp extends View {
+  override val tabs: TabbedPane = new TabbedPane {
+    import TabbedPane._
+    //aggiunta dei diversi grafici
+    pages += new Page("Waiting" ,
+      new BoxPanel(Orientation.Vertical) {
+        contents += new Label("In attesa della simulazione..")
+      })
+    pages += new Page("Split Panes" ,
+      new SplitPane(Orientation.Vertical, new Button("Hello"), new Button("World")) {
+        continuousLayout = true
+      })
 
+    val password: FlowPanel = new FlowPanel {
+      contents += new Label("Enter your secret password here ")
+      val field = new PasswordField(10)
+      contents += field
+      val label = new Label(field.text)
+      contents += label
+      listenTo(field)
+      reactions += {
+        case EditDone(`field`) => label.text = field.password.mkString
+      }
+    }
 
+    pages += new Page("Password", password, "Password tooltip")
+  }
 
-  def top: Frame = new MainFrame {
+  override def insertTab(page: TabbedPane.Page): Unit = ???
+
+  override def substituteTabe(page: TabbedPane.Page): Unit = ???
+
+  override def remuveTab(title: String): Unit = ???
+
+  override def clearTabs(): Unit = ???
+
+  override def top: Frame = new MainFrame {
     title = "PPS-19-Covid-Sim"
 
     //TextBoxes
@@ -78,56 +104,8 @@ object UserInterface extends SimpleSwingApplication {
       contents += new Menu("Empty Menu")
     }
 
-    /*
-     * The root component in this frame is a panel with a border layout.
-     */
     contents = new BorderPanel {
       import BorderPanel.Position._
-
-      val tabs: TabbedPane = new TabbedPane {
-        import TabbedPane._
-
-        //aggiunta dei diversi grafici
-        pages += new Page("Graph 1" ,
-          new BoxPanel(Orientation.Vertical) {
-            contents += new Label("In attesa della simulazione..")
-          })
-        pages += new Page("Graph 2" ,
-          new BoxPanel(Orientation.Vertical) {
-            contents += new Label("In attesa della simulazione..")
-          })
-        pages += new Page("Graph 3" ,
-          new BoxPanel(Orientation.Vertical) {
-            contents += new Label("In attesa della simulazione..")
-          })
-
-        /*pages += new Page("Buttons"     , btnPanel.buttons)
-        pages += new Page("GridBag"     , btnPanel.buttons)
-        pages += new Page("Converter"   , btnPanel.buttons)
-        pages += new Page("Tables"      , btnPanel.buttons)
-        pages += new Page("Dialogs"     , btnPanel.buttons)
-        pages += new Page("Combo Boxes" , btnPanel.buttons)*/
-        pages += new Page("Split Panes" ,
-          new SplitPane(Orientation.Vertical, new Button("Hello"), new Button("World")) {
-            continuousLayout = true
-          })
-
-        val password: FlowPanel = new FlowPanel {
-          contents += new Label("Enter your secret password here ")
-          val field = new PasswordField(10)
-          contents += field
-          val label = new Label(field.text)
-          contents += label
-          listenTo(field)
-          reactions += {
-            case EditDone(`field`) => label.text = field.password.mkString
-          }
-        }
-
-        pages += new Page("Password", password, "Password tooltip")
-        //pages += new Page("Painting", btnPanel.buttons )
-        //pages += new Page("Text Editor", TextEditor.ui)
-      }
 
       val list: ListView[TabbedPane.Page] = new ListView(tabs.pages) {
         selectIndices(0)
@@ -261,22 +239,6 @@ object UserInterface extends SimpleSwingApplication {
             case EditDone(`peopleSecureDistanceField`) => checkPercent(peopleSecureDistanceField)
           }
         }
-        /*contents += new BorderPanel {
-          add(new Label("<html><p>percentuale di persone che rispettano le distanze di sicurezza:</p></html>"), BorderPanel.Position.West)
-          add(new TextField(3), BorderPanel.Position.Center)
-          //add(new TextField(3), BorderPanel.Position.West)
-        }*/
-        /*contents +=  new BorderPanel {
-          add(new Label("%"), BorderPanel.Position.West)
-        }*/
-
-        /*
-        * - scelta di quali locali e strutture chiudere
-        * OpenPlace : beach square park
-        * FreeTimePlace : Resturant pub bar disco openDisco
-        * ClosedWorkPlace : Classrooms office shop
-        * Hobby : Field Gym
-        */
         contents += new BoxPanel(Orientation.Vertical) {
           border = CompoundBorder(TitledBorder(EtchedBorder, "Quali locali e strutture chiudere"), EmptyBorder(5, 5, 5, 10))
           contents ++= Seq(beachCheckbox,squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox, barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox,companyCheckbox,factoryCheckbox , shopCheckbox, fieldCheckbox,gymCheckbox)
@@ -305,36 +267,6 @@ object UserInterface extends SimpleSwingApplication {
             }
           }
         }
-        /*contents += new BoxPanel(Orientation.Vertical) {
-          border = CompoundBorder(TitledBorder(EtchedBorder, "Radio Buttons"), EmptyBorder(5, 5, 5, 10))
-          val a = new RadioButton("Radio1")
-          val b = new RadioButton("Radio2")
-          val c = new RadioButton("Radio3")
-          val mutex = new ButtonGroup(a, b, c)
-          contents ++= mutex.buttons
-        }*/
-        /*contents += new BoxPanel(Orientation.Vertical) {
-          border = CompoundBorder(TitledBorder(EtchedBorder, "Check Boxes"), EmptyBorder(5, 5, 5, 10))
-
-          val checkbox1 = new CheckBox("checkbox1")
-          val checkbox2 = new CheckBox("checkbox2")
-          val checkbox3 = new CheckBox("checkbox3")
-
-          val paintLabels = new CheckBox("Paint Labels")
-          val paintTicks = new CheckBox("Paint Ticks")
-          val snapTicks = new CheckBox("Snap To Ticks")
-          val live = new CheckBox("Live")
-          contents ++= Seq(checkbox1,checkbox2,checkbox3,paintLabels, paintTicks, snapTicks)
-          listenTo(paintLabels, paintTicks, snapTicks)
-          reactions += {
-            case ButtonClicked(`paintLabels`) =>
-              println("paintLabels clicked")
-            case ButtonClicked(`paintTicks`)=>
-              println("paintTicks clicked")
-            case ButtonClicked(`snapTicks`) =>
-              println("snapTicks clicked")
-          }
-        }*/
       }
 
       val center: SplitPane = new SplitPane(Orientation.Vertical, leftPanel, tabs) {//qui ci metteremo i grafici nelle tabs
@@ -343,9 +275,6 @@ object UserInterface extends SimpleSwingApplication {
       }
       layout(center) = Center
 
-      /*
-       * Establish connection between the tab pane, slider, and list view.
-       */
       listenTo(tabs.selection)
       listenTo(list.selection)
       reactions += {
@@ -359,7 +288,7 @@ object UserInterface extends SimpleSwingApplication {
   }
 }
 
-/*object btnPanel {
+object btnPanel {
   val buttons: FlowPanel = new FlowPanel {
     border = Swing.EmptyBorder(5, 5, 5, 5)
 
@@ -381,7 +310,7 @@ object UserInterface extends SimpleSwingApplication {
       listenTo(paintLabels, paintTicks, snapTicks)
       reactions += {
         case ButtonClicked(`paintLabels`) =>
-           println("paintLabels clicked")
+          println("paintLabels clicked")
         case ButtonClicked(`paintTicks`)=>
           println("paintTicks clicked")
         case ButtonClicked(`snapTicks`) =>
@@ -389,7 +318,4 @@ object UserInterface extends SimpleSwingApplication {
       }
     }
   }
-}*/
-
-
-
+}

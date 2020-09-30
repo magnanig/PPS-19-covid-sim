@@ -15,6 +15,7 @@ import pps.covid_sim.model.places.Locality
 import pps.covid_sim.model.places.Locality.{Province, Region}
 import pps.covid_sim.model.places.samples.Provinces
 import pps.covid_sim.model.simulation.Simulation
+import pps.covid_sim.view.GuiImp
 //import pps.covid_sim.people.actors.Communication.{Acknowledge, Tick}
 import pps.covid_sim.util.time.{DatesInterval, HoursInterval, Time}
 import pps.covid_sim.util.time.DatesInterval
@@ -34,6 +35,12 @@ class CoordinationTest {
 
     val interval = new DatesInterval(start,end)
     ActorsCoordination.create(c,interval)
+  }
+
+  @Test
+  def gui(): Unit = {
+    val g = new GuiImp
+    g.top.visible = true
   }
 
   /*@Test

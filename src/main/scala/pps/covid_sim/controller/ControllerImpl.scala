@@ -16,7 +16,9 @@ class ControllerImpl extends Controller {
 
   override def tick(time: Calendar): Unit = ???
 
-  override def simulationEnded(simulation: Simulation): Unit = {}//TODO
+  override def simulationEnded(simulation: Simulation): Unit = {//TODO
+    //chiamare un metodo sulla gui che gli dica di mostrare i grafici e glieli passo come argomenti: i grafici saranno di tipo page che contine titolo page(nome del grafico) e panel del grafico
+  }
 
   override def startLockdown(time: Calendar, infections: Int): Unit = ???
 
