@@ -5,7 +5,7 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import scala.collection.parallel.ParSet
 import pps.covid_sim.controller.ControllerImpl
 import pps.covid_sim.util.time.DatesInterval
-import pps.covid_sim.controller.actors.ActorsCoordination.{Init, Stop, system}
+import pps.covid_sim.controller.actors.ActorsCoordination.{Init, system}
 
 trait Coordinator {
 
