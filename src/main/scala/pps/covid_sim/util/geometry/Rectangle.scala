@@ -79,7 +79,7 @@ object Rectangle {
   }
 
   /**
-   *
+   * Calculates the number of obstacles to be placed in the specified axis, in order to fill the place.
    * @param dimension       the size of the axis on which to calculate the filling of the obstacles
    * @param fillFactor      the fill factor to be applied to the place
    * @return                the number of obstacles that can be inserted along this axis to make the filling
