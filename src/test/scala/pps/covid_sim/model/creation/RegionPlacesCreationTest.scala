@@ -32,7 +32,6 @@ class RegionPlacesCreationTest {
    */
   @Test
   def testSchoolCreation(): Unit = {
-
     val students: List[Student] = PeopleContainer.getPeople.filter(_.residence == Cities.AOSTA).filter(_.getClass == classOf[Student]).map(_.asInstanceOf[Student])
     val teachers: List[Teacher] = PeopleContainer.getPeople.filter(_.residence == Cities.AOSTA).filter(_.getClass == classOf[Teacher]).map(_.asInstanceOf[Teacher])
 
@@ -41,7 +40,6 @@ class RegionPlacesCreationTest {
 
     assertEquals(students.size, studentsAssigned)
     assertEquals(teachers.size, teachersAssigned)
-
   }
 
   /**
