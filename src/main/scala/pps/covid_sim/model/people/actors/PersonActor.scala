@@ -6,15 +6,15 @@ import akka.actor.{Actor, ActorRef}
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.container.PlacesContainer
-import PlacesContainer.placesInCityOrElseInProvince
+import pps.covid_sim.model.container.PlacesContainer.placesInCityOrElseInProvince
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.people.actors.Communication._
 import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.OpenPlaces.OpenPlace
 import pps.covid_sim.model.places.Shops.SuperMarket
-import pps.covid_sim.model.places.samples.Places
 import pps.covid_sim.model.places.{Habitation, LimitedHourAccess, Place}
+import pps.covid_sim.model.samples.Places
 import pps.covid_sim.parameters.CovidInfectionParameters.{maxMaskProbability, minMaskProbability, notRespectingIsolationMaxProbability}
 import pps.covid_sim.parameters.GoingOutParameters
 import pps.covid_sim.parameters.GoingOutParameters.maxNumShopPerWeek

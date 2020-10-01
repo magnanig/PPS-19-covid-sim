@@ -46,6 +46,6 @@ case class GymRoom(override val capacity: Int) extends Room with MovementSpace {
   override val mask: Option[Mask] = Some(Masks.Surgical)
 
   override protected val pathSampling: Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]] =
-    MovementFunctions.linearPath(dimension, obstacles, Speed.SLOW, 2)
+    MovementFunctions.linearPathWithWallFollowing(dimension, obstacles, Speed.SLOW, 2)
 
 }

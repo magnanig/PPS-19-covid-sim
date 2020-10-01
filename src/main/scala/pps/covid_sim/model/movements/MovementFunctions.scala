@@ -2,8 +2,7 @@ package pps.covid_sim.model.movements
 
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.util.geometry.Coordinates.randomClose
-import pps.covid_sim.util.geometry.{Coordinates, Dimension, Rectangle, Speed}
+import pps.covid_sim.util.geometry.{Coordinates, Dimension, Direction, Rectangle, Speed}
 
 import scala.annotation.tailrec
 import scala.collection.mutable
@@ -12,6 +11,7 @@ import scala.collection.mutable.ArrayBuffer
 object MovementFunctions {
 
   val samplesPerHour = 60
+  val obstacleCorners = 4
 
   /**
    * Movement function that simulates a random path, whose only purpose is to avoid obstacles within the place.
@@ -21,7 +21,7 @@ object MovementFunctions {
    * @param obstacles   the obstacles within the place
    * @param speed       the speed of the people walking in the place
    * @param partitions  the partitioning of people
-   * @return            a Set
+   * @return            a Set containing the sampling of the path for each person of each partition
    */
   def randomPath(dimension: Dimension,
                  obstacles: Set[Rectangle],
@@ -30,7 +30,7 @@ object MovementFunctions {
     groups => {
       @tailrec
       def _nextPosition(leader: Person): Coordinates = {
-        val nextPos: Coordinates = randomClose(dimension, leader.position, speed)
+        val nextPos: Coordinates = Coordinates.randomClose(dimension, leader.position, speed)
         if (obstacles.exists(r => nextPos.inside(r)) || nextPos.outOfDimension(dimension)) {
           _nextPosition(leader)
         } else {
@@ -52,22 +52,76 @@ object MovementFunctions {
                  obstacles: Set[Rectangle],
                  speed: Speed = Speed.MIDDLE,
                  partitions: Int): Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]] = {
-    // TODO: implement something like wall following (see https://en.wikipedia.org/wiki/Maze_solving_algorithm) and/or
-    //  https://link.springer.com/chapter/10.1007/978-3-319-62533-1_7
     groups => {
-      // TODO
       ???
     }
   }
 
+  /**
+   * Movement function that simulates a linear path, whose purpose is to follow a quite regular path
+   * following the obstacles inside the place.
+   * This function performs a path sampling, providing the coordinates of the path followed by each person
+   * in the place in a given time slot.
+   * @param dimension   the dimension of the place
+   * @param obstacles   the obstacles within the place
+   * @param speed       the speed of the people walking in the place
+   * @param partitions  the partitioning of people
+   * @return            a Set containing the sampling of the path for each person of each partition
+   */
   def linearPathWithWallFollowing(dimension: Dimension,
-                 obstacles: Set[Rectangle],
-                 speed: Speed = Speed.MIDDLE): Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]] = {
-    // TODO: implement something like wall following (see https://en.wikipedia.org/wiki/Maze_solving_algorithm) and/or
-    //  https://link.springer.com/chapter/10.1007/978-3-319-62533-1_7
+                                  obstacles: Set[Rectangle],
+                                  speed: Speed = Speed.MIDDLE,
+                                  partitions: Int): Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]] = {
     groups => {
-      // TODO
-      ???
+      val obstaclesList = obstacles.toList
+      var direction: Direction = Direction.randomDirection()
+      var nextPos: Coordinates = (0, 0)
+      var nextTarget: Option[Rectangle] = None
+      var targetReached: Boolean = false
+      var turns: Int = 0
+
+      @tailrec
+      def _nextPosition(leader: Person): Coordinates = {
+        if (!targetReached) {
+          nextPos = Coordinates.directionClose(leader.position, speed, direction) // maintaining the previous direction
+        } else { // target has been reached
+          if (turns < obstacleCorners) {
+            nextPos = Coordinates.followBorder(leader.position, speed, nextTarget.get)
+            if (nextPos.onCorner(nextTarget.get)) turns += 1 // increase turns when a corner is reached
+          } else {
+            direction = if (leader.position == (nextTarget.get.topLeftCorner.x,
+                                                nextTarget.get.bottomRightCorner.y)) Direction.SOUTH_WEST
+                        else Direction.NORTH_EAST
+            nextPos = Coordinates.directionClose(leader.position, speed, direction)
+            targetReached = false
+            turns = 0
+          }
+        }
+
+        if (nextPos.outOfDimension(dimension)) {
+          direction = Direction.randomDirection()
+          _nextPosition(leader)
+        } else {
+          if (obstaclesList.exists(r => nextPos.inside(r))) {
+            obstaclesList.indices.foreach(i => if (nextPos.inside(obstaclesList(i))) nextTarget = Some(obstaclesList(i)))
+            nextPos = Coordinates.translateOnBorder(nextPos, direction, nextTarget.get)
+            targetReached = true
+          }
+          leader.position = nextPos
+          leader.position
+        }
+      }
+
+      val partitioning = generatePartitions(groups, partitions)
+      partitioning.map(slot => slot.map(slotMember => slotMember.map(pair => {
+        direction = Direction.randomDirection()
+        targetReached = false
+        nextTarget = None
+        turns = 0
+        (pair._1, (0 until samplesPerHour).map(_ => pair._2 += _nextPosition(pair._1.leader)))
+      })))
+
+      partitioning
     }
   }
 

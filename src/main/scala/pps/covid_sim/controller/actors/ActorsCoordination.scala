@@ -19,6 +19,7 @@ import pps.covid_sim.util.Statistic
 import pps.covid_sim.util.time.DatesInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
+import scala.collection.parallel.ParSeq
 import scala.concurrent.duration.Duration
 
 object ActorsCoordination {
@@ -56,7 +57,7 @@ object ActorsCoordination {
       case Init(c, di) => controller = c
         this.createActors(c.regions)
         simulationInterval = di
-        simulation = Simulation(c.people)
+        //simulation = Simulation(c.people)
         currentTime = di.from
         this.nextAvailableLockdown = di.from
         println("Started")
@@ -74,7 +75,7 @@ object ActorsCoordination {
     }
 
     private def endSimulation(): Unit = {
-      simulation.close()
+      //simulation.close()
       controller.simulationEnded(simulation)
       _subordinatedActors.foreach(s => s ! Stop())//TODO stoppare prima le persone poi i province e poi le region
       context.stop(self)
@@ -83,7 +84,7 @@ object ActorsCoordination {
     private def tick(): Unit = {
       if (currentTime.hour == 0) {
         currentInfections = Statistic(controller.people).numCurrentPositive()
-        simulation.updateInfectedCount(currentTime, currentInfections)
+        //simulation.updateInfectedCount(currentTime, currentInfections)
         println(s"Infection on ${currentTime.getTime}: $currentInfections")
         if (currentInfections > localMaxInfections) localMaxInfections = currentInfections
       }
@@ -187,7 +188,7 @@ object ActorsCoordination {
    */
   class ProvinceCoordinator extends Actor with Coordinator {
     implicit protected var _province: Province = _ // will be initialized later when the SetProvince message will be received
-    private var _myPeople: Seq[Person] = _ // Will be initialized later when the SetProvince message will be received
+    private var _myPeople: ParSeq[Person] = _ // Will be initialized later when the SetProvince message will be received
     private var _upperCoordinator: RegionCoordinator = _ // Will be initialized later when the SetProvince message will be received
     override def receive: Receive = {
       case SetProvince(province, upperCoordinator) =>
@@ -204,7 +205,7 @@ object ActorsCoordination {
       case msg => println(s"Not expected [Province]: $msg")
     }
 
-    private def createActors(people: Seq[Person]): Unit = {
+    private def createActors(people: ParSeq[Person]): Unit = {
       val numPerson = people.size //TODO farlo in base ai parametri di simulazione
       var numWorker = 0
       val peopleActors = people.par.map {

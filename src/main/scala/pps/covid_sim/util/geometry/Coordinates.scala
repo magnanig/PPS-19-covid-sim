@@ -23,11 +23,21 @@ case class Coordinates(x: Double, y: Double) extends GeometryEntity {
     y <= maxDistance || (y >= dimension.length - maxDistance))
 
   /**
+   * Check whether current point is on a corner of the specified rectangle.
+   * @param rectangle
+   * @return
+   */
+  def onCorner(rectangle: Rectangle): Boolean = (x == rectangle.topLeftCorner.x && y == rectangle.topLeftCorner.y) ||
+    (x == rectangle.topLeftCorner.x && y == rectangle.bottomRightCorner.y) ||
+    (x == rectangle.bottomRightCorner.x && y == rectangle.bottomRightCorner.y) ||
+    (x == rectangle.bottomRightCorner.x && y == rectangle.topLeftCorner.y)
+
+  /**
    * Check whether current point is out of the specified dimension.
    * @param dimension     the desired dimension
    * @return
    */
-  def outOfDimension(dimension: Dimension): Boolean = x <= 0 || y <= 0 || x > dimension.width || y > dimension.length
+  def outOfDimension(dimension: Dimension): Boolean = x < 0 || y < 0 || x > dimension.width || y > dimension.length
 
   /**
    * Check whether current point is inside the specified rectangle.
@@ -72,7 +82,7 @@ object Coordinates {
    * Generate a random point inside the specified dimension, near the actual point.
    * @param dimension   the dimension inside which generate a random point
    * @param point       the starting point from which to calculate the new random point
-   * @param speed       the speed of the moving person
+   * @param speed       the speed of the moving point
    * @return            a random point inside dimension, close to the starting point
    */
   def randomClose(dimension: Dimension, point: Coordinates, speed: Speed): Coordinates =
@@ -89,13 +99,12 @@ object Coordinates {
 
   /**
    * Generate a point inside the specified dimension, near the actual point, towards the specified direction.
-   * @param dimension   the dimension inside which the close point
    * @param point       the starting point from which to calculate the new close point
-   * @param speed       the speed of the moving person
-   * @param direction   the direction towards which the person moved
-   * @return
+   * @param speed       the speed of the moving point
+   * @param direction   the direction towards which the point moved
+   * @return            a point inside the specified dimension, close to the actual point, towards the specified direction
    */
-  def directionClose(dimension: Dimension, point: Coordinates, speed: Speed, direction: Direction): Coordinates =
+  def directionClose(point: Coordinates, speed: Speed, direction: Direction): Coordinates =
     direction match {
       case Direction.NORTH => (point.x + (Direction.NORTH.deltaX * speed.delta), point.y + (Direction.NORTH.deltaY * speed.delta))
       case Direction.SOUTH => (point.x + (Direction.SOUTH.deltaX * speed.delta), point.y + (Direction.SOUTH.deltaY * speed.delta))
@@ -104,6 +113,68 @@ object Coordinates {
       case Direction.NORTH_EAST => (point.x + (Direction.NORTH_EAST.deltaX * speed.delta), point.y + (Direction.NORTH_EAST.deltaY * speed.delta))
       case Direction.SOUTH_EAST => (point.x + (Direction.SOUTH_EAST.deltaX * speed.delta), point.y + (Direction.SOUTH_EAST.deltaY * speed.delta))
       case Direction.NORTH_WEST => (point.x + (Direction.NORTH_WEST.deltaX * speed.delta), point.y + (Direction.NORTH_WEST.deltaY * speed.delta))
-      case _ => (point.x + (Direction.SOUTH_WEST.deltaX * speed.delta), point.y + (Direction.SOUTH_WEST.deltaY * speed.delta))
+      case Direction.SOUTH_WEST => (point.x + (Direction.SOUTH_WEST.deltaX * speed.delta), point.y + (Direction.SOUTH_WEST.deltaY * speed.delta))
     }
+
+  /**
+   * Translate the point on the border of the specified rectangle, towards the direction the point comes from.
+   * @param point       the starting point from which to calculate the translated point
+   * @param direction   the direction towards which the point moved
+   * @param rectangle   the rectangle on whose border to translate the point
+   * @return            the translated point
+   */
+  def translateOnBorder(point: Coordinates, direction: Direction, rectangle: Rectangle): Coordinates =
+    direction match {
+      case Direction.NORTH => (point.x, rectangle.bottomRightCorner.y)
+      case Direction.SOUTH => (point.x, rectangle.topLeftCorner.y)
+      case Direction.EAST => (rectangle.topLeftCorner.x, point.y)
+      case Direction.WEST => (rectangle.bottomRightCorner.x, point.y)
+      case Direction.NORTH_EAST => (rectangle.topLeftCorner.x, rectangle.bottomRightCorner.y)
+      case Direction.SOUTH_EAST => (rectangle.topLeftCorner.x, rectangle.topLeftCorner.y)
+      case Direction.NORTH_WEST => (rectangle.bottomRightCorner.x, rectangle.bottomRightCorner.y)
+      case Direction.SOUTH_WEST => (rectangle.bottomRightCorner.x, rectangle.topLeftCorner.y)
+  }
+
+  /**
+   * Generate a point near the actual point, towards the specified direction, following the rectangle border clockwise.
+   * @param point       the starting point from which to calculate the new close point
+   * @param rectangle   the rectangle on whose border to calculate the new point
+   * @return            a point close to the actual point, towards the specified direction,
+   *                    following the rectangle border clockwise
+   */
+  def followBorder(point: Coordinates, speed: Speed, rectangle: Rectangle): Coordinates = point match {
+    case Coordinates(rectangle.topLeftCorner.x, rectangle.topLeftCorner.y) =>
+      val nextPoint = directionClose(point, speed, Direction.SOUTH)
+      if (nextPoint.y > rectangle.bottomRightCorner.y) Coordinates(rectangle.topLeftCorner.x, rectangle.bottomRightCorner.y)
+      else nextPoint
+    case Coordinates(rectangle.topLeftCorner.x, rectangle.bottomRightCorner.y) =>
+      val nextPoint = directionClose(point, speed, Direction.EAST)
+      if (nextPoint.x > rectangle.bottomRightCorner.x) Coordinates(rectangle.bottomRightCorner.x, rectangle.bottomRightCorner.y)
+      else nextPoint
+    case Coordinates(rectangle.bottomRightCorner.x, rectangle.bottomRightCorner.y) =>
+      val nextPoint = directionClose(point, speed, Direction.NORTH)
+      if (nextPoint.y < rectangle.topLeftCorner.y) Coordinates(rectangle.bottomRightCorner.x, rectangle.topLeftCorner.y)
+      else nextPoint
+    case Coordinates(rectangle.bottomRightCorner.x, rectangle.topLeftCorner.y) =>
+      val nextPoint = directionClose(point, speed, Direction.WEST)
+      if (nextPoint.x < rectangle.topLeftCorner.x) Coordinates(rectangle.topLeftCorner.x, rectangle.topLeftCorner.y)
+      else nextPoint
+    case Coordinates(rectangle.topLeftCorner.x, _) =>
+      val nextPoint = directionClose(point, speed, Direction.SOUTH)
+      if (nextPoint.y > rectangle.bottomRightCorner.y) Coordinates(rectangle.topLeftCorner.x, rectangle.bottomRightCorner.y)
+      else nextPoint
+    case Coordinates(_, rectangle.bottomRightCorner.y) =>
+      val nextPoint = directionClose(point, speed, Direction.EAST)
+      if (nextPoint.x > rectangle.bottomRightCorner.x) Coordinates(rectangle.bottomRightCorner.x, rectangle.bottomRightCorner.y)
+      else nextPoint
+    case Coordinates(rectangle.bottomRightCorner.x, _) =>
+      val nextPoint = directionClose(point, speed, Direction.NORTH)
+      if (nextPoint.y < rectangle.topLeftCorner.y) Coordinates(rectangle.bottomRightCorner.x, rectangle.topLeftCorner.y)
+      else nextPoint
+    case Coordinates(_, rectangle.topLeftCorner.y) =>
+      val nextPoint = directionClose(point, speed, Direction.WEST)
+      if (nextPoint.x < rectangle.topLeftCorner.x) Coordinates(rectangle.topLeftCorner.x, rectangle.topLeftCorner.y)
+      else nextPoint
+  }
+
 }

@@ -40,7 +40,7 @@ trait MovementSpace extends DelimitedSpace {
       val sampling = pathSampling(currentGroups)
       // Assigns the last coordinate of the sampling to the people
       sampling.foreach(timeSlot => timeSlot.foreach(map => map.foreach(path => path._1.people
-        .foreach(person => person.position = path._2.last)))) // !!!!!!!!
+        .foreach(person => person.position = path._2.last))))
       // If two people inside the same time slot have not kept the safety distance, the contagion attempt occurs
       sampling.foreach(timeSlot => timeSlot.foreach(map =>
         // Attempt to avoid subsequent computations if there are no infected people within the same time slot

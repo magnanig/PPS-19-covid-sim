@@ -2,26 +2,23 @@ package pps.covid_sim.controller.Coordination
 
 import java.util.Calendar
 
-import akka.actor.{ActorRef, ActorSystem, Props}
-import akka.testkit.{TestActorRef, TestKit}
-import org.junit.Assert._
 import org.junit.Test
 import pps.covid_sim.controller.ControllerImpl
 import pps.covid_sim.controller.actors.ActorsCoordination
-import pps.covid_sim.controller.actors.ActorsCoordination.{ActorsCoordinator, Init, RegionCoordinator, actorsCoordinator, system}
 import pps.covid_sim.model.people.People.Student
 import pps.covid_sim.model.people.Person
+
+import scala.collection.parallel.ParSeq
 import pps.covid_sim.model.places.{Habitation, Locality}
-import pps.covid_sim.model.places.Locality.{City, Province, Region}
-import pps.covid_sim.model.places.samples.Provinces
+import pps.covid_sim.model.places.Locality.{City}
+import pps.covid_sim.model.places.Locality
+import pps.covid_sim.model.places.Locality.{Province, Region}
+import pps.covid_sim.model.samples.Provinces
 import pps.covid_sim.model.simulation.Simulation
 import pps.covid_sim.view.GuiImp
 //import pps.covid_sim.people.actors.Communication.{Acknowledge, Tick}
-import pps.covid_sim.util.time.{DatesInterval, HoursInterval, Time}
 import pps.covid_sim.util.time.DatesInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
-
-import scala.concurrent.duration.FiniteDuration
 
 
 class CoordinationTest {
@@ -107,15 +104,23 @@ object TestingCoordination extends App {
 
 
     val p1 = Student(ScalaCalendar(1997,1,1,1),Locality.City(1,"Bologna",1,Provinces.BOLOGNA))
-    p1.setHabitation(Habitation(City(1,"inventata",1,Provinces.BOLOGNA)))
+    val a1 = Habitation(City(1,"inventata",1,Provinces.BOLOGNA))
+    p1.setHabitation(a1)
+    a1.addMember(p1)
     val p2 = Student(ScalaCalendar(1997,1,1,1),Locality.City(2,"Milano",1,Provinces.MILANO))
-    p2.setHabitation(Habitation(City(2,"inventata",1,Provinces.MILANO)))
+    val a2 = Habitation(City(2,"inventata",1,Provinces.MILANO))
+    p2.setHabitation(a2)
+    a2.addMember(p2)
     val p3 = Student(ScalaCalendar(1997,1,1,1),Locality.City(3,"Roma",1,Provinces.ROMA))
-    p3.setHabitation(Habitation(City(3,"inventata",1,Provinces.ROMA)))
+    val a3 = Habitation(City(3,"inventata",1,Provinces.ROMA))
+    p3.setHabitation(a3)
+    a3.addMember(p3)
     val p4 = Student(ScalaCalendar(1997,1,1,1),Locality.City(4,"Torino",1,Provinces.TORINO))
-    p4.setHabitation(Habitation(City(4,"inventata",1,Provinces.TORINO)))
+    val a4 = Habitation(City(4,"inventata",1,Provinces.TORINO))
+    p4.setHabitation(a4)
+    a4.addMember(p4)
 
-    override def people: Seq[Person] = Seq(p1,p2,p3,p4)
+    override def people: ParSeq[Person] = ParSeq(p1,p2,p3,p4)
   }
   val start: Calendar = ScalaCalendar(2020, 9, 1, 1)
   val end: Calendar = ScalaCalendar(2020, 9, 1, 10)

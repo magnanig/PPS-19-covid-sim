@@ -6,6 +6,8 @@ import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{Province, Region}
 import pps.covid_sim.model.simulation.Simulation
 
+import scala.collection.parallel.ParSeq
+
 trait Controller {
 
   def startSimulation(from: Calendar, until: Calendar, runs: Int)
@@ -22,6 +24,6 @@ trait Controller {
 
   def provinces: Seq[Province]
 
-  def people: Seq[Person]
+  def people: ParSeq[Person]
 
 }

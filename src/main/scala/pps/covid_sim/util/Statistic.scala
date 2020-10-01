@@ -91,7 +91,7 @@ object Statistic {
 /**
  * A class to obtain statistics relating to infections that occur during the evolution of the virus
  */
-case class Statistic(people: Seq[Person]) {
+case class Statistic(people: ParSeq[Person]) {
 
   /**
    * Calculate the average age of currently positive people

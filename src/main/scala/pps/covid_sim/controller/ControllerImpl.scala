@@ -6,9 +6,12 @@ import pps.covid_sim.model.people.People.Student
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality
 import pps.covid_sim.model.places.Locality.{Province, Region}
-import pps.covid_sim.model.places.samples.Provinces
+import pps.covid_sim.model.samples
+import pps.covid_sim.model.samples.Provinces
 import pps.covid_sim.model.simulation.Simulation
 import pps.covid_sim.util.time.Time.ScalaCalendar
+
+import scala.collection.parallel.ParSeq
 
 class ControllerImpl extends Controller {
 
@@ -28,7 +31,7 @@ class ControllerImpl extends Controller {
 
   override def provinces: Seq[Province] = Seq(Provinces.BOLOGNA, Provinces.MILANO, Provinces.ROMA, Provinces.TORINO)
 
-  override def people: Seq[Person] = Seq(
+  override def people: ParSeq[Person] = ParSeq(
     Student(ScalaCalendar(1997,1,1,1),Locality.City(1,"Bologna",1,Provinces.BOLOGNA)),
     Student(ScalaCalendar(1997,1,1,1),Locality.City(2,"Milano",1,Provinces.MILANO)),
     Student(ScalaCalendar(1997,1,1,1),Locality.City(3,"Roma",1,Provinces.ROMA)),

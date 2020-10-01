@@ -54,7 +54,7 @@ object Shops {
     override val mask: Option[Mask] = Some(Masks.Surgical)
 
     override protected val pathSampling: Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]] =
-      MovementFunctions.linearPath(dimension, obstacles, Speed.SLOW, 3)
+      MovementFunctions.linearPathWithWallFollowing(dimension, obstacles, Speed.SLOW, 3)
   }
 
   case class ClothesShop(override val city: City,
@@ -81,7 +81,7 @@ object Shops {
     override val mask: Option[Mask] = Some(Masks.Surgical)
 
     override protected val pathSampling: Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]] =
-      MovementFunctions.linearPath(dimension, obstacles, Speed.SLOW, 4)
+      MovementFunctions.linearPathWithWallFollowing(dimension, obstacles, Speed.SLOW, 4)
   }
 
 }
