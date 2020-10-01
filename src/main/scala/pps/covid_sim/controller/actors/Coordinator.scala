@@ -4,6 +4,7 @@ import akka.actor.ActorRef
 import pps.covid_sim.controller.actors.ActorsCoordination.system
 
 import scala.collection.parallel.ParSet
+import pps.covid_sim.controller.actors.ActorsCoordination.{Init, system}
 
 trait Coordinator {
 

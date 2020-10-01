@@ -2,25 +2,19 @@ package pps.covid_sim.controller.Coordination
 
 import java.util.Calendar
 
-import akka.actor.{ActorRef, ActorSystem, Props}
-import akka.testkit.{TestActorRef, TestKit}
-import org.junit.Assert._
 import org.junit.Test
 import pps.covid_sim.controller.ControllerImpl
 import pps.covid_sim.controller.actors.ActorsCoordination
-import pps.covid_sim.controller.actors.ActorsCoordination.{ActorsCoordinator, Init, RegionCoordinator, actorsCoordinator, system}
 import pps.covid_sim.model.people.People.Student
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality
 import pps.covid_sim.model.places.Locality.{Province, Region}
-import pps.covid_sim.model.places.samples.Provinces
+import pps.covid_sim.model.samples.Provinces
 import pps.covid_sim.model.simulation.Simulation
+import pps.covid_sim.view.GuiImp
 //import pps.covid_sim.people.actors.Communication.{Acknowledge, Tick}
-import pps.covid_sim.util.time.{DatesInterval, HoursInterval, Time}
 import pps.covid_sim.util.time.DatesInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
-
-import scala.concurrent.duration.FiniteDuration
 
 
 class CoordinationTest {
@@ -34,6 +28,12 @@ class CoordinationTest {
 
     val interval = new DatesInterval(start,end)
     ActorsCoordination.create(c,interval)
+  }
+
+  @Test
+  def gui(): Unit = {
+    val g = new GuiImp
+    g.top.visible = true
   }
 
   /*@Test

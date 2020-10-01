@@ -2,14 +2,14 @@ package pps.covid_sim.util
 
 import java.util.Calendar
 
-import org.junit.Test
 import org.junit.Assert.assertEquals
+import org.junit.Test
+import pps.covid_sim.model.creation.test.CitiesObject
+import pps.covid_sim.model.people.{Person, PersonTmp}
+import pps.covid_sim.model.places.Locality._
+import pps.covid_sim.model.samples.Cities
 import pps.covid_sim.util
 import pps.covid_sim.util.time.Time.ScalaCalendar
-import pps.covid_sim.model.people.{Person, PersonTmp}
-import pps.covid_sim.model.creation.test.CitiesObject
-import pps.covid_sim.model.places.Locality._
-import pps.covid_sim.model.places.samples.Cities
 
 class StatisticTest {
 

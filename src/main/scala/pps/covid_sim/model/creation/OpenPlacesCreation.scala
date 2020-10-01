@@ -1,9 +1,9 @@
 package pps.covid_sim.model.creation
 
-import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.places.Locality.City
-import pps.covid_sim.model.places.samples.Places
 import pps.covid_sim.model.places.OpenPlaces.{Field, Park, Square}
+import pps.covid_sim.model.places.Place
+import pps.covid_sim.model.samples.Places
 
 // TODO scalaDoc
 case class OpenPlacesCreation() {

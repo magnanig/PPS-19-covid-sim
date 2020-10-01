@@ -2,13 +2,17 @@ package pps.covid_sim.model.places
 
 object Locality {
 
-  case class City(idCity: Int, name: String, numResidents: Int, province: Province) {
+  sealed trait Area
+
+  case class City(idCity: Int, name: String, numResidents: Int, province: Province) extends Area {
     val isProvince: Boolean = idCity == province.idProvince
   }
 
-  case class Province(idProvince: Int, name: String, abbreviation: String, region: Region)
+  case class Province(idProvince: Int, name: String, abbreviation: String, region: Region) extends Area
 
-  case class Region(id: Int, name: String, numResidents: Int)
+  case class Region(id: Int, name: String, numResidents: Int) extends Area
+
+  case class Italy() extends Area
 
   object Region extends Enumeration {
 

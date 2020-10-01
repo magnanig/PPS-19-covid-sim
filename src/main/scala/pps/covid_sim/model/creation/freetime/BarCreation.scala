@@ -5,7 +5,7 @@ import pps.covid_sim.model.places.FreeTime.Bar
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.places.rooms.TablesRoom
-import pps.covid_sim.model.places.samples.Places
+import pps.covid_sim.model.samples.Places
 import pps.covid_sim.util.RandomGeneration.{randomIntFromGaussian, randomIntInRange}
 import pps.covid_sim.util.Statistic
 import pps.covid_sim.util.scheduling.Planning.WorkPlan
