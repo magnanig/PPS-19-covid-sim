@@ -21,11 +21,11 @@ case class ProvinceSimulation(override val area: Province) extends Simulation {
   }
 
   def updateRecoveredCount(time: Calendar, count: Int): Unit = {
-    _recovered = updateParameter(infected, time, count)
+    _recovered = updateParameter(recovered, time, count)
   }
 
   def updateDeathsCount(time: Calendar, count: Int): Unit = {
-    _deaths = updateParameter(infected, time, count)
+    _deaths = updateParameter(deaths, time, count)
   }
 
   override def infectionPlaces: Map[Class[_ <: Place], Int] = _infectionPlaces
