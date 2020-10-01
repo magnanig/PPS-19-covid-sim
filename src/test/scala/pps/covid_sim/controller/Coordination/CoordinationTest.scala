@@ -11,8 +11,8 @@ import pps.covid_sim.controller.actors.ActorsCoordination
 import pps.covid_sim.controller.actors.ActorsCoordination.{ActorsCoordinator, Init, RegionCoordinator, actorsCoordinator, system}
 import pps.covid_sim.model.people.People.Student
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.places.Locality
-import pps.covid_sim.model.places.Locality.{Province, Region}
+import pps.covid_sim.model.places.{Habitation, Locality}
+import pps.covid_sim.model.places.Locality.{City, Province, Region}
 import pps.covid_sim.model.places.samples.Provinces
 import pps.covid_sim.model.simulation.Simulation
 import pps.covid_sim.view.GuiImp
@@ -37,11 +37,6 @@ class CoordinationTest {
     ActorsCoordination.create(c,interval)
   }
 
-  @Test
-  def gui(): Unit = {
-    val g = new GuiImp
-    g.top.visible = true
-  }
 
   /*@Test
   def testIt(): Unit = {
@@ -110,12 +105,17 @@ object TestingCoordination extends App {
 
     override def provinces: Seq[Province] = Seq(Provinces.BOLOGNA, Provinces.MILANO, Provinces.ROMA, Provinces.TORINO)
 
-    override def people: Seq[Person] = Seq(
-      Student(ScalaCalendar(1997,1,1,1),Locality.City(1,"Bologna",1,Provinces.BOLOGNA)),
-      Student(ScalaCalendar(1997,1,1,1),Locality.City(2,"Milano",1,Provinces.MILANO)),
-      Student(ScalaCalendar(1997,1,1,1),Locality.City(3,"Roma",1,Provinces.ROMA)),
-      Student(ScalaCalendar(1997,1,1,1),Locality.City(4,"Torino",1,Provinces.TORINO)),
-    )
+
+    val p1 = Student(ScalaCalendar(1997,1,1,1),Locality.City(1,"Bologna",1,Provinces.BOLOGNA))
+    p1.setHabitation(Habitation(City(1,"inventata",1,Provinces.BOLOGNA)))
+    val p2 = Student(ScalaCalendar(1997,1,1,1),Locality.City(2,"Milano",1,Provinces.MILANO))
+    p2.setHabitation(Habitation(City(2,"inventata",1,Provinces.MILANO)))
+    val p3 = Student(ScalaCalendar(1997,1,1,1),Locality.City(3,"Roma",1,Provinces.ROMA))
+    p3.setHabitation(Habitation(City(3,"inventata",1,Provinces.ROMA)))
+    val p4 = Student(ScalaCalendar(1997,1,1,1),Locality.City(4,"Torino",1,Provinces.TORINO))
+    p4.setHabitation(Habitation(City(4,"inventata",1,Provinces.TORINO)))
+
+    override def people: Seq[Person] = Seq(p1,p2,p3,p4)
   }
   val start: Calendar = ScalaCalendar(2020, 9, 1, 1)
   val end: Calendar = ScalaCalendar(2020, 9, 1, 10)

@@ -276,6 +276,7 @@ class GuiImp(controller: Controller) extends View {
   }
 }
 
+//TODO TO REMOVE IN FUTURE
 object btnPanel {
   val buttons: FlowPanel = new FlowPanel {
     border = Swing.EmptyBorder(5, 5, 5, 5)

@@ -128,7 +128,7 @@ trait Person {
     if (covidInfection.isDefined) covidInfection.get.hourTick(time)
   }
 
-  private[model] def setHabitation(habitation: Habitation): Unit = {
+  def setHabitation(habitation: Habitation): Unit = {
     _habitation = habitation
   }
 
