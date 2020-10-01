@@ -3,6 +3,7 @@ package pps.covid_sim.model.creation
 import pps.covid_sim.model.container.{PeopleContainer, PlacesContainer}
 import pps.covid_sim.model.creation.freetime.FreeTimePlacesCreation
 import pps.covid_sim.model.creation.hobbies.HobbyPlacesCreation
+import pps.covid_sim.model.creation.institute.InstitutePlacesCreation
 import pps.covid_sim.model.creation.work.WorkPlacesCreation
 
 import scala.util.Random
@@ -57,7 +58,7 @@ private class RegionPlacesCreation(region: Region) {
 
     allPlace = allPlace ::: OpenPlacesCreation().create(entry._1)
 
-    //allPlace = allPlace ::: EducationPlacesCreation().create(entry._1, teachers, students)
+    allPlace = allPlace ::: InstitutePlacesCreation().create(entry._1, teachers, students)
 
     index += workerPerPlace.head + workerPerPlace(1) + workerPerPlace(2)
     allPlace = allPlace ::: WorkPlacesCreation().create(entry._1,

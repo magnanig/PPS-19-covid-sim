@@ -3,13 +3,15 @@ package pps.covid_sim.model.creation
 import org.junit.Test
 import org.junit.Assert.assertEquals
 import pps.covid_sim.model.container.{CitiesContainer, PeopleContainer, PlacesContainer}
-import pps.covid_sim.model.people.People.Worker
+import pps.covid_sim.model.people.People.{Student, Teacher, Worker}
+import pps.covid_sim.model.places.Education.{School, University}
 import pps.covid_sim.model.places.FreeTime.{Bar, Disco, OpenDisco, Pub, Restaurant}
 import pps.covid_sim.model.places.Hobbies.{FootballTeam, Gym}
 import pps.covid_sim.model.places.Jobs.{Company, Factory}
 import pps.covid_sim.model.places.Locality.Region
 import pps.covid_sim.model.places.OpenPlaces.{Field, Park, Square}
 import pps.covid_sim.model.places.Shops.Shop
+import pps.covid_sim.model.samples.Cities
 
 import scala.collection.mutable
 
@@ -18,8 +20,8 @@ class RegionPlacesCreationTest {
   RegionPlacesCreation.create(Region.VALLE_DAOSTA)
 
   val squares: Int = PlacesContainer.getPlaces(classOf[Square]).size
-  //val schools: List[School] = PlacesContainer.getPlaces(classOf[School]).map(_.asInstanceOf[School])
-  //val universities: List[University] = PlacesContainer.getPlaces(classOf[University]).map(_.asInstanceOf[University])
+  val schools: List[School] = PlacesContainer.getPlaces(classOf[School]).map(_.asInstanceOf[School])
+  val universities: List[University] = PlacesContainer.getPlaces(classOf[University]).map(_.asInstanceOf[University])
   val companies: List[Company] = PlacesContainer.getPlaces(classOf[Company]).map(_.asInstanceOf[Company])
   val factories: List[Factory] = PlacesContainer.getPlaces(classOf[Factory]).map(_.asInstanceOf[Factory])
   val pubs: List[Pub] = PlacesContainer.getPlaces(classOf[Pub]).map(_.asInstanceOf[Pub])
@@ -31,14 +33,14 @@ class RegionPlacesCreationTest {
   @Test
   def testSchoolCreation(): Unit = {
 
-    /*val students: List[Student] = PeopleCreation.getPeople.filter(_.residence == Cities.AOSTA).filter(_.getClass == classOf[Student]).map(_.asInstanceOf[Student])
-    val teachers: List[Teacher] = PeopleCreation.getPeople.filter(_.residence == Cities.AOSTA).filter(_.getClass == classOf[Teacher]).map(_.asInstanceOf[Teacher])
+    val students: List[Student] = PeopleContainer.getPeople.filter(_.residence == Cities.AOSTA).filter(_.getClass == classOf[Student]).map(_.asInstanceOf[Student])
+    val teachers: List[Teacher] = PeopleContainer.getPeople.filter(_.residence == Cities.AOSTA).filter(_.getClass == classOf[Teacher]).map(_.asInstanceOf[Teacher])
 
     val studentsAssigned: Int = students.count(student => student.institute != null)
     val teachersAssigned: Int = teachers.count(teacher => teacher.workPlace != null)
 
     assertEquals(students.size, studentsAssigned)
-    assertEquals(teachers.size, teachersAssigned)*/
+    assertEquals(teachers.size, teachersAssigned)
 
   }
 
@@ -96,8 +98,8 @@ class RegionPlacesCreationTest {
     println("Numero di Parchi creati: " + PlacesContainer.getPlaces(classOf[Park]).size)
     println("Numero di Campi da calcio creati: " + PlacesContainer.getPlaces(classOf[Field]).size + "\n")
 
-    //println("Numero di Scuole create: " + schools.size)
-    //println("Numero di Università create: " + universities.size + "\n")
+    println("Numero di Scuole create: " + schools.size)
+    println("Numero di Università create: " + universities.size + "\n")
 
     println("Numero di Aziende create: " + companies.size)
     println("Numero di Fabbriche create: " + factories.size + "\n")
