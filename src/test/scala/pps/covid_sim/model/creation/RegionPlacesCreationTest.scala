@@ -10,7 +10,7 @@ import pps.covid_sim.model.places.Hobbies.{FootballTeam, Gym}
 import pps.covid_sim.model.places.Jobs.{Company, Factory}
 import pps.covid_sim.model.places.Locality.Region
 import pps.covid_sim.model.places.OpenPlaces.{Field, Park, Square}
-import pps.covid_sim.model.places.Shops.Shop
+import pps.covid_sim.model.places.Shops.{ClothesShop, Shop, SuperMarket}
 import pps.covid_sim.model.samples.Cities
 
 import scala.collection.mutable
@@ -102,7 +102,8 @@ class RegionPlacesCreationTest {
     println("Numero di Aziende create: " + companies.size)
     println("Numero di Fabbriche create: " + factories.size + "\n")
 
-    println("Numero di Negozi creati: " + PlacesContainer.getPlaces(classOf[Shop]).size + "\n")
+    println("Numero di Supermercati creati: " + PlacesContainer.getPlaces(classOf[SuperMarket]).size)
+    println("Numero di Negozi di Abbigliamento creati: " + PlacesContainer.getPlaces(classOf[ClothesShop]).size + "\n")
 
     println("Numero di FootballTeam creati: " + PlacesContainer.getPlaces(classOf[FootballTeam]).size)
     println("Numero di Palestre create: " + PlacesContainer.getPlaces(classOf[Gym]).size + "\n")
