@@ -25,9 +25,9 @@ object Aggregation {
 
     private def aggregateValues(parameterSelection: Simulation => SortedMap[Calendar, Int]): SortedMap[Calendar, Int] = {
       SortedMap[Calendar, Int]() ++ simulations
-        .flatMap(parameterSelection).toMap
+        .flatMap(parameterSelection)
         .groupBy(_._1)
-        .mapValues(_.values.sum)
+        .mapValues(_.map(_._2).sum)
     }
   }
 
