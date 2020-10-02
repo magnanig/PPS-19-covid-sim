@@ -10,8 +10,7 @@ libraryDependencies ++= Seq(
   "com.novocode" % "junit-interface" % "0.11" % Test
 )
 
-// https://mvnrepository.com/artifact/org.scalanlp/breeze-viz
-libraryDependencies += "org.scalanlp" %% "breeze-viz" % "1.0"
+libraryDependencies += "org.jfree" % "jfreechart" % "1.5.0"
 
 val AkkaVersion = "2.6.8"
 libraryDependencies += "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion
