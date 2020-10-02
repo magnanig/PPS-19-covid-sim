@@ -13,14 +13,14 @@ import pps.covid_sim.util.time.Time.ScalaCalendar
 
 class StatisticTest {
 
-  /*@Test
+  @Test
   def testRandomBirthDate(): Unit = {
     var ages: List[Int] = List()
     (0 until 1000).foreach( _ => {
       val currentTime: Long = System.currentTimeMillis()
       val birthDay: Calendar = Calendar.getInstance()
       val now: Calendar = Calendar.getInstance()
-      birthDay.setTimeInMillis(RandomGeneration.randomBirthDate(0, 100).getTimeInMillis)
+      birthDay.setTimeInMillis(RandomGeneration.randomBirthDate().getTimeInMillis)
       now.setTimeInMillis(currentTime)
 
       //effective years
@@ -47,7 +47,7 @@ class StatisticTest {
       people = PersonTmp(RandomGeneration.randomBirthDate(0, 100), Cities.CERVIA) :: people
     })
 
-    assertEquals(Math.round((age.sum.toDouble / 10000.0).toFloat), Statistic(people).middleAgeCurrentPositive())
+    assertEquals(Math.round((age.sum.toDouble / 10000.0).toFloat), Statistic(people.par).middleAgeCurrentPositive())
   }
 
   @Test
@@ -60,7 +60,7 @@ class StatisticTest {
     CitiesObject.getCities(Region.TRENTINO_ALTO_ADIGE)
       .foreach(city => people = PersonTmp(date, city) :: people)
 
-    val statistic: Statistic = util.Statistic(people)
+    val statistic: Statistic = util.Statistic(people.par)
 
     assertEquals(CitiesObject.getCities(Region.FRIULI_VENEZIA_GIULIA).size, statistic.numCurrentPositive())
 
@@ -85,7 +85,7 @@ class StatisticTest {
     CitiesObject.getCities(Region.TRENTINO_ALTO_ADIGE)
       .foreach(city => people = PersonTmp(date, city) :: people)
 
-    val statistic: Statistic = util.Statistic(people)
+    val statistic: Statistic = util.Statistic(people.par)
 
     assertEquals(CitiesObject.getCities(Region.EMILIA_ROMAGNA).size, statistic.numRecovered())
 
@@ -108,7 +108,7 @@ class StatisticTest {
     CitiesObject.getCities(Region.CAMPANIA).foreach(city => people = PersonTmp(date, city, death = true) :: people)
     CitiesObject.getCities(Region.TRENTINO_ALTO_ADIGE).foreach(city => people = PersonTmp(date, city) :: people)
 
-    val statistic: Statistic = util.Statistic(people)
+    val statistic: Statistic = util.Statistic(people.par)
 
     assertEquals(CitiesObject.getCities(Region.CAMPANIA).size, statistic.numDeaths())
 
@@ -134,7 +134,7 @@ class StatisticTest {
     CitiesObject.getCities(Region.VENETO).foreach(city => people = PersonTmp(date, city, recovered = true) :: people)
     CitiesObject.getCities(Region.MOLISE).foreach(city => people = PersonTmp(date, city, death = true) :: people)
 
-    val statistic: Statistic = util.Statistic(people)
+    val statistic: Statistic = util.Statistic(people.par)
 
     assertEquals(CitiesObject.getCities(Region.CALABRIA).size + CitiesObject.getCities(Region.VENETO).size +
       CitiesObject.getCities(Region.MOLISE).size, statistic.numConfirmedCases())
@@ -150,6 +150,6 @@ class StatisticTest {
     assertEquals(CitiesObject.getCities("CB").size,
       statistic.numConfirmedCases(CitiesObject.getProvince("CB")))
 
-  }*/
+  }
 
 }

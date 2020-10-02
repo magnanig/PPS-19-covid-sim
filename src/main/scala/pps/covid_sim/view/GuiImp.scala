@@ -43,7 +43,11 @@ class GuiImp(controller: Controller) extends View {
 
     //TextBoxes
     val probInfectionField = new TextField(3)
-    val healingTimingField = new TextField(4)
+    val minHealingTimingField = new TextField(4)
+    val maxHealingTimingField = new TextField(4)
+    val minInfectionDetectionTimeField = new TextField(4)
+    val maxInfectionDetectionTimeField = new TextField(4)
+    val multipleInfectionProbabilityField = new TextField(3)
     val asymptomaticAgeField = new TextField(3)
     val cunningAsymptomaticField = new TextField(3)
     val distField = new TextField(3)
@@ -146,7 +150,7 @@ class GuiImp(controller: Controller) extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>Probabilità contagio al netto di mascherine e distanziamento sociale:</p></html>")
+          contents += new Label("<html><p>Probabilità contagio al netto di mascherine e distanziamento sociale:</p></html>")//contagionProbability
           //val probInfectionField = new TextField(3)
           contents += probInfectionField
           contents += new Label("%")
@@ -161,18 +165,58 @@ class GuiImp(controller: Controller) extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>tempo minimo e massimo di guarigione dal virus:</p></html>")
-          //val healingTimingField = new TextField(4)
-          contents += healingTimingField
+          contents += new Label("<html><p>tempo minimo di guarigione dal virus:</p></html>")//minInfectionDetectionTime
+          contents += minHealingTimingField
           contents += new Label("Giorni")
-          listenTo(healingTimingField)
+          listenTo(minHealingTimingField)
           reactions += {
-            case EditDone(`healingTimingField`) => checkPositive(healingTimingField)
+            case EditDone(`minHealingTimingField`) => checkPositive(minHealingTimingField)
           }
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>Percentuale stimata di asintomatici per facie di età:</p></html>")
+          contents += new Label("<html><p>tempo massimo di guarigione dal virus:</p></html>")//maxInfectionDetectionTime
+          contents += maxHealingTimingField
+          contents += new Label("Giorni")
+          listenTo(maxHealingTimingField)
+          reactions += {
+            case EditDone(`maxHealingTimingField`) => checkPositive(maxHealingTimingField)
+          }
+        }
+
+        contents += new FlowPanel {
+          contents += new Label("<html><p>tempo minimo di guarigione dal virus:</p></html>")//minInfectionDetectionTime
+          contents += minInfectionDetectionTimeField
+          contents += new Label("Giorni")
+          listenTo(minInfectionDetectionTimeField)
+          reactions += {
+            case EditDone(`minInfectionDetectionTimeField`) => checkPositive(minInfectionDetectionTimeField)
+          }
+        }
+
+        contents += new FlowPanel {
+          contents += new Label("<html><p>tempo massimo di guarigione dal virus:</p></html>")//maxInfectionDetectionTime
+          contents += maxInfectionDetectionTimeField
+          contents += new Label("Giorni")
+          listenTo(maxInfectionDetectionTimeField)
+          reactions += {
+            case EditDone(`maxInfectionDetectionTimeField`) => checkPositive(maxInfectionDetectionTimeField)
+          }
+        }
+
+        contents += new FlowPanel {
+          contents += new Label("<html><p>Percentuale stimata di asintomatici per facie di età:</p></html>")//multipleInfectionProbability
+          //val asymptomaticAgeField = new TextField(3)
+          contents += multipleInfectionProbabilityField
+          contents += new Label("%")
+          listenTo(multipleInfectionProbabilityField)
+          reactions += {
+            case EditDone(`multipleInfectionProbabilityField`) => checkPercent(multipleInfectionProbabilityField)
+          }
+        }
+
+        contents += new FlowPanel {
+          contents += new Label("<html><p>Percentuale stimata di asintomatici per facie di età:</p></html>")//TODO asymptomaticProbability   gli assegnerei poi => valore fisso frega dell'età
           //val asymptomaticAgeField = new TextField(3)
           contents += asymptomaticAgeField
           contents += new Label("%")
@@ -183,7 +227,7 @@ class GuiImp(controller: Controller) extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>percentuale di asintomatici che riescono ad accorgiersi di essere infetti:</p></html>")
+          contents += new Label("<html><p>percentuale di asintomatici che riescono ad accorgiersi di essere infetti:</p></html>")//asymptomaticDetectionCondProbability
           //val cunningAsymptomaticField = new TextField(3)
           contents += cunningAsymptomaticField
           contents += new Label("%")
@@ -194,7 +238,7 @@ class GuiImp(controller: Controller) extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>distanza ad di sopra della quale è garantito che il virus non può transitare da persona a persona:</p></html>")
+          contents += new Label("<html><p>distanza ad di sopra della quale è garantito che il virus non può transitare da persona a persona:</p></html>")//safeZone
           //val distField = new TextField(3)
           contents += distField
           contents += new Label("cm")
@@ -205,7 +249,7 @@ class GuiImp(controller: Controller) extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>percentuale di persone che violano l'isolamento(lockdown o accertata positività):</p></html>")
+          contents += new Label("<html><p>percentuale di persone che violano l'isolamento(lockdown o accertata positività):</p></html>")//notRespectingIsolationMaxProbability
           //val breakingPeopkeField = new TextField(3)
           contents += breakingPeopkeField
           contents += new Label("%")
@@ -216,7 +260,7 @@ class GuiImp(controller: Controller) extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>percentuale di persone che indossano la mascherina nei posti dove richiesto:</p></html>")
+          contents += new Label("<html><p>percentuale di persone che indossano la mascherina nei posti dove richiesto:</p></html>")//minMaskProbability    max è sempre 1
           //val peopleWearingMaskField = new TextField(3)
           contents += peopleWearingMaskField
           contents += new Label("%")

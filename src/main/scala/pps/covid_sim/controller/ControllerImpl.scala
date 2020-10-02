@@ -37,4 +37,20 @@ class ControllerImpl extends Controller {
     Student(ScalaCalendar(1997,1,1,1),Locality.City(3,"Roma",1,Provinces.ROMA)),
     Student(ScalaCalendar(1997,1,1,1),Locality.City(4,"Torino",1,Provinces.TORINO)),
   )
+
+  def setSimulationParameters(safeZone: Double,minRecoverTime: Int, maxRecoverTime: Int,
+                              minInfectionDetectionTime: Int, maxInfectionDetectionTime: Int, multipleInfectionProbability: Double,
+                              asymptomaticProbability: Int ,asymptomaticDetectionCondProbability: Double,
+                              contagionProbability: Double,minMaskProbability: Double ,maxMaskProbability : Int,
+                              notRespectingIsolationMaxProbability: Double ,lockDownStart:Double,lockDownEnd: Double)
+
+
+
+
+
+
+
+
+
+
 }
