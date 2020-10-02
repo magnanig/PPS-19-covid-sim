@@ -16,6 +16,7 @@ libraryDependencies += "org.scalanlp" %% "breeze-viz" % "1.0"
 val AkkaVersion = "2.6.8"
 libraryDependencies += "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion
 libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % AkkaVersion % Test
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.3" % Runtime
 

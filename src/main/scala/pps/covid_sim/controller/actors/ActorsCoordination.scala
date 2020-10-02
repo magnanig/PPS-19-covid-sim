@@ -200,9 +200,9 @@ object ActorsCoordination {
       case HourTick(currentTime) => this.spreadTick(_province, currentTime)
       case ReceiveTimeout => sendAck(); println("WARNING: Timeout! Sono un sotto coordinatore: Province:" + _province)
       case Stop() => this.endSimulation()
-      case GetPlacesByProvince(province: Province, placeClass, datesInterval) => this.genericGetPlaceByProvince(province, placeClass, datesInterval,sender)
-      case GetPlacesByCity(city: City, placeClass, datesInterval) => this.genericGetPlaceByCity(city, placeClass, datesInterval,sender)
-      case msg => println(s"Not expected [Province]: $msg")
+      case GetPlacesByProvince(province, placeClass, datesInterval) => this.genericGetPlaceByProvince(province, placeClass, datesInterval,sender)
+      case GetPlacesByCity(city, placeClass, datesInterval) => this.genericGetPlaceByCity(city, placeClass, datesInterval,sender)
+      case msg => println(s"Not expected [Province]: $msg");
     }
 
     private def createActors(people: ParSeq[Person]): Unit = {
@@ -235,22 +235,22 @@ object ActorsCoordination {
       this._subordinatedActors.foreach(s => s ! HourTick(currentTime))
     }
 
-    private def genericGetPlaceByProvince(province: Province,placeClass: Option[Class[_ <: Place]], datesInterval: Option[DatesInterval],sender: ActorRef):Unit = {
+    private def genericGetPlaceByProvince(province: Province,placeClass: Class[_ <: Place], datesInterval: Option[DatesInterval],sender: ActorRef):Unit = {
       var res:List[Place] = List()
-      if(datesInterval.isEmpty  && placeClass.isDefined){
-        res = getPlaces(province, placeClass.get)
-      }else if(datesInterval.isDefined && placeClass.isDefined) {
-        res = getPlaces(province, placeClass.get, datesInterval.get)
+      if(datesInterval.isEmpty){
+        res = getPlaces(province, placeClass)
+      }else if(datesInterval.isDefined) {
+        res = getPlaces(province, placeClass, datesInterval.get)
       }
       sender ! RequestedPlaces(res)
     }
 
-    private def genericGetPlaceByCity(city: City,placeClass: Option[Class[_ <: Place]], datesInterval: Option[DatesInterval],sender: ActorRef):Unit = {
+    private def genericGetPlaceByCity(city: City,placeClass: Class[_ <: Place], datesInterval: Option[DatesInterval],sender: ActorRef):Unit = {
       var res:List[Place] = List()
-      if(datesInterval.isEmpty  && placeClass.isDefined){
-        res = getPlaces(city, placeClass.get)
-      }else if(datesInterval.isDefined && placeClass.isDefined) {
-        res = getPlaces(city, placeClass.get, datesInterval.get)
+      if(datesInterval.isEmpty){
+        res = getPlaces(city, placeClass)
+      }else if(datesInterval.isDefined) {
+        res = getPlaces(city, placeClass, datesInterval.get)
       }
       sender ! RequestedPlaces(res)
     }
