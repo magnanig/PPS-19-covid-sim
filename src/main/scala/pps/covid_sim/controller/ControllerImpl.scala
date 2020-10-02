@@ -7,7 +7,7 @@ import pps.covid_sim.model.people.People.Student
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality
 import pps.covid_sim.model.places.Locality.{Province, Region}
-import pps.covid_sim.model.samples
+import pps.covid_sim.model.{Model, ModelImpl, samples}
 import pps.covid_sim.model.samples.Provinces
 import pps.covid_sim.model.simulation.Simulation
 import pps.covid_sim.parameters.CovidInfectionParameters
@@ -17,13 +17,17 @@ import scala.collection.parallel.ParSeq
 
 class ControllerImpl extends Controller {
 
+  private val model: Model = new ModelImpl()
+
   override def startSimulation(from: Calendar, until: Calendar, runs: Int): Unit = {
     // creazione new linechart grafico e init()
     //ActorsCoordination.initPeopleFriends(people)
     //model.startSimulation(from, until, runs)
     //ActorsCoordination.create(this, from -> until)
   }
-  override def tick(time: Calendar): Unit = ???
+  override def tick(time: Calendar): Unit = {
+    model.tick(time)
+  }
 
   override def simulationEnded(simulation: Simulation): Unit = {//TODO
     //chiamare un metodo sulla gui che gli dica di mostrare i grafici e glieli passo come argomenti: i grafici saranno di tipo page che contine titolo page(nome del grafico) e panel del grafico
