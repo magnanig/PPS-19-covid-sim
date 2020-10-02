@@ -1,10 +1,13 @@
 package pps.covid_sim.view
+import java.util.Calendar
+
 import pps.covid_sim.controller.Controller
+import pps.covid_sim.util.time.Time.ScalaCalendar
 
 import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}
 import scala.swing.TabbedPane.Page
 import scala.swing.event.{ButtonClicked, EditDone, SelectionChanged}
-import scala.swing.{Action, BorderPanel, BoxPanel, Button, ButtonGroup, CheckBox, CheckMenuItem, FlowPanel, Frame, Label, ListView, MainFrame, Menu, MenuBar, MenuItem, Orientation, RadioButton, RadioMenuItem, Separator, SplitPane, Swing, TabbedPane, TextField}
+import scala.swing.{Action, BorderPanel, BoxPanel, Button, ButtonGroup, CheckBox, CheckMenuItem, ComboBox, FlowPanel, Frame, Label, ListView, MainFrame, Menu, MenuBar, MenuItem, Orientation, RadioButton, RadioMenuItem, Separator, SplitPane, Swing, TabbedPane, TextField}
 
 class GuiImp(controller: Controller) extends View {
   override val tabs: TabbedPane = new TabbedPane {
@@ -43,17 +46,53 @@ class GuiImp(controller: Controller) extends View {
 
     //TextBoxes
     val probInfectionField = new TextField(3)
+    probInfectionField.text = "70"
     val minHealingTimingField = new TextField(4)
+    minHealingTimingField.text = "7"
     val maxHealingTimingField = new TextField(4)
+    maxHealingTimingField.text = "40"
     val minInfectionDetectionTimeField = new TextField(4)
+    minInfectionDetectionTimeField.text = "3"
     val maxInfectionDetectionTimeField = new TextField(4)
+    maxInfectionDetectionTimeField.text = "1"
     val multipleInfectionProbabilityField = new TextField(3)
-    val asymptomaticAgeField = new TextField(3)
+    multipleInfectionProbabilityField.text = "10"
+    //val asymptomaticAgeField = new TextField(3)
+    //TODO capire come gestire questo
     val cunningAsymptomaticField = new TextField(3)
+    cunningAsymptomaticField.text = "20"
     val distField = new TextField(3)
+    distField.text = "150"
     val breakingPeopkeField = new TextField(3)
+    breakingPeopkeField.text = "40"
     val peopleWearingMaskField = new TextField(3)
+    peopleWearingMaskField.text = "30"
     val peopleSecureDistanceField = new TextField(3)
+    peopleSecureDistanceField.text = "80"
+    val lockdownStartField = new TextField(3)
+    lockdownStartField.text = "10"
+    val lockdownEndField = new TextField(2)
+    lockdownEndField.text = "80"
+
+    //dates
+    val dayStartField = new TextField(2)
+    val monthStartField = new TextField(2)
+    val yearStartField = new TextField(4)
+    val dayEndField = new TextField(2)
+    val monthEndField = new TextField(2)
+    val yearEndField = new TextField(4)
+
+    //runs
+    val runsField = new TextField(3)
+    runsField.text = "1"
+
+    dayStartField.text = "1"
+    monthStartField.text = "1"
+    yearStartField.text = "2020"
+    dayEndField.text = "1"
+    monthEndField.text = "12"
+    yearEndField.text = "2020"
+
 
     //CheckBoxes
     val beachCheckbox = new CheckBox("Spiagge")
@@ -71,6 +110,16 @@ class GuiImp(controller: Controller) extends View {
     val shopCheckbox = new CheckBox("Negozi")
     val fieldCheckbox = new CheckBox("Campi(Calcio)")
     val gymCheckbox = new CheckBox("Palestre")
+
+    /*Separare i radio e gestire la selezione
+      contents += new BoxPanel(Orientation.Vertical) {
+      border = CompoundBorder(TitledBorder(EtchedBorder, "Radio Buttons"), EmptyBorder(5, 5, 5, 10))
+      val a = new RadioButton("Green Vegetables")
+      val b = new RadioButton("Red Meat")
+      val c = new RadioButton("White Tofu")
+      val mutex = new ButtonGroup(a, b, c)
+      contents ++= mutex.buttons
+    }*/
 
     /*
      * Create a menu bar with a couple of menus and menu items and
@@ -149,19 +198,81 @@ class GuiImp(controller: Controller) extends View {
           } else {textField.text = "0"}
         }
 
+        def checkDay(textField: TextField): Unit = {
+          if (textField.text.forall(c => c.isDigit) && textField.text!="") {
+            if (textField.text.toInt < 0) {textField.text = "1"}
+            if (textField.text.toInt >31) {textField.text = "0"}
+          } else {textField.text = "1"}
+        }
+        def checkMonth(textField: TextField): Unit = {
+          if (textField.text.forall(c => c.isDigit) && textField.text!="") {
+            if (textField.text.toInt < 0) {textField.text = "1"}
+            if (textField.text.toInt > 12) {textField.text = "12"}
+          } else {textField.text = "1"}
+        }
+
+        val comboboxItems = Seq("gigi","el1","el1","el1","el1","el1","el1","el1","el1")
+
+        val comboBox: ComboBox[String]= new ComboBox[String](comboboxItems)
+        contents += new FlowPanel {
+          contents += new Label("<html><p>Nazione, Regione o Provincia su cui Simulare:</p></html>")//contagionProbability
+          //val probInfectionField = new TextField(3)
+          contents += comboBox
+          comboBox.selection.item
+          contents += new Label("   Runs:")
+          contents += runsField
+          listenTo(runsField)
+          reactions += {
+            case EditDone(`runsField`) => checkPositive(runsField)
+          }
+
+
+
+          //println(comboBox.selection.item)
+        }
+
+
+        contents += new FlowPanel {
+          contents += new Label("Data Inizio:")
+          contents += dayStartField
+          contents += new Label("-")
+          contents += monthStartField
+          contents += new Label("-")
+          contents += yearStartField
+          contents += new Label(" Data Fine:")
+          contents += dayEndField
+          contents += new Label("-")
+          contents += monthEndField
+          contents += new Label("-")
+          contents += yearEndField
+
+
+          listenTo(dayStartField,monthStartField,yearStartField,dayEndField,monthEndField,yearEndField)
+          reactions += {
+            case EditDone(`dayStartField`) => checkDay(dayStartField)
+            case EditDone(`monthStartField`) => checkMonth(monthStartField)
+            case EditDone(`yearStartField`) => checkPositive(yearStartField)
+            case EditDone(`dayEndField`) => checkDay(dayEndField)
+            case EditDone(`monthEndField`) => checkMonth(monthEndField)
+            case EditDone(`yearEndField`) => checkPositive(yearEndField)
+          }
+        }
+
+
+
+
+
+
         contents += new FlowPanel {
           contents += new Label("<html><p>Probabilità contagio al netto di mascherine e distanziamento sociale:</p></html>")//contagionProbability
           //val probInfectionField = new TextField(3)
           contents += probInfectionField
           contents += new Label("%")
-          /*
-          val label = new Label(field.text)
-          contents += label
-          listenTo(field)
+
+          listenTo(probInfectionField)
           reactions += {
-            case EditDone(`field`) => checkPercent(field)
-              label.text = field.text
-          }*/
+            case EditDone(`probInfectionField`) => checkPercent(probInfectionField)
+          }
         }
 
         contents += new FlowPanel {
@@ -204,18 +315,8 @@ class GuiImp(controller: Controller) extends View {
           }
         }
 
-        contents += new FlowPanel {
-          contents += new Label("<html><p>Percentuale stimata di asintomatici per facie di età:</p></html>")//multipleInfectionProbability
-          //val asymptomaticAgeField = new TextField(3)
-          contents += multipleInfectionProbabilityField
-          contents += new Label("%")
-          listenTo(multipleInfectionProbabilityField)
-          reactions += {
-            case EditDone(`multipleInfectionProbabilityField`) => checkPercent(multipleInfectionProbabilityField)
-          }
-        }
 
-        contents += new FlowPanel {
+        /*contents += new FlowPanel {
           contents += new Label("<html><p>Percentuale stimata di asintomatici per facie di età:</p></html>")//TODO asymptomaticProbability   gli assegnerei poi => valore fisso frega dell'età
           //val asymptomaticAgeField = new TextField(3)
           contents += asymptomaticAgeField
@@ -224,7 +325,7 @@ class GuiImp(controller: Controller) extends View {
           reactions += {
             case EditDone(`asymptomaticAgeField`) => checkPercent(asymptomaticAgeField)
           }
-        }
+        }*/
 
         contents += new FlowPanel {
           contents += new Label("<html><p>percentuale di asintomatici che riescono ad accorgiersi di essere infetti:</p></html>")//asymptomaticDetectionCondProbability
@@ -280,8 +381,31 @@ class GuiImp(controller: Controller) extends View {
             case EditDone(`peopleSecureDistanceField`) => checkPercent(peopleSecureDistanceField)
           }
         }
+        contents += new FlowPanel {
+          contents += new Label("<html><p>percentuale di persone per far partire il lockdown:</p></html>")//lockDownStart
+          //val peopleSecureDistanceField = new TextField(3)
+          contents += lockdownStartField
+          contents += new Label("%")
+          listenTo(lockdownStartField)
+          reactions += {
+            case EditDone(`lockdownStartField`) => checkPercent(lockdownStartField)
+          }
+        }
+
+        contents += new FlowPanel {
+          contents += new Label("<html><p>percentuale di persone per fermare lockdown ruspetto max infezioni precedente:</p></html>")//percentage respect with last max infections
+          //val peopleSecureDistanceField = new TextField(3)
+          contents += lockdownEndField
+          contents += new Label("%")
+          listenTo(lockdownEndField)
+          reactions += {
+            case EditDone(`lockdownEndField`) => checkPercent(lockdownEndField)
+          }
+        }
+
         contents += new BoxPanel(Orientation.Vertical) {
-          border = CompoundBorder(TitledBorder(EtchedBorder, "Quali locali e strutture chiudere"), EmptyBorder(5, 5, 5, 10))
+          border = CompoundBorder(TitledBorder(EtchedBorder, "Posti chiusi nel LockDown"), EmptyBorder(5, 5, 5, 10))
+          //contents += new Label("Quali locali e strutture chiudere")
           contents ++= Seq(beachCheckbox,squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox, barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox,companyCheckbox,factoryCheckbox , shopCheckbox, fieldCheckbox,gymCheckbox)
         }
 
@@ -295,8 +419,32 @@ class GuiImp(controller: Controller) extends View {
               //valori: beachCheckbox,squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox, barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox,companyCheckbox,factoryCheckbox , shopCheckbox, fieldCheckbox,gymCheckbox
               //li usi per fare partire la simulazione
               println("confirm!!!!")
-              tabs.pages += new Page("Painting", btnPanel.buttons )
+              //tabs.pages += new Page("Painting", btnPanel.buttons )
+              var dataInizio: Calendar = ScalaCalendar(yearStartField.text.toInt,monthStartField.text.toInt,dayStartField.text.toInt,0)
+              var dataFine: Calendar = ScalaCalendar(yearEndField.text.toInt,monthEndField.text.toInt,dayEndField.text.toInt,0)
+              //if(dataInizio.isBefore(dataFine))//TODO non è stato implementato un metodo che lo faccia
+
+              controller.setSimulationParameters(
+                distField.text.toDouble/10,
+                minHealingTimingField.text.toInt,
+                maxHealingTimingField.text.toInt,
+                minInfectionDetectionTimeField.text.toInt,
+                maxInfectionDetectionTimeField.text.toInt,
+                multipleInfectionProbabilityField.text.toDouble/100,
+                50.toDouble/100,
+                cunningAsymptomaticField.text.toDouble/100,
+                probInfectionField.text.toDouble/100,
+                peopleWearingMaskField.text.toDouble/100 ,
+                100.toInt/100 ,
+                breakingPeopkeField.text.toDouble/100,
+                lockdownStartField.text.toDouble/100,
+                lockdownEndField.text.toDouble/100)
+
+
+                controller.startSimulation(dataInizio,dataFine,runsField.text.toInt)
             }
+
+
           }
         }
       }
