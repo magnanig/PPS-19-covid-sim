@@ -1,10 +1,10 @@
 The structure of each .csv file is specified within this file
 
 italy_cities.csv:
-istat;comune;provincia;regione;prefisso;superficie;num_residenti
+istat;comune;provincia;regione;prefisso;superficie;num_residenti;longitudine;latitudine
 
 italy_province.csv:
-sigla;istat;nome;id_regione
+sigla;istat;nome;id_regione;longitudine;latitudine
 
 italy_regions.csv:
 id_regione;regione;superficie;num_residenti;num_comuni;num_province
