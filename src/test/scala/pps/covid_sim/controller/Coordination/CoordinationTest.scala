@@ -25,7 +25,7 @@ import pps.covid_sim.util.time.Time.ScalaCalendar
 class CoordinationTest {
 
 
-  @Test
+  /*@Test
   def testCoordinationWithActors(): Unit = {
     val c = new ControllerImpl(null,null)
     val start: Calendar = ScalaCalendar(2020, 9, 1, 1)
@@ -33,10 +33,32 @@ class CoordinationTest {
 
     val interval = new DatesInterval(start,end)
     ActorsCoordination.create(Region.EMILIA_ROMAGNA, c,interval)
-  }
+  }*/
 
+  @Test
   class MySpec()
     extends TestKit(ActorSystem("MySpec"))
+      with ImplicitSender
+      with AnyWordSpecLike
+      with Matchers
+      with BeforeAndAfterAll {
+
+    override def afterAll(): Unit = {
+      TestKit.shutdownActorSystem(system)
+    }
+    "An Echo actor" must {
+
+      "send back messages unchanged" in {
+        val echo = system.actorOf(TestActors.echoActorProps)
+        echo ! "hello world"
+        expectMsg("hello world")
+      }
+    }
+  }
+
+
+  class CoordinatorTest1()
+    extends TestKit(ActorSystem("CoordinatorTest1"))
       with ImplicitSender
       with AnyWordSpecLike
       with Matchers

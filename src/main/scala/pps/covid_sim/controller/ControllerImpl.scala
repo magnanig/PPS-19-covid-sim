@@ -37,7 +37,7 @@ class ControllerImpl(model: Model, view: View) extends Controller {
 
     // N.B. aggiornare il grafico PRIMA delle seguenti righe
 
-    
+
 
     model.simulationsManager.runCompleted()
     if(!model.simulationsManager.hasEnded) {
