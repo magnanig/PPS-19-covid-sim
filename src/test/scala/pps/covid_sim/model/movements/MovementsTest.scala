@@ -2,7 +2,6 @@ package pps.covid_sim.model.movements
 
 import java.util.Calendar
 
-import org.junit.Assert._
 import org.junit.Test
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.movements.MovementFunctions.{linearPathWithWallFollowing, randomPath}
@@ -10,9 +9,9 @@ import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{City, Province}
 import pps.covid_sim.model.places.OpenPlaces.{Beach, Park}
-import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.places.Shops.SuperMarket
 import pps.covid_sim.model.places.rooms.{DiscoRoom, GymRoom}
+import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.util.geometry.{Coordinates, Speed}
 import pps.covid_sim.util.scheduling.TimeTable
 import pps.covid_sim.util.time.MonthsInterval
@@ -57,8 +56,6 @@ class MovementsTest {
     override def isRecovered: Boolean = false
 
     override def isDeath: Boolean = false
-
-    override def infects(place: Place, time: Calendar): Unit = ???
 
     override def infectedPeopleMet: Set[Person] = ???
 

@@ -5,8 +5,8 @@ import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.parameters.CreationParameters._
 
-import scala.collection.{SortedMap, mutable}
 import scala.collection.parallel.ParSeq
+import scala.collection.{SortedMap, mutable}
 
 object Statistic {
 
@@ -112,7 +112,10 @@ case class Statistic(people: ParSeq[Person]) {
   //paziente 0 lo prende alla forma 0
   //per ogni stadio del virus restituisce quante persone ce l'hanno allo stadio 3, p.e.
   //Da stadio a numero di persone che ce l'hanno per ogni stadio
-  def covidStages(): Map[Int, Int] = ???
+  def covidStages(): Map[Int, Int] = people
+    .collect({ case person if person.isInfected => person.covidStage.get })
+    .map(stage => (stage, people.count(person => person.isInfected && person.covidStage.get == stage)))
+    .toMap.seq
 
   /**
    * Calculate the average age of currently positive people

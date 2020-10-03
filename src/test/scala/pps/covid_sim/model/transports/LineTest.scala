@@ -56,8 +56,6 @@ class LineTest {
 
     override def isDeath: Boolean = false
 
-    override def infects(place: Place, time: Calendar): Unit = ???
-
     override def infectedPeopleMet: Set[Person] = ???
 
     override def metInfectedPerson(person: Person): Unit = ???

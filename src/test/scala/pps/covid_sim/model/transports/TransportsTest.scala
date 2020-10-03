@@ -8,7 +8,6 @@ import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple, Single}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.City
-import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.transports.PrivateTransports.Car
 import pps.covid_sim.model.transports.PublicTransports.{Bus, Carriage, Train}
 import pps.covid_sim.util.time.Time.ScalaCalendar
@@ -35,8 +34,6 @@ class TransportsTest {
     override def isRecovered: Boolean = false
 
     override def isDeath: Boolean = false
-
-    override def infects(place: Place, time: Calendar): Unit = ???
 
     override def infectedPeopleMet: Set[Person] = ???
 

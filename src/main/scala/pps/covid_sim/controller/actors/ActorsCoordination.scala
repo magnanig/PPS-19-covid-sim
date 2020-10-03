@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit
 import akka.actor.{Actor, ActorRef, ActorSystem, Props, ReceiveTimeout}
 import pps.covid_sim.controller.ControllerImpl
 import pps.covid_sim.controller.actors.CoordinatorCommunication.{SetProvince, SetRegion}
-import pps.covid_sim.model.container.PeopleContainer
 import pps.covid_sim.model.container.PlacesContainer.getPlaces
 import pps.covid_sim.model.people.People.{Student, Worker}
 import pps.covid_sim.model.people.Person
@@ -14,7 +13,6 @@ import pps.covid_sim.model.people.actors.Communication._
 import pps.covid_sim.model.people.actors.{StudentActor, UnemployedActor, WorkerActor}
 import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
 import pps.covid_sim.model.places.{Locality, Place}
-import pps.covid_sim.parameters.CovidInfectionParameters
 import pps.covid_sim.util.Statistic
 import pps.covid_sim.util.time.DatesInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
@@ -89,7 +87,7 @@ object ActorsCoordination {
 
     private def tick(): Unit = {
       if (currentTime.hour == 0) {
-        currentInfections = Statistic(controller.people).numCurrentPositive()
+        currentInfections = Statistic(controller.people).numCurrentPositive
         //simulation.updateInfectedCount(currentTime, currentInfections)
         println(s"Infection on ${currentTime.getTime}: $currentInfections")
         if (currentInfections > localMaxInfections) localMaxInfections = currentInfections
