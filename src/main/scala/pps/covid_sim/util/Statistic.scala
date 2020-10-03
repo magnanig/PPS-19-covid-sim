@@ -5,7 +5,7 @@ import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.parameters.CreationParameters._
 
-import scala.collection.mutable
+import scala.collection.{SortedMap, mutable}
 import scala.collection.parallel.ParSeq
 
 object Statistic {
@@ -94,6 +94,27 @@ object Statistic {
 case class Statistic(people: ParSeq[Person]) {
 
   /**
+   * Calculates the current number of infected for each city.
+   *
+   * @param cities  cities for which the current number of
+   *                infected persons is to be obtained
+   * @return        map sorted by the population of each city.
+   *                So, at the top of the map there will be cities
+   *                with more residents and at the bottom of the
+   *                map there will be cities with fewer residents.
+   */
+  def cityPositives(cities: Set[City]): SortedMap[City, Int] = {
+    implicit val cityOrdering: Ordering[City] = (x: City, y: City) => y.numResidents.compareTo(x.numResidents)
+    SortedMap[City, Int]() ++ cities.map(city => (city, numCurrentPositive(city))).toMap
+  }
+
+  //TODO: scalaDoc
+  //paziente 0 lo prende alla forma 0
+  //per ogni stadio del virus restituisce quante persone ce l'hanno allo stadio 3, p.e.
+  //Da stadio a numero di persone che ce l'hanno per ogni stadio
+  def covidStages(): Map[Int, Int] = ???
+
+  /**
    * Calculate the average age of currently positive people
    *
    * @return average age of currently positive people
@@ -115,116 +136,102 @@ case class Statistic(people: ParSeq[Person]) {
     _return.toMap
   }
 
+  /**
+   * Calculates the total number of currently positive people within a specific area
+   *
+   * @param area  the area in which the number of currently positive people
+   *              is calculated
+   * @return      number of currently positive people within area
+   */
   def numCurrentPositive(area: Area): Int = area match {
-    case city: City =>  numCurrentPositive(city)
+    case city: City => numCurrentPositive(city)
     case region: Region => numCurrentPositive(region)
     case province: Province => numCurrentPositive(province)
-    case _ => numCurrentPositive()
+    case _ => numCurrentPositive
   }
 
-  // TODO fare i seguenti overload privati, utilizzando il pattern matching come sopra per rendere
-  //  pubblico un solo metodo
-  //  Fare lo stesso per tutti i metodi seguenti (guariti e morti)
-  def numCurrentPositive(city: City): Int = people.count(
-    person => person.residence == city && person.isInfected)
+  /**
+   * Calculates the number of people recovered from the virus within a specific area
+   *
+   * @param area  area in which to calculate the number of people recovered from
+                  the virus
+   * @return      number of people recovered from the virus within a specific area
+   */
+  def numRecovered(area: Area): Int = area match {
+    case city: City => numRecovered(city)
+    case region: Region => numRecovered(region)
+    case province: Province => numRecovered(province)
+    case _ => numRecovered
+  }
 
   /**
-   * Calculates the total number of currently positive people within a specific province
+   * Calculate the number of people who have died from the virus within a specific area
    *
-   * @param p the province in which the number of currently positive people
-   *          is calculated
-   * @return  number of currently positive people within a province
+   * @param area  area in which to calculate the number of people who have died from
+   *              the virus
+   * @return      number of people who have died from the virus within a specific area
    */
-  def numCurrentPositive(p: Province): Int = people.par.count(
-    person => person.residence.province == p && person.isInfected)
+  def numDeaths(area: Area): Int = area match {
+    case city: City => numDeaths(city)
+    case region: Region => numDeaths(region)
+    case province: Province => numDeaths(province)
+    case _ => numDeaths
+  }
 
   /**
-   * Calculates the total number of currently positive people within a specific region
+   * Calculate the number of confirmed covid cases into area. The calculation includes:
+   * the number of people currently positive in the area, the number of people recovered
+   * in the area and the number of people who died from the virus within the area.
    *
-   * @param r the region in which the number of currently positive people is
-   *          calculated
-   * @return  number of currently positive people within a region
+   * @param area  area in which to calculate the number of confirmed covid cases
+   * @return      number of confirmed cases of covid at the area level
    */
-  def numCurrentPositive(r: Region): Int = people.par.count(p => p.residence.province.region == r && p.isInfected)
+  def numConfirmedCases(area: Area): Int = area match {
+    case city: City => numConfirmedCases(city)
+    case region: Region => numConfirmedCases(region)
+    case province: Province => numConfirmedCases(province)
+    case _ => numConfirmedCases
+  }
 
   /**
    * Calculates the total number of people currently positive across the nation
    *
    * @return total number of people currently positive nationwide
    */
-  def numCurrentPositive(): Int = people.par.count(_.isInfected)
+  def numCurrentPositive: Int = people.par.count(_.isInfected)
 
-  /**
-   * Calculates the number of people recovered from the virus within a specific province
-   *
-   * @param p province in which to calculate the number of people recovered from
-              the virus
-   * @return  number of people recovered from the virus within a specific province
-   */
-  def numRecovered(p: Province): Int = people.par.count(person => person.residence.province == p && person.isRecovered)
+  private def numCurrentPositive(p: Province): Int = people.par.count(
+    person => person.residence.province == p && person.isInfected)
 
-  /**
-   * Calculates the number of people recovered from the virus within a specific region
-   *
-   * @param r region in which to calculate the number of people recovered from
-   *          the virus
-   * @return  number of people recovered from the virus within a specific region
-   */
-  def numRecovered(r: Region): Int = people.par.count(p => p.residence.province.region == r && p.isRecovered)
+  private def numCurrentPositive(c: City): Int = people.count( person => person.residence == c && person.isInfected)
+
+  private def numCurrentPositive(r: Region): Int = people.par.count( p => p.residence.province.region == r && p.isInfected)
 
   /**
    * Calculates the total number of people recovered from the virus across the nation
    *
    * @return number of people recovered from the virus nationwide
    */
-  def numRecovered(): Int = people.par.count(_.isRecovered)
+  def numRecovered: Int = people.par.count(_.isRecovered)
 
-  /**
-   * Calculate the number of people who have died from the virus within a specific province
-   *
-   * @param p province in which to calculate the number of people who have died from
-   *          the virus
-   * @return  number of people who have died from the virus within a specific
-   *          province
-   */
-  def numDeaths(p: Province): Int = people.par.count(person => person.residence.province == p && person.isDeath)
+  private def numRecovered(c: City): Int = people.par.count( person => person.residence == c && person.isRecovered)
 
-  /**
-   * Calculate the number of people who have died from the virus within a specific region
-   *
-   * @param r region in which to calculate the number of people who have died from
-   *          the virus
-   * @return  number of people who have died from the virus within a specific
-   *          region
-   */
-  def numDeaths(r: Region): Int = people.par.count(person => person.residence.province.region == r && person.isDeath)
+  private def numRecovered(p: Province): Int = people.par.count(person => person.residence.province == p && person.isRecovered)
+
+  private def numRecovered(r: Region): Int = people.par.count(p => p.residence.province.region == r && p.isRecovered)
 
   /**
    * Calculates the total number of people who have died from the virus across the nation
    *
    * @return number of died people from the virus nationwide
    */
-  def numDeaths(): Int = people.par.count(_.isDeath)
+  def numDeaths: Int = people.par.count(_.isDeath)
 
-  /**
-   * Calculate the number of provincial confirmed covid cases. The calculation includes:
-   * the number of people currently positive in the province, the number of people recovered
-   * in the province and the number of people who died from the virus within the province
-   *
-   * @param p province in which to calculate the number of confirmed covid cases
-   * @return  number of confirmed cases of covid at the province level
-   */
-  def numConfirmedCases(p: Province): Int = numCurrentPositive(p) + numRecovered(p) + numDeaths(p)
+  private def numDeaths(c: City): Int = people.par.count(person => person.residence == c && person.isDeath)
 
-  /**
-   * Calculate the number of regionally confirmed covid cases. The calculation includes:
-   * the number of people currently positive in the region, the number of people recovered
-   * in the region and the number of people who have died from the virus within a region
-   *
-   * @param r   region in which to calculate the number of confirmed covid cases
-   * @return    number of confirmed cases of covid at the regional level
-   */
-  def numConfirmedCases(r: Region): Int = numCurrentPositive(r) + numRecovered(r) + numDeaths(r)
+  private def numDeaths(p: Province): Int = people.par.count(person => person.residence.province == p && person.isDeath)
+
+  private def numDeaths(r: Region): Int = people.par.count(person => person.residence.province.region == r && person.isDeath)
 
   /**
    * Calculate the total number of nationally confirmed covid cases. The calculation
@@ -233,6 +240,12 @@ case class Statistic(people: ParSeq[Person]) {
    *
    * @return total number of confirmed cases of covid nationwide
    */
-  def numConfirmedCases(): Int = numCurrentPositive() + numRecovered() + numDeaths()
+  def numConfirmedCases: Int = numCurrentPositive + numRecovered + numDeaths
+
+  private def numConfirmedCases(c: City): Int = numCurrentPositive(c) + numRecovered(c) + numDeaths(c)
+
+  private def numConfirmedCases(p: Province): Int = numCurrentPositive(p) + numRecovered(p) + numDeaths(p)
+
+  private def numConfirmedCases(r: Region): Int = numCurrentPositive(r) + numRecovered(r) + numDeaths(r)
 
 }

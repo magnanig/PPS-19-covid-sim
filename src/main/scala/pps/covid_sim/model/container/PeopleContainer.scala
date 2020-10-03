@@ -2,6 +2,7 @@ package pps.covid_sim.model.container
 
 import pps.covid_sim.model.people.People.{Student, Worker}
 import pps.covid_sim.model.people.Person
+import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
 
 object PeopleContainer {
 
@@ -15,7 +16,22 @@ object PeopleContainer {
     _people = _people ::: people
   }
 
+  def getPeople(area: Area): List[Person] = area match {
+    case province: Province => getPeople(province)
+    case region: Region => getPeople(region)
+    case city: City => getPeople(city)
+    case _ => getPeople
+  }
+
   def getPeople: List[Person] = _people
+
+  private def getPeople(city: City): List[Person] = getPeople.filter(p => p.residence.equals(city))
+
+  private def getPeople(province: Province): List[Person] =
+    getPeople.filter(p => p.residence.province.equals(province))
+
+  private def getPeople(region: Region): List[Person] =
+    getPeople.filter(p => p.residence.province.region.equals(region))
 
   private[model] def checkAssignedWork(): Unit = {
     _people = _people.filter(person => myFilter(person))
