@@ -2,7 +2,8 @@ package pps.covid_sim.model
 import java.util.Calendar
 
 import pps.covid_sim.model.container.{PeopleContainer, PlacesContainer}
-import pps.covid_sim.model.creation.{RegionPeopleCreation, RegionPlacesCreation, WorldCreation}
+import pps.covid_sim.model.creation.region.RegionPlacesCreation
+import pps.covid_sim.model.creation.WorldCreation
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
 import pps.covid_sim.model.places.{Locality, Place}
@@ -24,10 +25,10 @@ class ModelImpl extends Model {
   override val people: ParSeq[Person] = _people
 
   override def initWorld(area: Area): Unit = {
-    area match {
-      case Locality.Italy() => WorldCreation.generateAll()
+    /*area match {
+      case Locality.Italy() => WorldCreation.create()
       case _ => RegionPlacesCreation.create(area)
-    }
+    }*/
     places = PlacesContainer.getPlaces.par
     _people = PeopleContainer.getPeople.par
     //trainLines = TrainLinesContainer.getLines.par

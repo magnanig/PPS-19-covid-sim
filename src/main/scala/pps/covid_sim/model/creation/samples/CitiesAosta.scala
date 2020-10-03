@@ -1,4 +1,4 @@
-package pps.covid_sim.model.creation.test
+package pps.covid_sim.model.creation.samples
 
 import pps.covid_sim.model.places.Locality
 import pps.covid_sim.model.places.Locality.{City, Province, Region}

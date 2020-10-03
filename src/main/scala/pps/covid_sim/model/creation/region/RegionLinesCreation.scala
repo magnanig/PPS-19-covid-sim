@@ -1,30 +1,25 @@
-package pps.covid_sim.model.creation
+package pps.covid_sim.model.creation.region
 
-import pps.covid_sim.model.container.{CitiesContainer, PeopleContainer, PlacesContainer}
-import pps.covid_sim.model.creation.freetime.FreeTimePlacesCreation
-import pps.covid_sim.model.creation.hobbies.HobbyPlacesCreation
-import pps.covid_sim.model.creation.institute.InstitutePlacesCreation
-import pps.covid_sim.model.creation.work.WorkPlacesCreation
-import pps.covid_sim.model.people.People.{Student, Teacher, Worker}
-import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.places.Locality.{Area, City, Region}
-import pps.covid_sim.model.places.Place
-import pps.covid_sim.parameters.CreationParameters._
-import pps.covid_sim.util.Statistic
+import pps.covid_sim.model.places.Locality.Region
+import pps.covid_sim.model.transports.PublicTransports.Line
 
-import scala.util.Random
+object RegionLinesCreation {
 
-// TODO: Scala Doc
-
-object RegionPlacesCreation {
-
-  def create(area: Area): List[Place] = area match {
-    case city: City => ??? // TODO CitiesPlacesCreation(city).create() <- creare SOLO i posti della CITTA' richiesta
-    case region: Region => new RegionPlacesCreation(region).create()
-    case _ => CitiesContainer.getRegions.flatMap(new RegionPlacesCreation(_).create()).toList
+  def create(region: Region): Unit = {
+    new RegionLinesCreation(region).create()
   }
+
 }
 
+private class RegionLinesCreation(region: Region) {
+
+  def create(): Unit = {
+
+  }
+
+}
+
+/*
 private class RegionPlacesCreation(region: Region) {
 
   private val _people: List[Person] = RegionPeopleCreation.create(region)
@@ -84,3 +79,4 @@ private class RegionPlacesCreation(region: Region) {
   }
 
 }
+*/
