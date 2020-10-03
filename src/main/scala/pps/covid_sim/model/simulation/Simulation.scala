@@ -19,4 +19,8 @@ trait Simulation {
 
   def deaths: SortedMap[Calendar, Int]
 
+  def takeScreenshot(time: Calendar): Unit
+
+  def close(): Unit
+
 }

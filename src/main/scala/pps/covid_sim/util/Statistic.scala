@@ -1,7 +1,7 @@
 package pps.covid_sim.util
 
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.places.Locality.{Province, Region}
+import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.parameters.CreationParameters._
 
@@ -114,6 +114,19 @@ case class Statistic(people: ParSeq[Person]) {
     people.filter(p => p.isInfected || p.isRecovered).foreach(p => _return(p.infectionPlace.get) += 1)
     _return.toMap
   }
+
+  def numCurrentPositive(area: Area): Int = area match {
+    case city: City =>  numCurrentPositive(city)
+    case region: Region => numCurrentPositive(region)
+    case province: Province => numCurrentPositive(province)
+    case _ => numCurrentPositive()
+  }
+
+  // TODO fare i seguenti overload privati, utilizzando il pattern matching come sopra per rendere
+  //  pubblico un solo metodo
+  //  Fare lo stesso per tutti i metodi seguenti (guariti e morti)
+  def numCurrentPositive(city: City): Int = people.count(
+    person => person.residence == city && person.isInfected)
 
   /**
    * Calculates the total number of currently positive people within a specific province

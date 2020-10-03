@@ -1,17 +1,21 @@
 package pps.covid_sim.model.creation
 
 import pps.covid_sim.model.container.CitiesContainer
+import pps.covid_sim.model.people.People.{Student, Teacher, Unemployed, Worker}
+import pps.covid_sim.model.people.Person
+import pps.covid_sim.model.places.Locality.{Area, City, Region}
 import pps.covid_sim.parameters.CreationParameters
 import pps.covid_sim.parameters.CreationParameters.{studentsPercentage, teachersPercentage, unemployedPercentage, workersPercentage}
-import pps.covid_sim.util.Statistic
-import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.places.Locality.{City, Region}
 import pps.covid_sim.util.RandomGeneration.randomBirthDate
-import pps.covid_sim.model.people.People.{Student, Teacher, Unemployed, Worker}
+import pps.covid_sim.util.Statistic
 
 object RegionPeopleCreation {
 
-  def create(region: Region): List[Person] = { new RegionPeopleCreation(region).create() }
+  def create(area: Area): List[Person] = area match {
+    case city: City => ??? // TODO CitiesPeopleCreation(city).create() <- creare SOLO le persone della CITTA' richiesta
+    case region: Region => new RegionPeopleCreation(region).create()
+    case _ => CitiesContainer.getRegions.flatMap(new RegionPeopleCreation(_).create()).toList
+  }
 
 }
 

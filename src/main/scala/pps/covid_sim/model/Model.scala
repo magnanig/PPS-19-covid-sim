@@ -2,23 +2,24 @@ package pps.covid_sim.model
 
 import java.util.Calendar
 
-import pps.covid_sim.model.simulation.{Simulation, Simulations}
 import pps.covid_sim.model.people.Person
+import pps.covid_sim.model.places.Locality.Area
+import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
+
+import scala.collection.parallel.ParSeq
 
 trait Model {
 
-  def startSimulation(from: Calendar, until: Calendar, runs: Int)
+  def initWorld(area: Area): Unit
 
-  def addSimulation(simulation: Simulation): Unit
+  def initSimulation(area: Area, from: Calendar, until: Calendar, runs: Int)
+
+  def people: ParSeq[Person]
 
   def tick(time: Calendar): Unit
 
   def reset(): Unit
 
-  def simulations: Simulations[Simulation]
-
-  def people: Seq[Person]
-
-
+  def simulationsManager: SimulationsManager[Simulation]
 
 }

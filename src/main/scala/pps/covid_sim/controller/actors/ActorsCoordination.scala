@@ -13,7 +13,6 @@ import pps.covid_sim.model.people.actors.Communication._
 import pps.covid_sim.model.people.actors.{StudentActor, UnemployedActor, WorkerActor}
 import pps.covid_sim.model.places.Locality.{City, Province, Region}
 import pps.covid_sim.model.places.Place
-import pps.covid_sim.model.simulation.Simulation
 import pps.covid_sim.parameters.CovidInfectionParameters
 import pps.covid_sim.util.Statistic
 import pps.covid_sim.util.time.DatesInterval
@@ -31,7 +30,6 @@ object ActorsCoordination {
 
   private var controller: ControllerImpl = _
   private var simulationInterval: DatesInterval = _
-  private var simulation: Simulation = _
   private var currentTime: Calendar = _
 
   /**
@@ -75,8 +73,7 @@ object ActorsCoordination {
     }
 
     private def endSimulation(): Unit = {
-      //simulation.close()
-      controller.simulationEnded(simulation)
+      controller.notifyRunEnded()
       _subordinatedActors.foreach(s => s ! Stop())//TODO stoppare prima le persone poi i province e poi le region
       context.stop(self)
     }
@@ -117,7 +114,7 @@ object ActorsCoordination {
       }
     }
 
-    private def createActors(regions: Seq[Region]): Unit = {
+    private def createActors(regions: Set[Region]): Unit = {
       val numRegion = regions.size //TODO farlo in base ai parametri di simulazione
       println(regions)
       val regionActors = regions.par.map {
@@ -139,7 +136,7 @@ object ActorsCoordination {
   class RegionCoordinator extends Actor with Coordinator {
 
     implicit protected  var _region: Region = _ // will be initialized later when the SetRegion message will be received
-    private var _myProvinces: Seq[Province] = _ // Will be initialized later when the SetProvince message will be received
+    private var _myProvinces: Set[Province] = _ // Will be initialized later when the SetProvince message will be received
 
     override def receive: Receive = {
       case SetRegion(region) => this._region = region
@@ -153,7 +150,7 @@ object ActorsCoordination {
       case msg => println(s"Not expected [Region]: $msg")
     }
 
-    private def createActors(provinces: Seq[Province]): Unit = {
+    private def createActors(provinces: Set[Province]): Unit = {
       val numProvince = provinces.size //TODO farlo in base ai parametri di simulazione
       val provinceActors = provinces.par.map {
         case province => system.actorOf(Props[ProvinceCoordinator]) -> province

@@ -5,7 +5,6 @@ import pps.covid_sim.controller.Controller
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
 import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}
-import scala.swing.TabbedPane.Page
 import scala.swing.event.{ButtonClicked, EditDone, SelectionChanged}
 import scala.swing.{Action, BorderPanel, BoxPanel, Button, ButtonGroup, CheckBox, CheckMenuItem, ComboBox, FlowPanel, Frame, Label, ListView, MainFrame, Menu, MenuBar, MenuItem, Orientation, RadioButton, RadioMenuItem, Separator, SplitPane, Swing, TabbedPane, TextField}
 
@@ -441,7 +440,7 @@ class GuiImp(controller: Controller) extends View {
                 lockdownEndField.text.toDouble/100)
 
 
-                controller.startSimulation(dataInizio,dataFine,runsField.text.toInt)
+                controller.startSimulation(null, dataInizio,dataFine,runsField.text.toInt) // TODO: specificare l'area (es. città o regione...)
             }
 
 

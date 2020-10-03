@@ -6,14 +6,16 @@ import pps.covid_sim.model.places.Place
 
 import scala.collection.SortedMap
 
-case class Simulations[S <: Simulation](from: Calendar, until: Calendar, runs: Int) extends Iterable[S] {
+case class SimulationsManager[+S <: Simulation](simulations: Seq[S],
+                                                from: Calendar,
+                                                until: Calendar) extends Iterable[S] {
+  private var current: Int = 0
 
-  private var simulations: Seq[S] = Seq()
-  private var remaining: Int = runs
+  def apply(index: Int): S = simulations(index)
 
-  def addSimulation(simulation: S): Unit = {
-    remaining = remaining - 1
-    simulations = simulation +: simulations
+  def runCompleted(): Unit = {
+    simulations(current).close()
+    current = current + 1
   }
 
   def average[A](values: => List[Map[A, Int]])(implicit ordering: Ordering[A]): SortedMap[A, Int] = {
@@ -28,13 +30,19 @@ case class Simulations[S <: Simulation](from: Calendar, until: Calendar, runs: I
         .mapValues(_.map(_._2).sum / values.size)
   }
 
-  def areCompleted: Boolean = remaining <= 0
+  def hasEnded: Boolean = current >= simulations.size
+
+  def currentSimulation: S = simulations(current)
+
+  def takeScreenshot(time: Calendar): Unit = {
+    simulations(current).takeScreenshot(time)
+  }
 
   override def iterator: Iterator[S] = simulations.iterator
 
 }
 
-object Simulations {
+object SimulationsManager {
   implicit val classOrdering: Ordering[Class[_ <: Place]] = (x: Class[_], y: Class[_]) =>
     x.getSimpleName.compareTo(y.getSimpleName)
 }

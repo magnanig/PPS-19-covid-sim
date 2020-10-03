@@ -2,28 +2,17 @@ package pps.covid_sim.controller.Coordination
 
 import java.util.Calendar
 
-import akka.actor.{Actor, ActorRef, ActorSystem, Props}
-import akka.testkit.{TestKit, TestProbe}
+import akka.actor.{ActorSystem, Props}
+import akka.testkit.TestKit
 import org.junit.Test
 import pps.covid_sim.controller.ControllerImpl
 import pps.covid_sim.controller.actors.ActorsCoordination
-import pps.covid_sim.controller.actors.ActorsCoordination.{ActorsCoordinator, ProvinceCoordinator, RegionCoordinator}
-import pps.covid_sim.model.container.PlacesContainer.getPlaces
-import pps.covid_sim.model.people.People.Student
-import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.people.actors.Communication.{GetPlacesByProvince, RequestedPlaces}
-import pps.covid_sim.model.people.actors.PersonActor
+import pps.covid_sim.controller.actors.ActorsCoordination.ProvinceCoordinator
+import pps.covid_sim.model.people.actors.Communication.GetPlacesByProvince
 import pps.covid_sim.model.places.FreeTime.Restaurant
-
-import scala.collection.parallel.ParSeq
-import pps.covid_sim.model.places.{ClosedPlace, Habitation, Locality}
-import pps.covid_sim.model.places.Locality.City
-import pps.covid_sim.model.places.Locality.{Province, Region}
 import pps.covid_sim.model.samples.Provinces
-import pps.covid_sim.model.simulation.Simulation
-import pps.covid_sim.view.GuiImp
 
-import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
+import scala.concurrent.duration.FiniteDuration
 //import pps.covid_sim.people.actors.Communication.{Acknowledge, Tick}
 import pps.covid_sim.util.time.DatesInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
@@ -34,7 +23,7 @@ class CoordinationTest {
 
   @Test
   def testCoordinationWithActors(): Unit = {
-    val c = new ControllerImpl
+    val c = new ControllerImpl(null)
     val start: Calendar = ScalaCalendar(2020, 9, 1, 1)
     val end: Calendar = ScalaCalendar(2020, 9, 1, 10)
 
