@@ -1,4 +1,4 @@
-package pps.covid_sim.model.creation.test
+package pps.covid_sim.model.creation.samples
 
 import pps.covid_sim.util.Statistic
 import pps.covid_sim.model.people.People._

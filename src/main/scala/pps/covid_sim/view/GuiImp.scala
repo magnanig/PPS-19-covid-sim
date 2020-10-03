@@ -2,8 +2,7 @@ package pps.covid_sim.view
 import java.util.Calendar
 
 import pps.covid_sim.controller.Controller
-import pps.covid_sim.model.creation.RegionPlacesCreation
-import pps.covid_sim.model.creation.test.CitiesObject
+import pps.covid_sim.model.creation.CitiesObject
 import pps.covid_sim.model.places.Locality
 import pps.covid_sim.model.places.Locality.{Area, Province, Region}
 import pps.covid_sim.model.samples.Regions

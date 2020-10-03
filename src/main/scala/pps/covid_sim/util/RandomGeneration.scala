@@ -56,12 +56,12 @@ object RandomGeneration {
   ).toInt
 
   /**
-   * Generates a random date of birth between 0 and 100 years.
+   * Generates a random date of birth between min and max years.
    *
    * @param random  an optional Random object to be used to generate a random number
-   * @return        a random date of birth between 0 and 100 years
+   * @return        a random date of birth between min and max years
    */
-  def randomBirthDate(min: Int = 0, max: Int = 100, random: Random = new Random()): Calendar = {
+  def randomBirthDate(min: Int, max: Int, random: Random = new Random()): Calendar = {
     val birthDate: Calendar = Calendar.getInstance()
     birthDate.add(Calendar.DAY_OF_MONTH, -randomIntInRange(min, max * CreationParameters.daysInYear, random))
     birthDate

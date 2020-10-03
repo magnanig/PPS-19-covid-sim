@@ -4,7 +4,7 @@ import java.util.Calendar
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import pps.covid_sim.model.creation.test.CitiesObject
+import pps.covid_sim.model.creation.CitiesObject
 import pps.covid_sim.model.people.{Person, PersonTmp}
 import pps.covid_sim.model.places.Locality._
 import pps.covid_sim.model.samples.Cities
@@ -20,7 +20,7 @@ class StatisticTest {
       val currentTime: Long = System.currentTimeMillis()
       val birthDay: Calendar = Calendar.getInstance()
       val now: Calendar = Calendar.getInstance()
-      birthDay.setTimeInMillis(RandomGeneration.randomBirthDate().getTimeInMillis)
+      birthDay.setTimeInMillis(RandomGeneration.randomBirthDate(0, 100).getTimeInMillis)
       now.setTimeInMillis(currentTime)
 
       //effective years

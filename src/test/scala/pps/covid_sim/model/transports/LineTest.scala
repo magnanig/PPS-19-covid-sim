@@ -21,9 +21,11 @@ class LineTest {
     override val city: City = cityTest
   }
 
+  //numero di bus per linea, capacità di ogni bus (20 circa), tempo in cui la linea è avviabile
   val busLine: BusLine = BusLine(2, 2, HoursInterval(8, 20))
   busLine.setCoveredCities(Set(cityTest))
 
+  //numero di treni, numero di carrozze
   val trainLine: TrainLine = TrainLine(1, 2, Locality.Region.EMILIA_ROMAGNA, HoursInterval(15, 16))
   trainLine.setCoveredCities(Set(cityTest))
 

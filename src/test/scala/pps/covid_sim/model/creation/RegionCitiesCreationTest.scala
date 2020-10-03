@@ -2,7 +2,6 @@ package pps.covid_sim.model.creation
 
 import org.junit.Test
 import org.junit.Assert.assertEquals
-import pps.covid_sim.model.creation.test.CitiesObject
 import pps.covid_sim.model.places.Locality.{City, Region}
 
 import scala.collection.mutable
@@ -40,6 +39,10 @@ class RegionCitiesCreationTest {
     CitiesObject.getRegions.foreach(region => testCities(region))
   }
 
+  /*
+   * It helped to locate some lines in the .CSV file of the cities where
+   * there were typos (upper and lower case) in the names of the regions.
+   */
   private def testCities(inputRegion: Region): Unit = {
     import java.io._
     val writeOriginal = new PrintWriter(new File("res/testOriginal.txt"))
@@ -48,7 +51,7 @@ class RegionCitiesCreationTest {
     // get the cities directly from the original file .csv
     var expectedCities: mutable.ListBuffer[String] = mutable.ListBuffer()
     for (line <- bufferedSource.getLines) {
-      val Array(_, common, _, region, _, _, _) = line.split(";")
+      val Array(_, common, _, region, _, _, _, _, _) = line.split(";") //cities
       if (region == inputRegion.name) expectedCities += common
     }
     expectedCities.sorted.foreach(elem => writeOriginal.write(elem + "\n"))
