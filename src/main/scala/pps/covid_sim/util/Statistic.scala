@@ -108,7 +108,7 @@ case class Statistic(people: ParSeq[Person]) {
     SortedMap[City, Int]() ++ cities.map(city => (city, numCurrentPositive(city))).toMap
   }
 
-  //TODO scalaDoc
+  //TODO: scalaDoc
   //paziente 0 lo prende alla forma 0
   //per ogni stadio del virus restituisce quante persone ce l'hanno allo stadio 3, p.e.
   //Da stadio a numero di persone che ce l'hanno per ogni stadio
