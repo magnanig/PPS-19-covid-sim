@@ -3,13 +3,17 @@ package pps.covid_sim.controller.Coordination
 import java.util.Calendar
 
 import akka.actor.{ActorSystem, Props}
-import akka.testkit.TestKit
+import akka.testkit.{ImplicitSender, TestActors, TestKit}
 import org.junit.Test
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import pps.covid_sim.controller.ControllerImpl
 import pps.covid_sim.controller.actors.ActorsCoordination
 import pps.covid_sim.controller.actors.ActorsCoordination.ProvinceCoordinator
 import pps.covid_sim.model.people.actors.Communication.GetPlacesByProvince
 import pps.covid_sim.model.places.FreeTime.Restaurant
+import pps.covid_sim.model.places.Locality.Region
 import pps.covid_sim.model.samples.Provinces
 
 import scala.concurrent.duration.FiniteDuration
@@ -21,14 +25,56 @@ import pps.covid_sim.util.time.Time.ScalaCalendar
 class CoordinationTest {
 
 
-  @Test
+  /*@Test
   def testCoordinationWithActors(): Unit = {
-    val c = new ControllerImpl(null)
+    val c = new ControllerImpl(null,null)
     val start: Calendar = ScalaCalendar(2020, 9, 1, 1)
     val end: Calendar = ScalaCalendar(2020, 9, 1, 10)
 
     val interval = new DatesInterval(start,end)
-    ActorsCoordination.create(c,interval)
+    ActorsCoordination.create(Region.EMILIA_ROMAGNA, c,interval)
+  }*/
+
+  @Test
+  class MySpec()
+    extends TestKit(ActorSystem("MySpec"))
+      with ImplicitSender
+      with AnyWordSpecLike
+      with Matchers
+      with BeforeAndAfterAll {
+
+    override def afterAll(): Unit = {
+      TestKit.shutdownActorSystem(system)
+    }
+    "An Echo actor" must {
+
+      "send back messages unchanged" in {
+        val echo = system.actorOf(TestActors.echoActorProps)
+        echo ! "hello world"
+        expectMsg("hello world")
+      }
+    }
+  }
+
+
+  class CoordinatorTest1()
+    extends TestKit(ActorSystem("CoordinatorTest1"))
+      with ImplicitSender
+      with AnyWordSpecLike
+      with Matchers
+      with BeforeAndAfterAll {
+
+    override def afterAll(): Unit = {
+      TestKit.shutdownActorSystem(system)
+    }
+    "An Echo actor" must {
+
+      "send back messages unchanged" in {
+        val echo = system.actorOf(TestActors.echoActorProps)
+        echo ! "hello world"
+        expectMsg("hello world")
+      }
+    }
   }
 
   @Test

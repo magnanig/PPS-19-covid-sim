@@ -7,6 +7,6 @@ object CoordinatorCommunication {
 
   case class SetRegion(region: Region)
 
-  case class SetProvince(province: Province, upperCoordinator: RegionCoordinator)
+  case class SetProvince(province: Province, upperCoordinator: Coordinator)
 
 }

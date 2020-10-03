@@ -31,4 +31,9 @@ trait View extends SimpleSwingApplication{
    */
   def clearTabs(): Unit
 
+  /**
+   * Method that set visible the button if it was not
+   */
+  def setVisibleConfirmButton(): Unit
+
 }

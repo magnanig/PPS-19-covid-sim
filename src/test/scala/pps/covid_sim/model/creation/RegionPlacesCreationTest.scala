@@ -3,6 +3,7 @@ package pps.covid_sim.model.creation
 import org.junit.Test
 import org.junit.Assert.assertEquals
 import pps.covid_sim.model.container.{CitiesContainer, PeopleContainer, PlacesContainer}
+import pps.covid_sim.model.creation.region.RegionCreation
 import pps.covid_sim.model.people.People.{Student, Teacher, Worker}
 import pps.covid_sim.model.places.Education.{School, University}
 import pps.covid_sim.model.places.FreeTime.{Bar, Disco, OpenDisco, Pub, Restaurant}
@@ -10,14 +11,14 @@ import pps.covid_sim.model.places.Hobbies.{FootballTeam, Gym}
 import pps.covid_sim.model.places.Jobs.{Company, Factory}
 import pps.covid_sim.model.places.Locality.Region
 import pps.covid_sim.model.places.OpenPlaces.{Field, Park, Square}
-import pps.covid_sim.model.places.Shops.{ClothesShop, Shop, SuperMarket}
+import pps.covid_sim.model.places.Shops.{ClothesShop, SuperMarket}
 import pps.covid_sim.model.samples.Cities
 
 import scala.collection.mutable
 
 class RegionPlacesCreationTest {
 
-  RegionPlacesCreation.create(Region.VALLE_DAOSTA)
+  RegionCreation.create(Region.VALLE_DAOSTA)
 
   val squares: Int = PlacesContainer.getPlaces(classOf[Square]).size
   val schools: List[School] = PlacesContainer.getPlaces(classOf[School]).map(_.asInstanceOf[School])

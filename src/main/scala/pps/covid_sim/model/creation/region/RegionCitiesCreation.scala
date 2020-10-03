@@ -1,16 +1,17 @@
-package pps.covid_sim.model.creation
+package pps.covid_sim.model.creation.region
 
 import pps.covid_sim.model.places.Locality.{City, Province, Region}
 
 import scala.collection.mutable
 
-/**
- * Represents a singleton object, unique in the whole program.
- * Through this object it is possible to create all the cities
- * of a specific region.
- */
-object RegionCitiesCreation {
+private[region] object RegionCitiesCreation {
 
+  /**
+   * Create all the cities of a specific region.
+   *
+   * @param region  region whose cities will be created.
+   * @return        list of all the cities that have been created.
+   */
   def create(region: Region): Set[City] = { new RegionCitiesCreation(region).create() }
 
 }
@@ -24,9 +25,10 @@ private class RegionCitiesCreation(val region: Region) {
     provincesCreation()
     val bufferedSource = io.Source.fromFile("res/italy_cities.csv")
     for (line <- bufferedSource.getLines) {
-      val Array(istat, name, abbreviation, region_name, _, _, num_residents) = line.split(";")
+      val Array(istat, name, abbreviation, region_name, _, _, num_residents, longitude, latitude) = line.split(";")
       if (region.name.equals(region_name)) {
-        cities += City(istat.toInt, name, num_residents.toInt, provinces(abbreviation))
+        cities += City(istat.toInt, name, num_residents.toInt, provinces(abbreviation),
+          latitude.toDouble, longitude.toDouble)
       }
     }
     bufferedSource.close
@@ -36,9 +38,10 @@ private class RegionCitiesCreation(val region: Region) {
   private def provincesCreation(): Unit = {
     val bufferedSource = io.Source.fromFile("res/italy_provinces.csv")
     for (line <- bufferedSource.getLines) {
-      val Array(abbreviation, istat, name, id_region) = line.split(";")
+      val Array(abbreviation, istat, name, id_region, longitude, latitude) = line.split(";")
       if (region.id == id_region.toInt) {
-        provinces += (abbreviation -> Province(istat.toInt, name, abbreviation, region))
+        provinces += (abbreviation -> Province(istat.toInt, name, abbreviation, region,
+          latitude.toDouble, longitude.toDouble))
       }
     }
     bufferedSource.close

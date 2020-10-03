@@ -1,28 +1,41 @@
-package pps.covid_sim.model.creation
+package pps.covid_sim.model.creation.region
 
-import pps.covid_sim.model.container.{CitiesContainer, PeopleContainer, PlacesContainer}
+import pps.covid_sim.model.container.{PeopleContainer, PlacesContainer}
 import pps.covid_sim.model.creation.freetime.FreeTimePlacesCreation
 import pps.covid_sim.model.creation.hobbies.HobbyPlacesCreation
 import pps.covid_sim.model.creation.institute.InstitutePlacesCreation
 import pps.covid_sim.model.creation.work.WorkPlacesCreation
+import pps.covid_sim.model.creation.{HabitationsCreation, OpenPlacesCreation}
 import pps.covid_sim.model.people.People.{Student, Teacher, Worker}
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.places.Locality.{Area, City, Region}
+import pps.covid_sim.model.places.Locality.{City, Region}
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.parameters.CreationParameters._
 import pps.covid_sim.util.Statistic
 
 import scala.util.Random
 
-// TODO: Scala Doc
+private[region] object RegionPlacesCreation {
 
-object RegionPlacesCreation {
-
-  def create(area: Area): List[Place] = area match {
-    case city: City => ??? // TODO CitiesPlacesCreation(city).create() <- creare SOLO i posti della CITTA' richiesta
-    case region: Region => new RegionPlacesCreation(region).create()
-    case _ => CitiesContainer.getRegions.flatMap(new RegionPlacesCreation(_).create()).toList
+  /**
+   * Create all places throughout the region. This computation also involves
+   * the creation of all people and all cities of the region. In addition to
+   * creating the different places, it also takes care of assigning students
+   * and professors to their respective schools and/or universities.
+   * Finally, it also assigns all workers to their respective jobs.
+   *
+   * @note          All the places that will be created, at the end of
+   *                the computation, will be contained within the
+   *                PlacesContainer object.
+   *                The same goes for the cities and people that will be
+   *                contained in CitiesContainer and PeopleContainer
+   *                respectively.
+   * @param region  region in which all places will be created.
+   */
+  def create(region: Region): Unit = {
+    new RegionPlacesCreation(region).create()
   }
+
 }
 
 private class RegionPlacesCreation(region: Region) {
@@ -30,14 +43,13 @@ private class RegionPlacesCreation(region: Region) {
   private val _people: List[Person] = RegionPeopleCreation.create(region)
   private val random: Random = new Random()
 
-  def create(): List[Place] = {
+  def create(): Unit = {
     PeopleContainer.add(_people)
-    val places = _people
+    _people
       .groupBy(person => person.residence)
       .flatMap(entry => createEntityFor(entry))
       .toList
-    //PeopleContainer.checkAssignedWork()
-    places
+    PeopleContainer.checkAssignedWork()
   }
 
   def createEntityFor(entry: (City, List[Person])): List[Place] = {

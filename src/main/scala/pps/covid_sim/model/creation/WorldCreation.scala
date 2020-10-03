@@ -1,29 +1,30 @@
 package pps.covid_sim.model.creation
 
-import pps.covid_sim.model.container.PeopleContainer
+import pps.covid_sim.model.creation.region.RegionCreation
 import pps.covid_sim.model.places.Locality.Region
 
 import scala.collection.mutable
 
-//TODO  Questo oggetto, volendo (se dovesse servire o fare comodo)
-// potrebbe contenere una mappa che, per ogni regione,contiene
-// tutti i posti contenuti in quella specifica regione,
-// mantenendo salvato il riferimeto di ogni RegionPlacesCreation.
-// In questo modo, potranno essere effettuate delle ricerche
-// per ogni Regione, deve "lanciare" un'istanza di
-// mirate per ogni regione in modo rapido ed efficiente.
-
+/**
+ * It takes care of creating the entire application domain
+ * based on the entire region.
+ */
 object WorldCreation {
 
   private var regions: mutable.Map[Int, Region] = mutable.Map[Int, Region]() // id_region -> Region
+  private var created: Boolean = false
 
-  // Per ogni Regione viene lanciata un'istanza di RegionPlacesCreation.
-  // In questo modo, per ogni regione, vengono create città, persone e
-  // luoghi comuni di aggregazione.
-  def generateAll(): Unit = {
-    regionsCreation()
-    regions.values.foreach(RegionPlacesCreation.create)
-    PeopleContainer.checkAssignedWork()
+  /**
+   * For each Italian region: cities, people and commonplaces of
+   * aggregation are created.
+   */
+  def create(): Unit = {
+    if (!created) {
+      regionsCreation()
+      regions.values.foreach(RegionCreation.create)
+      //PeopleContainer.checkAssignedWork()
+      created = true
+    }
   }
 
   private def regionsCreation(): Unit = {

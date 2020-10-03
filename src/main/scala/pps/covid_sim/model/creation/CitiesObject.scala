@@ -1,4 +1,4 @@
-package pps.covid_sim.model.creation.test
+package pps.covid_sim.model.creation
 
 import pps.covid_sim.model.places.Locality.{City, Province, Region}
 
@@ -88,11 +88,22 @@ private class CitiesObject {
     provincesCreation()
     val bufferedSource = io.Source.fromFile("res/italy_cities.csv")
     for (line <- bufferedSource.getLines) {
-      val Array(istat, name, abbreviation, _, _, _, num_residents) = line.split(";")
-      cities += City(istat.toInt, name, num_residents.toInt, provinces(abbreviation))
+      val Array(istat, name, abbreviation, _, _, _, num_residents, longitude, latitude) = line.split(";")
+      cities += City(istat.toInt, name, num_residents.toInt, provinces(abbreviation),
+        latitude.toDouble, longitude.toDouble)
     }
     bufferedSource.close
     cities
+  }
+
+  private def provincesCreation(): Unit = {
+    val bufferedSource = io.Source.fromFile("res/italy_provinces.csv")
+    for (line <- bufferedSource.getLines) {
+      val Array(abbreviation, istat, name, id_region, longitude, latitude) = line.split(";")
+      provinces += (abbreviation -> Province(istat.toInt, name, abbreviation, regions(id_region.toInt),
+        latitude.toDouble, longitude.toDouble))
+    }
+    bufferedSource.close
   }
 
   private def regionsCreation(): Unit = {
@@ -100,15 +111,6 @@ private class CitiesObject {
     for (line <- bufferedSource.getLines) {
       val Array(id_region, name, _, num_residents, _, _) = line.split(";")
       regions += (id_region.toInt -> Region(id_region.toInt, name, num_residents.toInt))
-    }
-    bufferedSource.close
-  }
-
-  private def provincesCreation(): Unit = {
-    val bufferedSource = io.Source.fromFile("res/italy_provinces.csv")
-    for (line <- bufferedSource.getLines) {
-      val Array(abbreviation, istat, name, id_region) = line.split(";")
-      provinces += (abbreviation -> Province(istat.toInt, name, abbreviation, regions(id_region.toInt)))
     }
     bufferedSource.close
   }

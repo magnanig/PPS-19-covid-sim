@@ -2,13 +2,24 @@ package pps.covid_sim.view
 import java.util.Calendar
 
 import pps.covid_sim.controller.Controller
+import pps.covid_sim.model.creation.CitiesObject
+import pps.covid_sim.model.places.Locality
+import pps.covid_sim.model.places.Locality.{Area, Province, Region}
+import pps.covid_sim.model.samples.Regions
 import pps.covid_sim.util.time.Time.ScalaCalendar
+import pps.covid_sim.view.viewUtil.Checkers._
 
 import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}
 import scala.swing.event.{ButtonClicked, EditDone, SelectionChanged}
 import scala.swing.{Action, BorderPanel, BoxPanel, Button, ButtonGroup, CheckBox, CheckMenuItem, ComboBox, FlowPanel, Frame, Label, ListView, MainFrame, Menu, MenuBar, MenuItem, Orientation, RadioButton, RadioMenuItem, Separator, SplitPane, Swing, TabbedPane, TextField}
 
-class GuiImp(controller: Controller) extends View {
+class GuiImp() extends View {
+
+  def setController(controller: Controller): Unit = {
+    this.controller = controller;
+  }
+  var controller: Controller = _
+
   override val tabs: TabbedPane = new TabbedPane {
     import TabbedPane._
     //aggiunta dei diversi grafici
@@ -39,6 +50,13 @@ class GuiImp(controller: Controller) extends View {
   override def clearTabs(): Unit = {
     tabs.pages.clear()
   }
+
+  override def setVisibleConfirmButton(): Unit = {
+    confirmButton.visible = true
+  }
+
+  //confirm Button
+  val confirmButton = new Button("Conferma")
 
   override def top: Frame = new MainFrame {
     title = "PPS-19-Covid-Sim"
@@ -75,23 +93,21 @@ class GuiImp(controller: Controller) extends View {
 
     //dates
     val dayStartField = new TextField(2)
+    dayStartField.text = "1"
     val monthStartField = new TextField(2)
+    monthStartField.text = "1"
     val yearStartField = new TextField(4)
+    yearStartField.text = "2020"
     val dayEndField = new TextField(2)
+    dayEndField.text = "1"
     val monthEndField = new TextField(2)
+    monthEndField.text = "12"
     val yearEndField = new TextField(4)
+    yearEndField.text = "2020"
 
     //runs
     val runsField = new TextField(3)
     runsField.text = "1"
-
-    dayStartField.text = "1"
-    monthStartField.text = "1"
-    yearStartField.text = "2020"
-    dayEndField.text = "1"
-    monthEndField.text = "12"
-    yearEndField.text = "2020"
-
 
     //CheckBoxes
     val beachCheckbox = new CheckBox("Spiagge")
@@ -110,15 +126,13 @@ class GuiImp(controller: Controller) extends View {
     val fieldCheckbox = new CheckBox("Campi(Calcio)")
     val gymCheckbox = new CheckBox("Palestre")
 
-    /*Separare i radio e gestire la selezione
-      contents += new BoxPanel(Orientation.Vertical) {
-      border = CompoundBorder(TitledBorder(EtchedBorder, "Radio Buttons"), EmptyBorder(5, 5, 5, 10))
-      val a = new RadioButton("Green Vegetables")
-      val b = new RadioButton("Red Meat")
-      val c = new RadioButton("White Tofu")
-      val mutex = new ButtonGroup(a, b, c)
-      contents ++= mutex.buttons
-    }*/
+
+
+
+
+    var selectedRegion : Option[Region] = Option.empty
+    var selectedProvince : Option[Province] = Option.empty
+
 
     /*
      * Create a menu bar with a couple of menus and menu items and
@@ -176,58 +190,71 @@ class GuiImp(controller: Controller) extends View {
        */
       val leftPanel: BoxPanel = new BoxPanel(Orientation.Vertical){
 
-        /**
-         * Method that check if the inserted value is a number between 0 and 100
-         * @param textField containing the value to check
-         */
-        def checkPercent(textField: TextField): Unit = {
-          if (textField.text.forall(c => c.isDigit) && textField.text!="") {
-            if (textField.text.toInt > 100) {textField.text = "100"}
-            else if (textField.text.toInt < 0) {textField.text = "0"}
-          } else {textField.text = "0"}
-        }
 
-        /**
-         * Method that check if the inserted value is a number positive number
-         * @param textField containing the value to check
-         */
-        def checkPositive(textField: TextField): Unit = {
-          if (textField.text.forall(c => c.isDigit) && textField.text!="") {
-            if (textField.text.toInt < 0) {textField.text = "0"}
-          } else {textField.text = "0"}
-        }
+        // TODO ricordarsi il "seleziona"
+        var regionComboboxItems: Seq[String] = Seq(new Locality.Italy().name,"second","third")//ci stanno le regioni
+        //val italy : Area = new Locality.Italy()
 
-        def checkDay(textField: TextField): Unit = {
-          if (textField.text.forall(c => c.isDigit) && textField.text!="") {
-            if (textField.text.toInt < 0) {textField.text = "1"}
-            if (textField.text.toInt >31) {textField.text = "0"}
-          } else {textField.text = "1"}
-        }
-        def checkMonth(textField: TextField): Unit = {
-          if (textField.text.forall(c => c.isDigit) && textField.text!="") {
-            if (textField.text.toInt < 0) {textField.text = "1"}
-            if (textField.text.toInt > 12) {textField.text = "12"}
-          } else {textField.text = "1"}
-        }
+        val regionSet: Set[Region] = Set() //CitiesObject.getRegions
+        val provinceSet: Set[Province] = regionSet.flatMap(r => CitiesObject.getProvince(r))
+        //println(italy)
+        //println(regionSet)
+        //println(ProvinceSet)
+        //Locality.Italy()
+        //CitiesObject.getRegions
+        //CitiesObject.getProvince(/**/)
 
-        val comboboxItems = Seq("gigi","el1","el1","el1","el1","el1","el1","el1","el1")
+        // TODO ricordarsi il "seleziona"   e prima della selezione di regione mettere a disposizione solo un elemento che avvisi che prima deve selezionare la regione se vuole fare per provincia
+        var provinceComboboxItems: Seq[String] = Seq("Seleziona","second","third")//ci stanno le provincie della regione selezionata
 
-        val comboBox: ComboBox[String]= new ComboBox[String](comboboxItems)
+        //val areasSimulation = CitiesObject.getRegions.map(r => r.name)
+
+        val regionComboBox: ComboBox[String]= new ComboBox[String](regionComboboxItems)
+        val provinceComboBox: ComboBox[String]= new ComboBox[String](provinceComboboxItems)
+
         contents += new FlowPanel {
-          contents += new Label("<html><p>Nazione, Regione o Provincia su cui Simulare:</p></html>")//contagionProbability
+          contents += new Label("<html><p>Simulazione di/dell':</p></html>")
           //val probInfectionField = new TextField(3)
-          contents += comboBox
-          comboBox.selection.item
+          contents += regionComboBox
+          //regionComboBox.selection.item
+
+          contents += provinceComboBox
+          //provinceComboBox.selection.item
+          provinceComboBox.visible = false
+
+          //runs
           contents += new Label("   Runs:")
           contents += runsField
-          listenTo(runsField)
+          listenTo(runsField, regionComboBox.selection, provinceComboBox.selection)
           reactions += {
             case EditDone(`runsField`) => checkPositive(runsField)
+
+            case SelectionChanged(`provinceComboBox`) => {
+              if(provinceComboBox.selection.item=="Seleziona"){
+                selectedProvince = Option.empty
+              }else{
+                val provinceSelected: Province = provinceSet.filter(p=> p.name == provinceComboBox.selection.item).head
+                selectedProvince = Option(provinceSelected)
+              }
+            }
+
+            case SelectionChanged(`regionComboBox`) => {
+              println(regionComboBox.selection.item)
+              if(regionComboBox.selection.item == "Italia"){
+                  provinceComboBox.visible = false
+                  selectedRegion = Option.empty
+                  selectedProvince = Option.empty
+              }else{
+                provinceComboBox.visible = true
+                //aggiorno gli elementi di province
+                val regionSelected: Region = regionSet.filter(r=> r.name == regionComboBox.selection.item).head
+                selectedRegion = Option(regionSelected)
+
+                val nuovaListaItemProvince = CitiesObject.getProvince(regionSelected).toList;
+                provinceComboboxItems = nuovaListaItemProvince.map(p=> p.name)
+              }
+            }
           }
-
-
-
-          //println(comboBox.selection.item)
         }
 
 
@@ -245,7 +272,6 @@ class GuiImp(controller: Controller) extends View {
           contents += new Label("-")
           contents += yearEndField
 
-
           listenTo(dayStartField,monthStartField,yearStartField,dayEndField,monthEndField,yearEndField)
           reactions += {
             case EditDone(`dayStartField`) => checkDay(dayStartField)
@@ -256,12 +282,6 @@ class GuiImp(controller: Controller) extends View {
             case EditDone(`yearEndField`) => checkPositive(yearEndField)
           }
         }
-
-
-
-
-
-
         contents += new FlowPanel {
           contents += new Label("<html><p>Probabilità contagio al netto di mascherine e distanziamento sociale:</p></html>")//contagionProbability
           //val probInfectionField = new TextField(3)
@@ -313,8 +333,6 @@ class GuiImp(controller: Controller) extends View {
             case EditDone(`maxInfectionDetectionTimeField`) => checkPositive(maxInfectionDetectionTimeField)
           }
         }
-
-
         /*contents += new FlowPanel {
           contents += new Label("<html><p>Percentuale stimata di asintomatici per facie di età:</p></html>")//TODO asymptomaticProbability   gli assegnerei poi => valore fisso frega dell'età
           //val asymptomaticAgeField = new TextField(3)
@@ -325,7 +343,6 @@ class GuiImp(controller: Controller) extends View {
             case EditDone(`asymptomaticAgeField`) => checkPercent(asymptomaticAgeField)
           }
         }*/
-
         contents += new FlowPanel {
           contents += new Label("<html><p>percentuale di asintomatici che riescono ad accorgiersi di essere infetti:</p></html>")//asymptomaticDetectionCondProbability
           //val cunningAsymptomaticField = new TextField(3)
@@ -409,11 +426,11 @@ class GuiImp(controller: Controller) extends View {
         }
 
         contents +=  new BorderPanel {
-          val confirmButton = new Button("Conferma")
           add(confirmButton, BorderPanel.Position.East)
           listenTo(confirmButton)
           reactions += {
             case ButtonClicked(`confirmButton`) => {
+              confirmButton.visible = false;
               //check che i valori obbligatori siano inseriti
               //valori: beachCheckbox,squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox, barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox,companyCheckbox,factoryCheckbox , shopCheckbox, fieldCheckbox,gymCheckbox
               //li usi per fare partire la simulazione
@@ -421,29 +438,38 @@ class GuiImp(controller: Controller) extends View {
               //tabs.pages += new Page("Painting", btnPanel.buttons )
               var dataInizio: Calendar = ScalaCalendar(yearStartField.text.toInt,monthStartField.text.toInt,dayStartField.text.toInt,0)
               var dataFine: Calendar = ScalaCalendar(yearEndField.text.toInt,monthEndField.text.toInt,dayEndField.text.toInt,0)
-              //if(dataInizio.isBefore(dataFine))//TODO non è stato implementato un metodo che lo faccia
 
-              controller.setSimulationParameters(
-                distField.text.toDouble/10,
-                minHealingTimingField.text.toInt,
-                maxHealingTimingField.text.toInt,
-                minInfectionDetectionTimeField.text.toInt,
-                maxInfectionDetectionTimeField.text.toInt,
-                multipleInfectionProbabilityField.text.toDouble/100,
-                50.toDouble/100,
-                cunningAsymptomaticField.text.toDouble/100,
-                probInfectionField.text.toDouble/100,
-                peopleWearingMaskField.text.toDouble/100 ,
-                100.toInt/100 ,
-                breakingPeopkeField.text.toDouble/100,
-                lockdownStartField.text.toDouble/100,
-                lockdownEndField.text.toDouble/100)
+              if(dataInizio < dataFine){//controllo che i dates siano corretti
+                controller.setSimulationParameters(
+                  distField.text.toDouble/10,
+                  minHealingTimingField.text.toInt,
+                  maxHealingTimingField.text.toInt,
+                  minInfectionDetectionTimeField.text.toInt,
+                  maxInfectionDetectionTimeField.text.toInt,
+                  multipleInfectionProbabilityField.text.toDouble/100,
+                  50.toDouble/100,
+                  cunningAsymptomaticField.text.toDouble/100,
+                  probInfectionField.text.toDouble/100,
+                  peopleWearingMaskField.text.toDouble/100 ,
+                  100.toInt/100 ,
+                  breakingPeopkeField.text.toDouble/100,
+                  lockdownStartField.text.toDouble/100,
+                  lockdownEndField.text.toDouble/100)
 
-
-                controller.startSimulation(null, dataInizio,dataFine,runsField.text.toInt) // TODO: specificare l'area (es. città o regione...)
+                //italia => WorldCreation.generateAll()
+                /*Regione => */ //RegionPlacesCreation.create(regioneSelezionata)
+                /*Province => */ // RegionPlacesCreation.create(ProvinciaSelezionata)
+                var selectedArea: Area = new Locality.Italy{}
+                if(selectedRegion.isDefined && selectedProvince.isDefined) {
+                  selectedArea = selectedProvince.get
+                }else if (selectedRegion.isDefined && !selectedProvince.isDefined){
+                  selectedArea = selectedRegion.get
+                }
+                controller.startSimulation(selectedArea, dataInizio,dataFine,runsField.text.toInt) // TODO: specificare l'area (es. città o regione...)
+              }else{
+                print("Date inserite in modo errato")
+              }
             }
-
-
           }
         }
       }

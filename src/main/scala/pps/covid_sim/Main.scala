@@ -6,8 +6,10 @@ import pps.covid_sim.view.GuiImp
 
 object Main {
   def main(args: Array[String]): Unit = {
-    val c = new ControllerImpl(new ModelImpl)
-    val g = new GuiImp(c)
+    val g = new GuiImp()
+    val c = new ControllerImpl(new ModelImpl,g)
+    g.setController(c)
+
     g.top.pack()
     g.top.centerOnScreen()
     g.top.open()

@@ -2,6 +2,7 @@ package pps.covid_sim.controller
 
 import java.util.Calendar
 
+import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
 
@@ -28,6 +29,8 @@ trait Controller {
                               minMaskProbability: Double, maxMaskProbability : Int,
                               notRespectingIsolationMaxProbability: Double,
                               lockDownStart:Double, lockDownEnd: Double): Unit
+
+  def covidInfectionParameters: CovidInfectionParameters
 
   def regions: Set[Region]
 

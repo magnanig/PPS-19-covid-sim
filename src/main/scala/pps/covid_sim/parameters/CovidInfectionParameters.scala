@@ -1,6 +1,10 @@
 package pps.covid_sim.parameters
 
+import pps.covid_sim.model.places.Place
+
 object CovidInfectionParameters {
+
+  //TODO Da cancellare MAGNO
 
   var safeZone = 1.5 // meters
 
@@ -32,5 +36,7 @@ object CovidInfectionParameters {
 
   var lockDownStart = 0.1 // population percentage
   var lockDownEnd = 0.8 // percentage respect with last max infections
+
+  val placeToclose: Set[Class[_ <:Place]] = Set()
 
 }
