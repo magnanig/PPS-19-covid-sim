@@ -8,6 +8,7 @@ object PeopleContainer {
 
   private var _people: List[Person] = List()
 
+  //TODO scaladoc
   def add(person: Person): Unit = {
     _people = person :: _people
   }
