@@ -2,7 +2,7 @@ package pps.covid_sim.model.container
 
 import pps.covid_sim.model.transports.PublicTransports.{BusLine, TrainLine}
 
-//TODO scalaDoc
+// TODO scalaDoc
 object TransportLinesContainer {
 
   private var _busLines: List[BusLine] = List()
