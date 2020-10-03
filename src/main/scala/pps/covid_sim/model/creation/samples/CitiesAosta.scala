@@ -76,9 +76,10 @@ private class CitiesAosta {
     provincesCreation()
     val bufferedSource = io.Source.fromFile("res/italy_cities.csv")
     for (line <- bufferedSource.getLines) {
-      val Array(istat, name, abbreviation, _, _, _, num_residents) = line.split(";")
+      val Array(istat, name, abbreviation, _, _, _, num_residents, longitude, latitude) = line.split(";")
       if (abbreviation.equals("AO")) {
-        cities += City(istat.toInt, name, num_residents.toInt, provinces(abbreviation))
+        cities += City(istat.toInt, name, num_residents.toInt, provinces(abbreviation),
+          latitude.toDouble, longitude.toDouble)
       }
     }
     bufferedSource.close
@@ -99,9 +100,10 @@ private class CitiesAosta {
   private def provincesCreation(): Unit = {
     val bufferedSource = io.Source.fromFile("res/italy_provinces.csv")
     for (line <- bufferedSource.getLines) {
-      val Array(abbreviation, istat, name, id_region) = line.split(";")
+      val Array(abbreviation, istat, name, id_region, longitude, latitude) = line.split(";")
       if (abbreviation.equals("AO")) {
-        provinces += (abbreviation -> Province(istat.toInt, name, abbreviation, regions(id_region.toInt)))
+        provinces += (abbreviation -> Province(istat.toInt, name, abbreviation, regions(id_region.toInt),
+          latitude.toDouble, longitude.toDouble))
       }
     }
     bufferedSource.close
