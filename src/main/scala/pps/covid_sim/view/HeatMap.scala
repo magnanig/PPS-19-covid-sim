@@ -3,7 +3,7 @@ package pps.covid_sim.view
 import javax.swing.JComponent
 import javax.swing.JFrame
 import javax.swing.JPanel
-import java.awt.{BorderLayout, Color, Graphics, Graphics2D, RenderingHints, Shape}
+import java.awt.{BorderLayout, Color, Component, Graphics, Graphics2D, RenderingHints, Shape}
 import java.awt.geom.{Ellipse2D, Rectangle2D}
 import java.awt.image.BufferedImage
 import java.io.File
@@ -57,6 +57,8 @@ class HeatMap() {
     revalidate()
     repaint()
     this.setVisible(true)
+
+
 
     private class GraphicsComponent(infectionsInADay: Map[City, Int]) extends JComponent {
       private val italyOutlineMap: BufferedImage = ImageIO.read(new File("./res/italy_outline_map.png"))
