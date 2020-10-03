@@ -2,6 +2,11 @@ package pps.covid_sim.view
 import java.util.Calendar
 
 import pps.covid_sim.controller.Controller
+import pps.covid_sim.model.creation.RegionPlacesCreation
+import pps.covid_sim.model.creation.test.CitiesObject
+import pps.covid_sim.model.places.Locality
+import pps.covid_sim.model.places.Locality.{Province, Region}
+import pps.covid_sim.model.samples.Regions
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
 import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}
@@ -210,7 +215,13 @@ class GuiImp(controller: Controller) extends View {
           } else {textField.text = "1"}
         }
 
-        val comboboxItems = Seq("gigi","el1","el1","el1","el1","el1","el1","el1","el1")
+        val comboboxItems = Seq("gigi","el1")
+        //Locality.Italy()
+        //CitiesObject.getRegions
+        //CitiesObject.getProvince(/**/)
+        val areasSimulation = CitiesObject.getRegions.map(r => r.name)
+
+
 
         val comboBox: ComboBox[String]= new ComboBox[String](comboboxItems)
         contents += new FlowPanel {
@@ -224,8 +235,6 @@ class GuiImp(controller: Controller) extends View {
           reactions += {
             case EditDone(`runsField`) => checkPositive(runsField)
           }
-
-
 
           //println(comboBox.selection.item)
         }
@@ -439,7 +448,9 @@ class GuiImp(controller: Controller) extends View {
                 lockdownStartField.text.toDouble/100,
                 lockdownEndField.text.toDouble/100)
 
-
+              //italia => WorldCreation.generateAll()
+              /*Regione => */ //RegionPlacesCreation.create(regioneSelezionata)
+              /*Province => */ // RegionPlacesCreation.create(ProvinciaSelezionata)
                 controller.startSimulation(null, dataInizio,dataFine,runsField.text.toInt) // TODO: specificare l'area (es. città o regione...)
             }
 
