@@ -2,11 +2,13 @@ package pps.covid_sim.model.simulation
 
 import java.util.Calendar
 
+import pps.covid_sim.model.places.Locality.Area
 import pps.covid_sim.model.places.Place
 
 import scala.collection.SortedMap
 
 case class SimulationsManager[+S <: Simulation](simulations: Seq[S],
+                                               area: Area,
                                                 from: Calendar,
                                                 until: Calendar) extends Iterable[S] {
   private var current: Int = 0

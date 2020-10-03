@@ -1,12 +1,16 @@
-package pps.covid_sim.parameters
+package pps.covid_sim.model
 
 import pps.covid_sim.model.places.Place
 
-object CovidInfectionParameters {
+case class CovidInfectionParameters() {
 
-  //TODO Da cancellare MAGNO
+  //TODO fare setter e getter!!!
 
-  var safeZone = 1.5 // meters
+  private var _safeZone = 1.5 // meters
+  private[model] def safeZone_=(distance:Double):Unit = {
+    _safeZone = distance
+  }
+  def safeZone:Double = _safeZone
 
   var minRecoverTime: Int = 7 * 24 // min time (hours) after which patient get recovered
   var maxRecoverTime: Int = 40 * 24 // max time (hours) after which patient get recovered

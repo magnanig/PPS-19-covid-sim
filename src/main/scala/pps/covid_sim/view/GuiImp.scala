@@ -14,7 +14,13 @@ import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorde
 import scala.swing.event.{ButtonClicked, EditDone, SelectionChanged}
 import scala.swing.{Action, BorderPanel, BoxPanel, Button, ButtonGroup, CheckBox, CheckMenuItem, ComboBox, FlowPanel, Frame, Label, ListView, MainFrame, Menu, MenuBar, MenuItem, Orientation, RadioButton, RadioMenuItem, Separator, SplitPane, Swing, TabbedPane, TextField}
 
-class GuiImp(controller: Controller) extends View {
+class GuiImp() extends View {
+
+  def setController(controller: Controller): Unit = {
+    this.controller = controller;
+  }
+  var controller: Controller = _
+
   override val tabs: TabbedPane = new TabbedPane {
     import TabbedPane._
     //aggiunta dei diversi grafici
@@ -45,6 +51,13 @@ class GuiImp(controller: Controller) extends View {
   override def clearTabs(): Unit = {
     tabs.pages.clear()
   }
+
+  override def setVisibleConfirmButton(): Unit = {
+    confirmButton.visible = true
+  }
+
+  //confirm Button
+  val confirmButton = new Button("Conferma")
 
   override def top: Frame = new MainFrame {
     title = "PPS-19-Covid-Sim"
@@ -113,6 +126,10 @@ class GuiImp(controller: Controller) extends View {
     val shopCheckbox = new CheckBox("Negozi")
     val fieldCheckbox = new CheckBox("Campi(Calcio)")
     val gymCheckbox = new CheckBox("Palestre")
+
+
+
+
 
     var selectedRegion : Option[Region] = Option.empty
     var selectedProvince : Option[Province] = Option.empty
@@ -410,11 +427,11 @@ class GuiImp(controller: Controller) extends View {
         }
 
         contents +=  new BorderPanel {
-          val confirmButton = new Button("Conferma")
           add(confirmButton, BorderPanel.Position.East)
           listenTo(confirmButton)
           reactions += {
             case ButtonClicked(`confirmButton`) => {
+              confirmButton.visible = false;
               //check che i valori obbligatori siano inseriti
               //valori: beachCheckbox,squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox, barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox,companyCheckbox,factoryCheckbox , shopCheckbox, fieldCheckbox,gymCheckbox
               //li usi per fare partire la simulazione
@@ -422,37 +439,38 @@ class GuiImp(controller: Controller) extends View {
               //tabs.pages += new Page("Painting", btnPanel.buttons )
               var dataInizio: Calendar = ScalaCalendar(yearStartField.text.toInt,monthStartField.text.toInt,dayStartField.text.toInt,0)
               var dataFine: Calendar = ScalaCalendar(yearEndField.text.toInt,monthEndField.text.toInt,dayEndField.text.toInt,0)
-              //if(dataInizio.isBefore(dataFine))//TODO non è stato implementato un metodo che lo faccia
 
-              controller.setSimulationParameters(
-                distField.text.toDouble/10,
-                minHealingTimingField.text.toInt,
-                maxHealingTimingField.text.toInt,
-                minInfectionDetectionTimeField.text.toInt,
-                maxInfectionDetectionTimeField.text.toInt,
-                multipleInfectionProbabilityField.text.toDouble/100,
-                50.toDouble/100,
-                cunningAsymptomaticField.text.toDouble/100,
-                probInfectionField.text.toDouble/100,
-                peopleWearingMaskField.text.toDouble/100 ,
-                100.toInt/100 ,
-                breakingPeopkeField.text.toDouble/100,
-                lockdownStartField.text.toDouble/100,
-                lockdownEndField.text.toDouble/100)
+              if(dataInizio < dataFine){//controllo che i dates siano corretti
+                controller.setSimulationParameters(
+                  distField.text.toDouble/10,
+                  minHealingTimingField.text.toInt,
+                  maxHealingTimingField.text.toInt,
+                  minInfectionDetectionTimeField.text.toInt,
+                  maxInfectionDetectionTimeField.text.toInt,
+                  multipleInfectionProbabilityField.text.toDouble/100,
+                  50.toDouble/100,
+                  cunningAsymptomaticField.text.toDouble/100,
+                  probInfectionField.text.toDouble/100,
+                  peopleWearingMaskField.text.toDouble/100 ,
+                  100.toInt/100 ,
+                  breakingPeopkeField.text.toDouble/100,
+                  lockdownStartField.text.toDouble/100,
+                  lockdownEndField.text.toDouble/100)
 
-              //italia => WorldCreation.generateAll()
-              /*Regione => */ //RegionPlacesCreation.create(regioneSelezionata)
-              /*Province => */ // RegionPlacesCreation.create(ProvinciaSelezionata)
-              var selectedArea: Area = new Locality.Italy{}
-              if(selectedRegion.isDefined && selectedProvince.isDefined) {
-                selectedArea = selectedProvince.get
-              }else if (selectedRegion.isDefined && !selectedProvince.isDefined){
-                selectedArea = selectedRegion.get
+                //italia => WorldCreation.generateAll()
+                /*Regione => */ //RegionPlacesCreation.create(regioneSelezionata)
+                /*Province => */ // RegionPlacesCreation.create(ProvinciaSelezionata)
+                var selectedArea: Area = new Locality.Italy{}
+                if(selectedRegion.isDefined && selectedProvince.isDefined) {
+                  selectedArea = selectedProvince.get
+                }else if (selectedRegion.isDefined && !selectedProvince.isDefined){
+                  selectedArea = selectedRegion.get
+                }
+                controller.startSimulation(selectedArea, dataInizio,dataFine,runsField.text.toInt) // TODO: specificare l'area (es. città o regione...)
+              }else{
+                print("Date inserite in modo errato")
               }
-              controller.startSimulation(selectedArea, dataInizio,dataFine,runsField.text.toInt) // TODO: specificare l'area (es. città o regione...)
             }
-
-
           }
         }
       }

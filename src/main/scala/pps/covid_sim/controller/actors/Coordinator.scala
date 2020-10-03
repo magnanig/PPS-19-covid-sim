@@ -1,11 +1,11 @@
 package pps.covid_sim.controller.actors
 
-import akka.actor.ActorRef
+import akka.actor.{Actor, ActorRef}
 import pps.covid_sim.controller.actors.ActorsCoordination.system
 
 import scala.collection.parallel.ParSet
 
-trait Coordinator {
+trait Coordinator extends Actor{
 
   //private[actors] var system: ActorSystem = _
 
