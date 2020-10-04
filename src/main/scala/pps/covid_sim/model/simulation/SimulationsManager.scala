@@ -7,14 +7,14 @@ import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{Area, City}
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.util.Statistic
+import pps.covid_sim.util.time.DatesInterval
 
 import scala.collection.SortedMap
 import scala.collection.parallel.ParSeq
 
 case class SimulationsManager[+S <: Simulation](simulations: Seq[S],
                                                area: Area,
-                                                from: Calendar,
-                                                until: Calendar) extends Iterable[S] {
+                                               period: DatesInterval) extends Iterable[S] {
   private var current: Int = 0
   private var _citiesInfection: SortedMap[Calendar, SortedMap[City, Int]] = SortedMap()
   private var covidStages: SortedMap[Calendar, Map[Int, Int]] = SortedMap()

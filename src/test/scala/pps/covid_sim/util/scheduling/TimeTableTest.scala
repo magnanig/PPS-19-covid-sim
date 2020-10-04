@@ -51,12 +51,16 @@ class TimeTableTest {
       .add(Day.TUESDAY, 22 -> 0)
     assertEquals(Some(ScalaCalendar(2020, 10, 3, 22) -> ScalaCalendar(2020, 10, 4, 3)),
       timeTable.get(ScalaCalendar(2020, 10, 3, 19) -> ScalaCalendar(2020, 10, 4, 3)))
+
     assertEquals(Some(ScalaCalendar(2020, 10, 3, 22) -> ScalaCalendar(2020, 10, 4, 4)),
       timeTable.get(ScalaCalendar(2020, 10, 3) -> ScalaCalendar(2020, 10, 4, 4)))
+
     assertEquals(Some(ScalaCalendar(2020, 10, 5, 11) -> ScalaCalendar(2020, 10, 5, 15)),
       timeTable.get(ScalaCalendar(2020, 10, 5, 11) -> ScalaCalendar(2020, 10, 5, 20)))
+
     assertEquals(Some(ScalaCalendar(2020, 10, 4) -> ScalaCalendar(2020, 10, 4, 1)),
       timeTable.get(ScalaCalendar(2020, 10, 4) -> ScalaCalendar(2020, 10, 4, 1)))
+
     assertEquals(Some(ScalaCalendar(2020, 10, 6, 23) -> ScalaCalendar(2020, 10, 7)),
       timeTable.get(ScalaCalendar(2020, 10, 6, 23) -> ScalaCalendar(2020, 10, 7)))
   }

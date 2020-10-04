@@ -73,21 +73,25 @@ case class TimeTable(period: MonthsInterval = MonthsInterval.ALL_YEAR,
    *         the above constraint
    */
   def get(datesInterval: DatesInterval): Option[DatesInterval] = {
-    def _get(datesInterval: DatesInterval, take: Int): Option[DatesInterval] = {
-      if(take == 0) return None
+    def _get(datesInterval: DatesInterval): Option[DatesInterval] = {
       datesInterval.find(isDefinedAt) match {
         case Some(time) => timeTable(time.day)
           .find(_.contains(time.hour))
-          .map(hours => {
-            val until = time + HoursInterval(time.hour, hours.until).size
-            DatesInterval(time, Seq(until +
-              (if(until.hour == 0 && isDefinedAt(until)) _get(until -> datesInterval.until, take - 1).map(_.size).getOrElse(0); else 0),
-              datesInterval.until).min)
-          })
+          .map(hours => DatesInterval(time, Seq(time + HoursInterval(time.hour, hours.until).size,
+            datesInterval.until).min))
         case _ => None
       }
     }
-    _get(datesInterval, 2)
+
+    _get(datesInterval) match {
+      case Some(firstPeriod) if firstPeriod.until.hour == 0 && isDefinedAt(firstPeriod.until) =>
+        _get(firstPeriod.until -> datesInterval.until) match {
+          case Some(secondPeriod) => Some(DatesInterval(firstPeriod.from, secondPeriod.until))
+          case None => Some(firstPeriod)
+        }
+      case datesInterval @ Some(_) => datesInterval
+      case _ => None
+    }
   }
 
   /**

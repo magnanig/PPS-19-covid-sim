@@ -6,6 +6,7 @@ import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
 import pps.covid_sim.model.places.Place
+import pps.covid_sim.util.time.DatesInterval
 
 import scala.collection.parallel.ParSeq
 
@@ -41,5 +42,7 @@ trait Controller {
   def cities: Set[City]
 
   def people: ParSeq[Person]
+
+  def simulationInterval: DatesInterval
 
 }

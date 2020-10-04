@@ -557,9 +557,9 @@ class GuiImpl() extends View {
         contents += new Label("In attesa fine simulazione..")
       }))
   //creare i chart
-    //chartSet = Set(LineChart("Evolution of infections over time", "Days", "Infections", "Infections trend"), todo
-      //LineChart("Evolution of recovered over time", "Days", "Recovered", "Recovered trend"), todo
-      //LineChart("Evolution of deaths over time", "Days", "Deaths", "Deaths trend")) todo
+    chartSet = Set(LineChart("Evolution of infections over time", controller.simulationInterval.from, "Days", "Infections", "Infections trend"),
+      LineChart("Evolution of recovered over time", controller.simulationInterval.from, "Days", "Recovered", "Recovered trend"),
+      LineChart("Evolution of deaths over time", controller.simulationInterval.from, "Days", "Deaths", "Deaths trend"))
     //aggiungere anche gli altri
 
     //aggiungere al set
@@ -572,7 +572,7 @@ class GuiImpl() extends View {
     chartSet.foreach(c=>this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList))))))
     //aggiungere le heat e gli altri
 
-    //todo virusStagesChart = LineChart("Evolution of infections over time for each stage","Days", "Infections", "Infections trend")
+    virusStagesChart = LineChart("Evolution of infections over time for each stage", controller.simulationInterval.from, "Days", "Infections", "Infections trend")
     //this.insertTab(new Page(virusStagesChart.title, convertJavaToScalaComponent(virusStagesChart.???(simulationsManager.?????))))//weeklyCovidStages
     barChart = BarChart("Number of infections per place", "Places", "Infections")
     //this.insertTab(new Page(barChart.title, convertJavaToScalaComponent(barChart.drawChart(simulationsManager.average(simulationsManager.map(_.infectionPlaces).toList))))//TODO Capire sorted
