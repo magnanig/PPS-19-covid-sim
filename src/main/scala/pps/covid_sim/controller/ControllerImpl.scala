@@ -21,14 +21,15 @@ import scala.swing.TabbedPane.Page
 
 class ControllerImpl(model: Model, view: View) extends Controller {
 
-  val lineChart: LineChart = LineChart("Evoluzioni contagi", "asse x", "asse y", "legend") // spostare
+  //val lineChart: LineChart = LineChart("Evoluzioni contagi", "asse x", "asse y", "legend") //TODO spostare => rimuovere
 
   override def startSimulation(area: Area, from: Calendar, until: Calendar, runs: Int): Unit = {
+    view.notifyStart
     model.initWorld(area)
     model.initSimulation(area, from, until, runs)
     startActors(model.simulationsManager)
 
-    val forli: City = City(1, "Forlì", 118000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA), 44.22268559, 12.04068608)
+    /*val forli: City = City(1, "Forlì", 118000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA), 44.22268559, 12.04068608)
     val cesena: City = City(1, "Cesena", 98000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA), 44.13654899, 12.24217492)
     val fake: City = City(1, "Cesena", 98000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA), 44.80436680, 11.34172080)
     val rimini: City = City(1, "Rimini", 300000, Province(3, "Rimini", "RN", Locality.Region.EMILIA_ROMAGNA), 44.06090086, 12.56562951)
@@ -60,7 +61,7 @@ class ControllerImpl(model: Model, view: View) extends Controller {
     }
 
     val page2 = new Page("titolo2", scalaComp2)
-    view.insertTab(page2)
+    view.insertTab(page2)*/
 
   }
 
@@ -98,13 +99,13 @@ class ControllerImpl(model: Model, view: View) extends Controller {
       //
       //model.simulationsManager.average(model.simulationsManager.map(_.infectionPlaces).toList)
 
+      view.notifyEnd(model.simulationsManager)
+
       view.setVisibleConfirmButton()//riattiva il button
 
 
-      val page3 = new Page("Infections", convertJavaToScalaComponent(lineChart.drawChart(model.simulationsManager.average(model.simulationsManager.map(_.infected).toList))))
-      view.insertTab(page3)
-
-
+      //val page3 = new Page("Infections", convertJavaToScalaComponent(lineChart.drawChart(model.simulationsManager.average(model.simulationsManager.map(_.infected).toList))))
+      //view.insertTab(page3)
 
     }
   }
@@ -115,10 +116,8 @@ class ControllerImpl(model: Model, view: View) extends Controller {
     }
   }
 
-  // TODO: disegnare, se possibile, un simbolo sul grafico per marcare il punto di inizio e fine del lockdown,
-  //  altrimenti rimuovere i seguenti due metodi       [X MELUZ credo (by Sute)]
-  override def startLockdown(time: Calendar, infections: Int): Unit = lineChart.drawLockDownStart(time, infections)
-  override def endLockdown(time: Calendar, infections: Int): Unit = lineChart.drawLockDownEnd(time, infections)
+  override def startLockdown(time: Calendar, infections: Int): Unit = view.startLockdown(time,infections) //lineChart.drawLockDownStart(time, infections)
+  override def endLockdown(time: Calendar, infections: Int): Unit = view.endLockdown(time,infections) //lineChart.drawLockDownEnd(time, infections)
 
   override def regions: Set[Region] = CitiesObject.getRegions
 

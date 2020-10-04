@@ -1,6 +1,9 @@
 package pps.covid_sim.view
 
+import java.util.Calendar
+
 import pps.covid_sim.controller.Controller
+import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
 
 import scala.swing.{Frame, SimpleSwingApplication, TabbedPane}
 import scala.swing.TabbedPane.Page
@@ -35,5 +38,20 @@ trait View extends SimpleSwingApplication{
    * Method that set visible the button if it was not
    */
   def setVisibleConfirmButton(): Unit
+
+  /**
+   * Notify the gui that the simulation started.
+   */
+  def notifyStart: Unit
+
+  /**
+   * Notify the gui that the simulation ended.
+   */
+  def notifyEnd(simulationsManager: SimulationsManager[Simulation]): Unit
+
+
+  def startLockdown(time: Calendar, infections: Int): Unit
+
+  def endLockdown(time: Calendar, infections: Int): Unit
 
 }

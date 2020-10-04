@@ -97,8 +97,9 @@ object ActorsCoordination {
       controller.tick(currentTime)
       println();println("----->Tick<-----")
       _subordinatedActors.foreach(_ ! HourTick(currentTime))
-      context.setReceiveTimeout(Duration.create(100, TimeUnit.MILLISECONDS))
+      context.setReceiveTimeout(Duration.create(1200, TimeUnit.MILLISECONDS))
       currentTime = currentTime + 1
+      print(currentTime.hour)
     }
 
     private[controller] def stopSimulation(): Unit = synchronized {
@@ -184,7 +185,7 @@ object ActorsCoordination {
     private def spreadTick(region :Region, currentTime: Calendar) :Unit = { //esempio test
       // println(region)
       this.waitingAck = _subordinatedActors
-      context.setReceiveTimeout(Duration.create(80, TimeUnit.MILLISECONDS))
+      context.setReceiveTimeout(Duration.create(500, TimeUnit.MILLISECONDS))
       this._subordinatedActors.foreach(s => s ! HourTick(currentTime))
     }
 
@@ -213,7 +214,7 @@ object ActorsCoordination {
       case Stop() => this.endSimulation()
       case GetPlacesByProvince(province, placeClass, datesInterval) => this.genericGetPlaceByProvince(province, placeClass, datesInterval,sender)
       case GetPlacesByCity(city, placeClass, datesInterval) => this.genericGetPlaceByCity(city, placeClass, datesInterval,sender)
-      case msg => println(s"Not expected [Province]: $msg");
+      case msg => println(s"Not expected [Province]: $msg" +"is sender in peoples: "+waitingAck.contains(sender) +" "+(sender.toString()));
     }
 
     private def createActors(people: ParSeq[Person]): Unit = {
@@ -241,7 +242,7 @@ object ActorsCoordination {
     private def spreadTick(currentTime: Calendar): Unit = { //esempio test
       this._subordinatedActors.foreach(s => s ! HourTick(currentTime))
       this.waitingAck = _subordinatedActors
-      context.setReceiveTimeout(Duration.create(60, TimeUnit.MILLISECONDS))
+      context.setReceiveTimeout(Duration.create(200, TimeUnit.MILLISECONDS))
     }
 
     private def genericGetPlaceByProvince(province: Province,placeClass: Class[_ <: Place], datesInterval: Option[DatesInterval],sender: ActorRef):Unit = {

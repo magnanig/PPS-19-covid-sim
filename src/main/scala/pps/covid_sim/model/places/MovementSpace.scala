@@ -34,8 +34,9 @@ trait MovementSpace extends DelimitedSpace {
    * @param place the place where the person is
    */
   override def propagateVirus(time: Calendar, place: Place): Unit = {
+    super.propagateVirus(time, place)
     if (currentGroups.exists(group => group.people.exists(person => person.canInfect))) {
-      super.propagateVirus(time, place)
+
       // People from the same group will follow the same path
       val sampling = pathSampling(currentGroups)
       // Assigns the last coordinate of the sampling to the people

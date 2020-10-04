@@ -12,6 +12,7 @@ import javax.imageio.ImageIO
 import pps.covid_sim.model.places.Locality
 import pps.covid_sim.model.places.Locality.{City, Province, Region}
 
+import scala.collection.SortedMap
 import scala.swing.Dimension
 
 /*
@@ -46,11 +47,11 @@ object HeatMap {
 
 class HeatMap() {
 
-  def drawMap(infectionsInADay: Map[City, Int]): JPanel = {
+  def drawMap(infectionsInADay: SortedMap[City, Int]): JPanel = {
     new GraphicsPanel(infectionsInADay)
   }
 
-  class GraphicsPanel(infectionsInADay: Map[City, Int]) extends JPanel {
+  class GraphicsPanel(infectionsInADay: SortedMap[City, Int]) extends JPanel {
     setLayout(new BorderLayout)
     this.setPreferredSize(new Dimension(1000, 1000))
     this.add(new GraphicsComponent(infectionsInADay), BorderLayout.CENTER)
@@ -60,7 +61,7 @@ class HeatMap() {
 
 
 
-    private class GraphicsComponent(infectionsInADay: Map[City, Int]) extends JComponent {
+    private class GraphicsComponent(infectionsInADay: SortedMap[City, Int]) extends JComponent {
       private val italyOutlineMap: BufferedImage = ImageIO.read(new File("./res/italy_outline_map.png"))
       private val mapWidth: Int = italyOutlineMap.getWidth
       private val mapHeight: Int = italyOutlineMap.getHeight

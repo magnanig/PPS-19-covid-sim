@@ -1,21 +1,24 @@
 package pps.covid_sim.view
 import java.util.Calendar
 
-import javax.swing.SwingUtilities
+import javax.swing.{JPanel, SwingUtilities}
+import org.jfree.chart.plot.PiePlot
 import pps.covid_sim.controller.Controller
 import pps.covid_sim.model.creation.CitiesObject
 import pps.covid_sim.model.places.Locality
 import pps.covid_sim.model.places.Locality.{Area, Province, Region}
 import pps.covid_sim.model.samples.Provinces
+import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
 import pps.covid_sim.util.time.Time.ScalaCalendar
 import pps.covid_sim.view.viewUtil.Checkers._
 
 import scala.collection.mutable.ArrayBuffer
 import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}
+import scala.swing.TabbedPane.Page
 import scala.swing.event.{ButtonClicked, EditDone, SelectionChanged}
-import scala.swing.{Action, BorderPanel, BoxPanel, Button, ButtonGroup, CheckBox, CheckMenuItem, ComboBox, FlowPanel, Frame, Label, ListView, MainFrame, Menu, MenuBar, MenuItem, Orientation, RadioButton, RadioMenuItem, Separator, SplitPane, Swing, TabbedPane, TextField}
+import scala.swing.{Action, BorderPanel, BoxPanel, Button, ButtonGroup, CheckBox, CheckMenuItem, ComboBox, Component, Dialog, FlowPanel, Frame, Label, ListView, MainFrame, Menu, MenuBar, MenuItem, Orientation, RadioButton, RadioMenuItem, Separator, SplitPane, Swing, TabbedPane, TextField}
 
-class GuiImp() extends View {
+class GuiImpl() extends View {
 
   def setController(controller: Controller): Unit = {
     this.controller = controller;
@@ -56,6 +59,13 @@ class GuiImp() extends View {
   override def setVisibleConfirmButton(): Unit = {
     confirmButton.visible = true
   }
+
+
+  var chartSet: Set[LineChart] = _
+  var virusStagesChart: LineChart = _
+  var weeklyStages: Seq[PieChart] = _
+  var barChart: BarChart = _
+
 
   //confirm Button
   val confirmButton = new Button("Conferma")
@@ -446,6 +456,7 @@ class GuiImp() extends View {
           listenTo(confirmButton)
           reactions += {
             case ButtonClicked(`confirmButton`) => {
+
               confirmButton.visible = false;
               //check che i valori obbligatori siano inseriti
               //valori: beachCheckbox,squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox, barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox,companyCheckbox,factoryCheckbox , shopCheckbox, fieldCheckbox,gymCheckbox
@@ -484,6 +495,12 @@ class GuiImp() extends View {
                 controller.startSimulation(Provinces.AOSTA, /*selectedArea*/ dataInizio,dataFine,runsField.text.toInt) // TODO: specificare l'area (es. città o regione...)
               }else{
                 print("Date inserite in modo errato")
+                /*Dialog(
+                  Dialog.Message.Warning()
+                  contents += new Label("Date inserite in modo errato")
+                )*/
+
+                confirmButton.visible = true
               }
             }
           }
@@ -505,6 +522,50 @@ class GuiImp() extends View {
           if (list.selection.items.length == 1)
             tabs.selection.page = list.selection.items(0)
       }
+    }
+  }
+
+  override def notifyStart: Unit = {
+  //creare i chart
+    chartSet = Set(LineChart("Evolution of infections over time", "Days", "Infections", "Infections trend"),
+      LineChart("Evolution of recovered over time", "Days", "Recovered", "Recovered trend"),
+      LineChart("Evolution of deaths over time", "Days", "Deaths", "Deaths trend"))
+    //aggiungere anche gli altri
+
+    //aggiungere al set
+
+  }
+
+  override def notifyEnd(simulationsManager: SimulationsManager[Simulation] ): Unit = {
+    this.clearTabs()
+
+    chartSet.foreach(c=>this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList))))))
+    //aggiungere le heat e gli altri
+
+    virusStagesChart = LineChart("Evolution of infections over time for each stage","Days", "Infections", "Infections trend")
+    //this.insertTab(new Page(virusStagesChart.title, convertJavaToScalaComponent(virusStagesChart.???(simulationsManager.?????))))//weeklyCovidStages
+    barChart = BarChart("Number of infections per place", "Places", "Infections")
+    //this.insertTab(new Page(barChart.title, convertJavaToScalaComponent(barChart.drawChart(simulationsManager.average(simulationsManager.map(_.infectionPlaces).toList))))//TODO Capire sorted
+
+    simulationsManager.weeklyCovidStages.foreach(w=> this.insertTab(new Page(w._1.getWeekYear.toString+" week",convertJavaToScalaComponent(PieChart(w._1.getWeekYear.toString+" week").drawChart(w._2)))))
+
+    //heat
+    this.insertTab(new Page("HeatMap Infections",convertJavaToScalaComponent(new HeatMap().drawMap(simulationsManager.citiesInfection.last._2))))
+  }
+
+  override def startLockdown(time: Calendar, infections: Int): Unit = {
+    //lineChart.drawLockDownStart(time, infections)
+    chartSet.foreach(c=>c.drawLockDownStart(time, infections))
+  }
+
+  override def endLockdown(time: Calendar, infections: Int): Unit = {
+    //lineChart.drawLockDownEnd(time, infections)
+    chartSet.foreach(c=>c.drawLockDownEnd(time, infections))
+  }
+
+  private def convertJavaToScalaComponent(panel: JPanel): Component = {
+    new Component {
+      override lazy val peer: JPanel = panel
     }
   }
 }

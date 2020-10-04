@@ -9,6 +9,8 @@ import java.util.Date
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.data.category.DefaultCategoryDataset
 
+import scala.collection.SortedMap
+
 /**
  * Class that manages the creation of a bar chart.
  * @param title         the title of the chart

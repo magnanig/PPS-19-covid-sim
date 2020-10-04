@@ -53,10 +53,11 @@ class ModelImpl extends Model {
   }
 
   override def tick(time: Calendar): Unit = {
-    places.foreach(place => place.propagateVirus(time, place))
+    //places.foreach(place => place.propagateVirus(time, place))
     if(time.hour == 0) {
       simulationsManager.takeScreenshot(time, people)
     }
+    //TODO [PASO]
     // trainLines.trains.foreach(transport => transport.propagateVirus(time, transport))
     // busLines.busses.foreach(transport => transport.propagateVirus(time, transport))
   }
