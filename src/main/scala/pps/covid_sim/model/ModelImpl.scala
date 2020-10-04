@@ -2,11 +2,15 @@ package pps.covid_sim.model
 import java.util.Calendar
 
 import pps.covid_sim.model.container.{PeopleContainer, PlacesContainer}
+import pps.covid_sim.model.creation.WorldCreation
+import pps.covid_sim.model.creation.province.ProvinceCreation
+import pps.covid_sim.model.creation.region.RegionCreation
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
+import pps.covid_sim.model.places.Locality._
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.simulation.Aggregation.{NationSimulation, ProvinceSimulation, RegionSimulation}
 import pps.covid_sim.model.simulation.{CitySimulation, Simulation, SimulationsManager}
+import pps.covid_sim.util.time.Time.ScalaCalendar
 
 import scala.collection.parallel.ParSeq
 
@@ -19,15 +23,18 @@ class ModelImpl extends Model {
   private var _people: ParSeq[Person] = _
   private var _simulationsManager: SimulationsManager[Simulation] = _
 
-  override val people: ParSeq[Person] = _people
+  override def people: ParSeq[Person] = _people
 
   override def initWorld(area: Area): Unit = {
-    /*area match {
-      case Locality.Italy() => WorldCreation.create()
-      case _ => RegionPlacesCreation.create(area)
-    }*/
+    area match {
+      case Italy() => WorldCreation.create()
+      case region: Region => RegionCreation.create(region)
+      case province: Province => ProvinceCreation.create(province)
+      // case city: City => ProvinceCreation.create(city.province)
+    }
     places = PlacesContainer.getPlaces.par
-    _people = PeopleContainer.getPeople.par
+    _people = PeopleContainer.getPeople.take(1000).par
+    println(s"Created ${_people.size} people")
     //trainLines = TrainLinesContainer.getLines.par
     //busLines = BusLinesContainer.getLines.par
   }
@@ -47,7 +54,9 @@ class ModelImpl extends Model {
 
   override def tick(time: Calendar): Unit = {
     places.foreach(place => place.propagateVirus(time, place))
-    simulationsManager.takeScreenshot(time, people)
+    if(time.hour == 0) {
+      simulationsManager.takeScreenshot(time, people)
+    }
     // trainLines.trains.foreach(transport => transport.propagateVirus(time, transport))
     // busLines.busses.foreach(transport => transport.propagateVirus(time, transport))
   }

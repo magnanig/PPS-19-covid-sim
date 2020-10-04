@@ -1,25 +1,22 @@
 package pps.covid_sim.controller
 
-import java.util
 import java.util.Calendar
 
-import javax.swing.{JComponent, JPanel}
+import javax.swing.JPanel
 import pps.covid_sim.controller.actors.ActorsCoordination
-import pps.covid_sim.model.{CovidInfectionParameters, Model}
-import pps.covid_sim.model.container.CitiesContainer
+import pps.covid_sim.model.creation.CitiesObject
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality
 import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
-import pps.covid_sim.parameters.CovidInfectionParameters
+import pps.covid_sim.model.{CovidInfectionParameters, Model}
 import pps.covid_sim.util.time.DatesInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
 import pps.covid_sim.view.{HeatMap, LineChart, View}
 
 import scala.collection.SortedMap
 import scala.collection.parallel.ParSeq
-import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}
-import scala.swing.{BoxPanel, Component, Orientation}
+import scala.swing.Component
 import scala.swing.TabbedPane.Page
 
 class ControllerImpl(model: Model, view: View) extends Controller {
@@ -123,11 +120,11 @@ class ControllerImpl(model: Model, view: View) extends Controller {
   override def startLockdown(time: Calendar, infections: Int): Unit = lineChart.drawLockDownStart(time, infections)
   override def endLockdown(time: Calendar, infections: Int): Unit = lineChart.drawLockDownEnd(time, infections)
 
-  override def regions: Set[Region] = CitiesContainer.getRegions
+  override def regions: Set[Region] = CitiesObject.getRegions
 
-  override def provinces: Set[Province] = regions.flatMap(CitiesContainer.getProvince)
+  override def provinces: Set[Province] = regions.flatMap(CitiesObject.getProvince)
 
-  override def cities: Set[City] = CitiesContainer.getCities
+  override def cities: Set[City] = CitiesObject.getCities
 
   override def people: ParSeq[Person] = model.people
 

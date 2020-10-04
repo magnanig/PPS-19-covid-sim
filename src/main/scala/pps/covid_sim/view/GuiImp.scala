@@ -5,7 +5,7 @@ import pps.covid_sim.controller.Controller
 import pps.covid_sim.model.creation.CitiesObject
 import pps.covid_sim.model.places.Locality
 import pps.covid_sim.model.places.Locality.{Area, Province, Region}
-import pps.covid_sim.model.samples.Regions
+import pps.covid_sim.model.samples.Provinces
 import pps.covid_sim.util.time.Time.ScalaCalendar
 import pps.covid_sim.view.viewUtil.Checkers._
 
@@ -58,7 +58,7 @@ class GuiImp() extends View {
   //confirm Button
   val confirmButton = new Button("Conferma")
 
-  override def top: Frame = new MainFrame {
+  override val top: Frame = new MainFrame {
     title = "PPS-19-Covid-Sim"
 
     //TextBoxes
@@ -465,7 +465,7 @@ class GuiImp() extends View {
                 }else if (selectedRegion.isDefined && !selectedProvince.isDefined){
                   selectedArea = selectedRegion.get
                 }
-                controller.startSimulation(selectedArea, dataInizio,dataFine,runsField.text.toInt) // TODO: specificare l'area (es. città o regione...)
+                controller.startSimulation(Provinces.AOSTA, /*selectedArea*/ dataInizio,dataFine,runsField.text.toInt) // TODO: specificare l'area (es. città o regione...)
               }else{
                 print("Date inserite in modo errato")
               }

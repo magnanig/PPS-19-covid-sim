@@ -3,8 +3,8 @@ package pps.covid_sim.controller.actors
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
-import akka.actor.{Actor, ActorRef, ActorSystem, Props, ReceiveTimeout}
-import pps.covid_sim.controller.ControllerImpl
+import akka.actor.{ActorRef, ActorSystem, Props, ReceiveTimeout}
+import pps.covid_sim.controller.Controller
 import pps.covid_sim.controller.actors.CoordinatorCommunication.{SetProvince, SetRegion}
 import pps.covid_sim.model.container.PlacesContainer.getPlaces
 import pps.covid_sim.model.people.People.{Student, Worker}
@@ -17,17 +17,18 @@ import pps.covid_sim.util.Statistic
 import pps.covid_sim.util.time.DatesInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
-import scala.collection.parallel.{ParSeq, ParSet}
+import scala.collection.parallel.ParSeq
+import scala.collection.parallel.immutable.ParSet
 import scala.concurrent.duration.Duration
 
 object ActorsCoordination {
 
-  private[actors] case class Init(area: Area, controller: ControllerImpl, datesInterval: DatesInterval)
+  private[actors] case class Init(area: Area, controller: Controller, datesInterval: DatesInterval)
 
   private[actors] var system: ActorSystem = _
   private[actors] var actorsCoordinator: ActorRef = _
 
-  private var controller: ControllerImpl = _
+  private var controller: Controller = _
   private var simulationInterval: DatesInterval = _
   private var currentTime: Calendar = _
   private var simulationArea: Area = _
@@ -37,7 +38,9 @@ object ActorsCoordination {
    * @param controller that coordinators call to get useful data and run methods
    * @param datesInterval that indicates the interval the user had insert for the simulation
    */
-  private[controller] def create(area: Area, controller: ControllerImpl, datesInterval: DatesInterval): Unit = {
+  private[controller] def create(area: Area, controller: Controller, datesInterval: DatesInterval): Unit = {
+    println("Going to create actors")
+    this.controller = controller
     system = ActorSystem.create()
     actorsCoordinator = system.actorOf(Props[ActorsCoordinator])
     simulationArea = area
@@ -46,7 +49,7 @@ object ActorsCoordination {
   /***
    * The main Coordinator of level 0. It manage a subSet of RegionCoordinator
    */
-  class ActorsCoordinator extends Actor with Coordinator {
+  class ActorsCoordinator extends Coordinator {
 
     private var localMaxInfections: Int = 0
     private var nextAvailableLockdown: Calendar = _
@@ -54,7 +57,7 @@ object ActorsCoordination {
 
 
     override def receive: Receive = {
-      case Init(area, c, di) => controller = c
+      case Init(area, c, di) => //controller = c
         area match {
           //case City(idCity, name, numResidents, province, latitude, longitude) => _//non gestita
           case province: Province => this.createProvinceActors(province) //Set()//voglio creare una region contenente la sola provincia da analizzare
@@ -62,7 +65,6 @@ object ActorsCoordination {
           case Locality.Italy() => this.createActors(c.regions)//tutte le regioni
         }
         simulationInterval = di
-        //simulation = Simulation(c.people)
         currentTime = di.from
         this.nextAvailableLockdown = di.from
         println("Started")
@@ -71,7 +73,7 @@ object ActorsCoordination {
         if (waitingAck.isEmpty) nextStep()
       case ReceiveTimeout => println("WARNING: Timeout!"); nextStep()
       case Stop => endSimulation()
-      case msg => println(s"Not expected: $msg")
+      case msg => println(s"[TOP] Not expected: $msg")
     }
 
     private def nextStep(): Unit = {
@@ -88,7 +90,6 @@ object ActorsCoordination {
     private def tick(): Unit = {
       if (currentTime.hour == 0) {
         currentInfections = Statistic(controller.people).numCurrentPositive
-        //simulation.updateInfectedCount(currentTime, currentInfections)
         println(s"Infection on ${currentTime.getTime}: $currentInfections")
         if (currentInfections > localMaxInfections) localMaxInfections = currentInfections
       }
@@ -129,7 +130,7 @@ object ActorsCoordination {
       }.toMap
       println(s"Total regions considered in the simulation: $numRegion")
 
-      _subordinatedActors = regionActors.keySet
+      _subordinatedActors = regionActors.keySet.toSet
       this.waitingAck = _subordinatedActors
 
       regionActors.foreach({ case (actor, region) => actor ! SetRegion(region) })
@@ -139,7 +140,7 @@ object ActorsCoordination {
       val provinceActor = system.actorOf(Props[ProvinceCoordinator])
       this._subordinatedActors = ParSet(provinceActor)
       this.waitingAck = _subordinatedActors
-      provinceActor ! SetProvince(province,this)//TODO controllare che vada anche così. Qui, sostanzialmente, ho saltato la creazione del region coordinator
+      provinceActor ! SetProvince(province)//TODO controllare che vada anche così. Qui, sostanzialmente, ho saltato la creazione del region coordinator
     }
   }
 
@@ -169,10 +170,10 @@ object ActorsCoordination {
         case province => system.actorOf(Props[ProvinceCoordinator]) -> province
       }.toMap
       println(s"Total province considered in the simulation: $numProvince")
-      this._subordinatedActors = provinceActors.keySet
+      this._subordinatedActors = provinceActors.keySet.toSet
       this.waitingAck = _subordinatedActors
 
-      provinceActors.foreach({ case (actor, province) => actor ! SetProvince(province,this) })
+      provinceActors.foreach({ case (actor, province) => actor ! SetProvince(province) })
     }
 
     private def sendAck(): Unit = {
@@ -199,15 +200,15 @@ object ActorsCoordination {
   class ProvinceCoordinator extends Coordinator {
     implicit protected var _province: Province = _ // will be initialized later when the SetProvince message will be received
     private var _myPeople: ParSeq[Person] = _ // Will be initialized later when the SetProvince message will be received
-    private var _upperCoordinator: Coordinator = _ // Will be initialized later when the SetProvince message will be received
+    private var _upperCoordinator: ActorRef = _ // Will be initialized later when the SetProvince message will be received
     override def receive: Receive = {
-      case SetProvince(province, upperCoordinator) =>
-        this._province = province;  this._upperCoordinator = upperCoordinator
+      case SetProvince(province) =>
+        this._province = province;  this._upperCoordinator = sender
         this._myPeople = controller.people.filter(p=>p.residence.province==_province)
         this.createActors(this._myPeople)
       case Acknowledge() if this.waitingAck.contains(sender) => this.waitingAck -= sender
         if (this.waitingAck.isEmpty) sendAck()
-      case HourTick(currentTime) => this.spreadTick(_province, currentTime)
+      case HourTick(currentTime) => this.spreadTick(currentTime)
       case ReceiveTimeout => sendAck(); println("WARNING: Timeout! Sono un sotto coordinatore: Province:" + _province)
       case Stop() => this.endSimulation()
       case GetPlacesByProvince(province, placeClass, datesInterval) => this.genericGetPlaceByProvince(province, placeClass, datesInterval,sender)
@@ -225,24 +226,22 @@ object ActorsCoordination {
       }.toMap
 
       println(s"Total person considered in the simulation: $numPerson")
-      this._subordinatedActors = peopleActors.keySet
+      this._subordinatedActors = peopleActors.keySet.toSet
       this.waitingAck = _subordinatedActors
 
       peopleActors.foreach({ case (actor, person) => actor ! SetPerson(person) })
     }
 
     private def sendAck(): Unit = {
+      println("Sending cumulative ACK");
       this.waitingAck = _subordinatedActors
-
-      this._upperCoordinator.self ! Acknowledge()
+      this._upperCoordinator ! Acknowledge()
     }
 
-    private def spreadTick(province: Province, currentTime: Calendar): Unit = { //esempio test
-      //println(province)
+    private def spreadTick(currentTime: Calendar): Unit = { //esempio test
+      this._subordinatedActors.foreach(s => s ! HourTick(currentTime))
       this.waitingAck = _subordinatedActors
       context.setReceiveTimeout(Duration.create(60, TimeUnit.MILLISECONDS))
-
-      this._subordinatedActors.foreach(s => s ! HourTick(currentTime))
     }
 
     private def genericGetPlaceByProvince(province: Province,placeClass: Class[_ <: Place], datesInterval: Option[DatesInterval],sender: ActorRef):Unit = {
