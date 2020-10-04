@@ -26,6 +26,10 @@ import scala.swing.{Action, BorderPanel, BoxPanel, Button, ButtonGroup, CheckBox
 
 class GuiImpl() extends View {
 
+  /**
+   * method to set the reference of the controller on the view
+   * @param controller that will be setted on the view
+   */
   def setController(controller: Controller): Unit = {
     this.controller = controller;
   }
@@ -39,8 +43,6 @@ class GuiImpl() extends View {
         contents += new Label("In attesa insrimento parametri..")
       })
   }
-
-
 
   override def insertTab(page: TabbedPane.Page): Unit = {
     if(tabs.pages.forall(p=>p.title!= page.title)){
@@ -67,12 +69,10 @@ class GuiImpl() extends View {
     confirmButton.visible = true
   }
 
-
   var chartSet: Set[LineChart] = _
   var virusStagesChart: LineChart = _
   var weeklyStages: Seq[PieChart] = _
   var barChart: BarChart = _
-
 
   //confirm Button
   val confirmButton = new Button("Conferma")
@@ -94,7 +94,7 @@ class GuiImpl() extends View {
     val multipleInfectionProbabilityField = new TextField(3)
     multipleInfectionProbabilityField.text = "10"
     //val asymptomaticAgeField = new TextField(3)
-    //TODO capire come gestire questo
+
     val cunningAsymptomaticField = new TextField(3)
     cunningAsymptomaticField.text = "20"
     val distField = new TextField(3)
@@ -160,7 +160,14 @@ class GuiImpl() extends View {
      * set the result as this frame's menu bar. TODO chose what to show in the menu.. maybe we can give the user the possibility to download the simulation data and maybe give a functionality that allow to load a graph from a file
      */
     menuBar = new MenuBar {
-      contents += new Menu("File") {
+      contents += new Menu("Authors") {
+        //probably if we want to use these components we should declare them out of this method
+        contents += new Label("Sutera Lorenzo")
+        contents += new Label("Magnani Gianmarco")
+        contents += new Label("Meluzzi Marco")
+        contents += new Label("Pasolini Nicolas")
+      }
+      /*contents += new Menu("File") {
         //probably if we want to use these components we should declare them out of this method
         contents += new MenuItem(Action("Save Simulation") {
           println("Action '" + title + "' invoked")
@@ -168,8 +175,8 @@ class GuiImpl() extends View {
         contents += new MenuItem(Action("Load Simulation") {
           println("Action '" + title + "' invoked")
         })
-      }
-      contents += new Menu("Another example Menu") {
+      }*/
+      /*contents += new Menu("Another example Menu") {
         contents += new MenuItem("An item")
         contents += new MenuItem(Action("An action item") {
           println("Action '" + title + "' invoked")
@@ -185,7 +192,7 @@ class GuiImpl() extends View {
         contents ++= mutex.buttons
       }
       //another menu if needed
-      contents += new Menu("Empty Menu")
+      contents += new Menu("Empty Menu")*/
     }
 
     contents = new BorderPanel {
@@ -518,12 +525,7 @@ class GuiImpl() extends View {
                 }
                 controller.startSimulation(Provinces.AOSTA, /*selectedArea*/ dataInizio,dataFine,runsField.text.toInt) // TODO: specificare l'area (es. città o regione...)
               }else{
-                print("Date inserite in modo errato")
-                /*Dialog(
-                  Dialog.Message.Warning()
-                  contents += new Label("Date inserite in modo errato")
-                )*/
-
+                Dialog.showMessage(contents.head, "The inserted dates are incorrect!", title="You pressed me")
                 confirmButton.visible = true
               }
             }
@@ -536,7 +538,6 @@ class GuiImpl() extends View {
         continuousLayout = true
       }
       layout(center) = Center
-
       listenTo(tabs.selection)
       listenTo(list.selection)
       reactions += {
@@ -595,39 +596,6 @@ class GuiImpl() extends View {
   private def convertJavaToScalaComponent(panel: JPanel): Component = {
     new Component {
       override lazy val peer: JPanel = panel
-    }
-  }
-}
-
-//TODO TO REMOVE IN FUTURE
-object btnPanel {
-  val buttons: FlowPanel = new FlowPanel {
-    border = Swing.EmptyBorder(5, 5, 5, 5)
-
-    contents += new BoxPanel(Orientation.Vertical) {
-      border = CompoundBorder(TitledBorder(EtchedBorder, "Radio Buttons"), EmptyBorder(5, 5, 5, 10))
-      val a = new RadioButton("Green Vegetables")
-      val b = new RadioButton("Red Meat")
-      val c = new RadioButton("White Tofu")
-      val mutex = new ButtonGroup(a, b, c)
-      contents ++= mutex.buttons
-    }
-    contents += new BoxPanel(Orientation.Vertical) {
-      border = CompoundBorder(TitledBorder(EtchedBorder, "Check Boxes"), EmptyBorder(5, 5, 5, 10))
-      val paintLabels = new CheckBox("Paint Labels")
-      val paintTicks = new CheckBox("Paint Ticks")
-      val snapTicks = new CheckBox("Snap To Ticks")
-      val live = new CheckBox("Live")
-      contents ++= Seq(paintLabels, paintTicks, snapTicks)
-      listenTo(paintLabels, paintTicks, snapTicks)
-      reactions += {
-        case ButtonClicked(`paintLabels`) =>
-          println("paintLabels clicked")
-        case ButtonClicked(`paintTicks`)=>
-          println("paintTicks clicked")
-        case ButtonClicked(`snapTicks`) =>
-          println("snapTicks clicked")
-      }
     }
   }
 }

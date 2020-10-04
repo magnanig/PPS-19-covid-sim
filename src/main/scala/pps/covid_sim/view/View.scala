@@ -50,8 +50,18 @@ trait View extends SimpleSwingApplication{
   def notifyEnd(simulationsManager: SimulationsManager[Simulation]): Unit
 
 
+  /**
+   * Method called to update the charts and mark the start of the lockdown
+   * @param time when the lockdown started
+   * @param infections number of infections in the time specified in time
+   */
   def startLockdown(time: Calendar, infections: Int): Unit
 
+  /**
+   * Method called to update the charts and mark the end of the lockdown
+   * @param time when the lockdown ended
+   * @param infections number of infections in the time specified in time
+   */
   def endLockdown(time: Calendar, infections: Int): Unit
 
 }

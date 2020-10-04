@@ -1,3 +1,5 @@
+
+
 package pps.covid_sim.view
 
 import java.io.File
@@ -10,7 +12,7 @@ import scala.swing.Swing._
 import scala.swing.TabbedPane.Page
 import scala.swing.{TextField, _}
 import scala.swing.event._
-
+//TODO REMOVE THE ENTIRE FILE!
 object UserInterface extends SimpleSwingApplication {
 
 
@@ -300,8 +302,7 @@ object UserInterface extends SimpleSwingApplication {
               //check che i valori obbligatori siano inseriti
               //valori: beachCheckbox,squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox, barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox,companyCheckbox,factoryCheckbox , shopCheckbox, fieldCheckbox,gymCheckbox
               //li usi per fare partire la simulazione
-              println("confirm!!!!")
-              tabs.pages += new Page("Painting", btnPanel.buttons )
+              println("confirm!")
             }
           }
         }
