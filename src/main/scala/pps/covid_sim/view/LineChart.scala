@@ -11,10 +11,9 @@ import org.jfree.chart.plot.{PlotOrientation, XYPlot}
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
 import org.jfree.chart.title.TextTitle
 import org.jfree.chart.{ChartFactory, ChartPanel, ChartUtils, JFreeChart}
-import org.jfree.data.xy.{XYDataItem, XYSeries, XYSeriesCollection}
+import org.jfree.data.xy.{XYSeries, XYSeriesCollection}
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
-import scala.:+
 import scala.collection.SortedMap
 import scala.swing.Font
 
@@ -41,6 +40,13 @@ case class LineChart(title: String,
   dataset.addSeries(startLockdownSeries)
   dataset.addSeries(endLockdownSeries)
 
+  /**
+   * Method that draws a line chart representing the evolution of a phenomenon over time (e.g. infections trends).
+   * @param infected      a map containing the number of people (map value) affected by the phenomenon
+   *                      for each day (map key)
+   * @param avg           true if the line chart refers to an average of multiple runs
+   * @return              a ChartPanel containing the line chart
+   */
   def drawChart(infected: SortedMap[Calendar, Int], avg: Boolean = false): ChartPanel = {
     infected.zipWithIndex.foreach(elem => mainSeries.add(elem._2, elem._1._2))
     dataset.addSeries(mainSeries)
@@ -53,7 +59,7 @@ case class LineChart(title: String,
       PlotOrientation.VERTICAL,
       true, true, false)
 
-    plot = chart.getXYPlot()
+    plot = chart.getXYPlot
 
     val xAxis = new NumberAxis()
     xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits())
@@ -89,12 +95,18 @@ case class LineChart(title: String,
     chart.setTitle(new TextTitle(title, Font("Sans Serif", Font.Bold, 18)))
 
     val chartPanel = new ChartPanel(chart)
-    //chartPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15))
     chartPanel.setBackground(Color.white)
 
     chartPanel
   }
 
+  /**
+   * Method that draws a line chart with multiple series representing the evolution of a phenomenon over time
+   * (e.g. infections trends).
+   * @param infectedPerStage      a map containing the number of people affected by the phenomenon
+   *                              for each day (map value) for each stage (map key)
+   * @return                      a ChartPanel containing the line chart
+   */
   def drawMultiSeriesChart(infectedPerStage: Map[Int, SortedMap[Calendar, Int]]): ChartPanel = {
     var stageSeries: Seq[XYSeries] = Seq()
 
@@ -114,7 +126,7 @@ case class LineChart(title: String,
       PlotOrientation.VERTICAL,
       true, true, false)
 
-    plot = chart.getXYPlot()
+    plot = chart.getXYPlot
 
     val xAxis = new NumberAxis()
     xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits())
@@ -140,24 +152,37 @@ case class LineChart(title: String,
     chart.setTitle(new TextTitle(title, Font("Sans Serif", Font.Bold, 18)))
 
     val chartPanel = new ChartPanel(chart)
-    //chartPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15))
     chartPanel.setBackground(Color.white)
 
     chartPanel
   }
 
+  /**
+   * Method that adds to the specific series the start of a lockdown.
+   * @param time          when the lockdown starts
+   * @param infections    the number of infections at that time
+   */
   def drawLockDownStart(time: Calendar, infections: Int): Unit = {
     startLockdownSeries.add(time \ from, infections)
   }
 
+  /**
+   * Method that adds to the specific series the end of a lockdown.
+   * @param time          when the lockdown ends
+   * @param infections    the number of infections at that time
+   */
   def drawLockDownEnd(time: Calendar, infections: Int): Unit = {
     endLockdownSeries.add(time \ from, infections)
   }
 
+  /**
+   * Save the line chart in png format.
+   */
   def saveChartAsPNG(): Unit = {
     val path = Paths.get("./sim_res")
     if (!Files.exists(path)) Files.createDirectory(path)
-    ChartUtils.saveChartAsPNG(new File(s"./sim_res/linechart_${new Date().toString}.png"), chart, 450, 400)
+    ChartUtils.saveChartAsPNG(new File(s"./sim_res/linechart_${new Date().toString}.png"), chart,
+      450, 400)
   }
 
 }

@@ -8,6 +8,9 @@ import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
+/**
+ * Object containing different movement functions used by the people inside the movement places.
+ */
 object MovementFunctions {
 
   val samplesPerHour = 60
@@ -46,15 +49,6 @@ object MovementFunctions {
       partitioning
     }
 
-  }
-
-  def linearPath(dimension: Dimension,
-                 obstacles: Set[Rectangle],
-                 speed: Speed = Speed.MIDDLE,
-                 partitions: Int): Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]] = {
-    groups => {
-      ???
-    }
   }
 
   /**

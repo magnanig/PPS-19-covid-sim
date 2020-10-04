@@ -3,6 +3,11 @@ package pps.covid_sim.util.geometry
 import pps.covid_sim.util.DoubleImplicits.RichDouble
 import pps.covid_sim.util.RandomGeneration
 
+/**
+ * Utility class that performs different operations on a point.
+ * @param x     the x-axis coordinate of the point
+ * @param y     the y-axis coordinate of the point
+ */
 case class Coordinates(x: Double, y: Double) extends GeometryEntity {
 
   /**
@@ -24,8 +29,8 @@ case class Coordinates(x: Double, y: Double) extends GeometryEntity {
 
   /**
    * Check whether current point is on a corner of the specified rectangle.
-   * @param rectangle
-   * @return
+   * @param rectangle     the specified rectangle
+   * @return              true if current point is on a corner of the rectangle, false otherwise
    */
   def onCorner(rectangle: Rectangle): Boolean = (x == rectangle.topLeftCorner.x && y == rectangle.topLeftCorner.y) ||
     (x == rectangle.topLeftCorner.x && y == rectangle.bottomRightCorner.y) ||
@@ -35,7 +40,7 @@ case class Coordinates(x: Double, y: Double) extends GeometryEntity {
   /**
    * Check whether current point is out of the specified dimension.
    * @param dimension     the desired dimension
-   * @return
+   * @return              true if current point is out of the specified dimension, false otherwise
    */
   def outOfDimension(dimension: Dimension): Boolean = x < 0 || y < 0 || x > dimension.width || y > dimension.length
 

@@ -3,7 +3,8 @@ package pps.covid_sim.util.geometry
 import pps.covid_sim.util.RandomGeneration
 
 /**
- * Possible directions considered in the movement functions, considering a point of view over the place.
+ * Utility class modeling possible directions considered in the movement functions,
+ * considering a point of view over the place.
  *
  * @param deltaX    the delta of variation along the x-axis
  * @param deltaY    the delta of variation along the y-axis
