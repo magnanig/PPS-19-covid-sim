@@ -88,14 +88,14 @@ class MovementsTest {
 
   @Test
   def testRandomMovementFunctionInBeach(): Unit = {
-    /*(0 until 5).foreach(i => beach.enter(groupsOfTwo(i), time))
+    (0 until 5).foreach(i => beach.enter(groupsOfTwo(i), time))
     (0 until 5).foreach(i => beach.enter(groupsOfThree(i), time))
     beach.currentGroups.flatten.foreach(_.position = Coordinates.randomOnBorder(beach.dimension))
     println(beach.dimension)
 
     val pathsSampling = randomPath(beach.dimension, beach.obstacles, Speed.FAST, 6)
     val paths = pathsSampling((groupsOfTwo.slice(0, 5) ++ groupsOfThree.slice(0, 5)).toSet)
-    println(paths)*/
+    println(paths)
   }
 
   @Test

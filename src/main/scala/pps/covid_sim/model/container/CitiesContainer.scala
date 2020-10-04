@@ -6,21 +6,32 @@ object CitiesContainer {
 
   private var _cities: Set[City] = Set()
 
+  /**
+   * Adds a city in the container.
+   */
   def add(city: City): Unit = {
     _cities += city
   }
 
+  /**
+   * Adds a list of cities in the container.
+   */
   def add(cities: Set[City]): Unit = {
     _cities ++= cities
   }
 
+  /**
+   * Get all cities
+   *
+   * @return  all cities in the current simulation
+   */
   def getCities: Set[City] = _cities
 
   /**
-   * Get all cities that are in a specific province
+   * Get all cities that are in a specific province.
    *
    * @param provinceAbbreviation abbreviation code of the province of which you want all the cities
-   * @return all cities that are in a specific province
+   * @return all cities that are in a specific province.
    */
   def getCities(provinceAbbreviation: String): Set[City] =
     getCities.filter(city => city.province.abbreviation.equals(provinceAbbreviation))

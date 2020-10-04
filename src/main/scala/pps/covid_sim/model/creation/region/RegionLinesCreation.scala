@@ -10,13 +10,18 @@ import scala.util.Random
 
 private[region] object RegionLinesCreation {
 
+  /**
+   * Creates all transport line within a specific region.
+   *
+   * @param region  region where transport line will be created.
+   */
   def create(region: Region): Unit = {
     new RegionLinesCreation(region).create()
   }
 
 }
 
-private class RegionLinesCreation(region: Region) {
+private class RegionLinesCreation(val region: Region) {
 
   private val random: Random = new Random()
 
@@ -32,19 +37,19 @@ private class RegionLinesCreation(region: Region) {
     TransportLinesContainer.add(trainLine)
   }
 
-  def randomBusesPerLine(): Int = {
+  private def randomBusesPerLine(): Int = {
     RandomGeneration.randomIntInRange(40, 400, random)
   }
 
-  def randomPlacesPerBus(): Int = {
+  private def randomPlacesPerBus(): Int = {
     RandomGeneration.randomIntInRange(20, 80, random)
   }
 
-  def randomTrainPerRegion(): Int = {
+  private def randomTrainPerRegion(): Int = {
     RandomGeneration.randomIntInRange(2, 8, random)
   }
 
-  def randomCarriagesPerTrain(): Int = {
+  private def randomCarriagesPerTrain(): Int = {
     RandomGeneration.randomIntInRange(2, 12, random)
   }
 

@@ -108,13 +108,16 @@ case class Statistic(people: ParSeq[Person]) {
     SortedMap[City, Int]() ++ cities.map(city => (city, numCurrentPositive(city))).toMap
   }
 
-  //TODO: scalaDoc
-  //paziente 0 lo prende alla forma 0
-  //per ogni stadio del virus restituisce quante persone ce l'hanno allo stadio 3, p.e.
-  //Da stadio a numero di persone che ce l'hanno per ogni stadio
+  /**
+   * For each stage of the virus, calculate the number of people
+   * who have the virus at that specific stage.
+   *
+   * @return a map from stage to number of people who have the virus at that stage
+   */
   def covidStages(): Map[Int, Int] = people
-    .collect({ case person if person.isInfected => person.covidStage.get })
-    .map(stage => (stage, people.count(person => person.isInfected && person.covidStage.get == stage)))
+    .filter(_.isInfected)
+    .groupBy(_.covidStage.get)
+    .mapValues(_.size)
     .toMap.seq
 
   /**
