@@ -6,7 +6,7 @@ import javax.swing.JPanel
 import pps.covid_sim.controller.actors.ActorsCoordination
 import pps.covid_sim.model.creation.CitiesObject
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.places.Locality
+import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
 import pps.covid_sim.model.{CovidInfectionParameters, Model}
@@ -135,13 +135,13 @@ class ControllerImpl(model: Model, view: View) extends Controller {
                                        contagionProbability: Double,
                                        minMaskProbability: Double, maxMaskProbability: Int,
                                        notRespectingIsolationMaxProbability: Double,
-                                       lockDownStart: Double, lockDownEnd: Double): Unit = {
+                                       lockDownStart: Double, lockDownEnd: Double, closedPlaceSet: Set[Class[_ <:Place]]): Unit = {
     model.setSimulationParameters(safeZone, minRecoverTime, maxRecoverTime,
       minInfectionDetectionTime, maxInfectionDetectionTime,
       multipleInfectionProbability, asymptomaticProbability,
       asymptomaticDetectionCondProbability, contagionProbability,
       minMaskProbability, maxMaskProbability,
-      notRespectingIsolationMaxProbability, lockDownStart, lockDownEnd)
+      notRespectingIsolationMaxProbability, lockDownStart, lockDownEnd, closedPlaceSet)
   }
 
   private def startActors(simulationsManager: SimulationsManager[Simulation]): Unit = {

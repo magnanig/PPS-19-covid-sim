@@ -5,8 +5,14 @@ import javax.swing.{JPanel, SwingUtilities}
 import org.jfree.chart.plot.PiePlot
 import pps.covid_sim.controller.Controller
 import pps.covid_sim.model.creation.CitiesObject
-import pps.covid_sim.model.places.Locality
+import pps.covid_sim.model.places.Education.{School, University}
+import pps.covid_sim.model.places.FreeTime.{Bar, Disco, OpenDisco, Pub, Restaurant}
+import pps.covid_sim.model.places.Hobbies.Gym
+import pps.covid_sim.model.places.Jobs.{Company, Factory}
+import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.places.Locality.{Area, Province, Region}
+import pps.covid_sim.model.places.OpenPlaces.{Beach, Park, Square}
+import pps.covid_sim.model.places.Shops.Shop
 import pps.covid_sim.model.samples.Provinces
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
 import pps.covid_sim.util.time.Time.ScalaCalendar
@@ -30,9 +36,10 @@ class GuiImpl() extends View {
     //aggiunta dei diversi grafici
     pages += new Page("Waiting" ,
       new BoxPanel(Orientation.Vertical) {
-        contents += new Label("In attesa della simulazione..")
+        contents += new Label("In attesa insrimento parametri..")
       })
   }
+
 
 
   override def insertTab(page: TabbedPane.Page): Unit = {
@@ -137,14 +144,16 @@ class GuiImpl() extends View {
     val shopCheckbox = new CheckBox("Negozi")
     val fieldCheckbox = new CheckBox("Campi(Calcio)")
     val gymCheckbox = new CheckBox("Palestre")
+    //val placeToCloseBox :Seq[CheckBox] = Seq(beachCheckbox,squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox, barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox,companyCheckbox,factoryCheckbox , shopCheckbox, gymCheckbox /*, fieldCheckbox*/)
+    //val placeToCloseList :Seq[Class[_ <:Place]] = Seq(classOf[Beach],classOf[Square],classOf[Park],classOf[Restaurant],classOf[Pub],classOf[Bar], classOf[Disco] ,classOf[OpenDisco],classOf[School], classOf[University],classOf[Company],classOf[Factory] , classOf[Shop],classOf[Gym] /*, classOf[Field]*/)
 
-
-
-
+    val placeAndCheckMap : Map[CheckBox,Class[_ <:Place]]= Map(beachCheckbox->classOf[Beach],squareCheckbox -> classOf[Square],
+      parkCheckbox -> classOf[Park], resturantCheckbox -> classOf[Restaurant], pubCheckbox -> classOf[Pub], barCheckbox -> classOf[Bar],
+      discoCheckbox -> classOf[Disco], openDiscoCheckbox -> classOf[OpenDisco], schoolCheckbox -> classOf[School], universityCheckBox -> classOf[University],
+      companyCheckbox -> classOf[Company], factoryCheckbox -> classOf[Factory], shopCheckbox -> classOf[Shop], gymCheckbox -> classOf[Gym])
 
     var selectedRegion : Option[Region] = Option.empty
     var selectedProvince : Option[Province] = Option.empty
-
 
     /*
      * Create a menu bar with a couple of menus and menu items and
@@ -445,9 +454,21 @@ class GuiImpl() extends View {
           }
         }
 
-        contents += new BoxPanel(Orientation.Vertical) {
+        contents += new BoxPanel(Orientation.Horizontal) {
           border = CompoundBorder(TitledBorder(EtchedBorder, "Posti chiusi nel LockDown"), EmptyBorder(5, 5, 5, 10))
           //contents += new Label("Quali locali e strutture chiudere")
+          contents += new Component {
+
+            contents += new BoxPanel(Orientation.Vertical) {
+              contents ++= Seq(beachCheckbox,squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox)
+            }
+            contents += new BoxPanel(Orientation.Vertical) {
+              contents ++= Seq( barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox)
+            }
+            contents += new BoxPanel(Orientation.Vertical) {
+              contents ++= Seq(companyCheckbox,factoryCheckbox , shopCheckbox, fieldCheckbox,gymCheckbox)
+            }
+          }
           //contents ++= Seq(beachCheckbox,squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox, barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox,companyCheckbox,factoryCheckbox , shopCheckbox, fieldCheckbox,gymCheckbox)
         }
 
@@ -467,6 +488,8 @@ class GuiImpl() extends View {
               var dataFine: Calendar = ScalaCalendar(yearEndField.text.toInt,monthEndField.text.toInt,dayEndField.text.toInt,0)
 
               if(dataInizio < dataFine){//controllo che i dates siano corretti
+                //println(placeAndCheckMap)
+                //println(placeAndCheckMap.filter(el=> el._1.selected).map(el=>el._2).toSet)
                 controller.setSimulationParameters(
                   distField.text.toDouble/10,
                   minHealingTimingField.text.toInt,
@@ -481,7 +504,8 @@ class GuiImpl() extends View {
                   100.toInt/100 ,
                   breakingPeopkeField.text.toDouble/100,
                   lockdownStartField.text.toDouble/100,
-                  lockdownEndField.text.toDouble/100)
+                  lockdownEndField.text.toDouble/100,
+                  placeAndCheckMap.filter(el=> el._1.selected).map(el=>el._2).toSet)
 
                 //italia => WorldCreation.generateAll()
                 /*Regione => */ //RegionPlacesCreation.create(regioneSelezionata)
@@ -489,7 +513,7 @@ class GuiImpl() extends View {
                 var selectedArea: Area = new Locality.Italy{}
                 if(selectedRegion.isDefined && selectedProvince.isDefined) {
                   selectedArea = selectedProvince.get
-                }else if (selectedRegion.isDefined && !selectedProvince.isDefined){
+                }else if (selectedRegion.isDefined && selectedProvince.isEmpty){
                   selectedArea = selectedRegion.get
                 }
                 controller.startSimulation(Provinces.AOSTA, /*selectedArea*/ dataInizio,dataFine,runsField.text.toInt) // TODO: specificare l'area (es. città o regione...)
@@ -526,6 +550,11 @@ class GuiImpl() extends View {
   }
 
   override def notifyStart: Unit = {
+    this.clearTabs()
+    this.insertTab(new Page("Waiting" ,
+      new BoxPanel(Orientation.Vertical) {
+        contents += new Label("In attesa fine simulazione..")
+      }))
   //creare i chart
     chartSet = Set(LineChart("Evolution of infections over time", "Days", "Infections", "Infections trend"),
       LineChart("Evolution of recovered over time", "Days", "Recovered", "Recovered trend"),

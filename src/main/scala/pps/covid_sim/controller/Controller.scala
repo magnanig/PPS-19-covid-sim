@@ -5,6 +5,7 @@ import java.util.Calendar
 import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
+import pps.covid_sim.model.places.Place
 
 import scala.collection.parallel.ParSeq
 
@@ -28,7 +29,8 @@ trait Controller {
                               contagionProbability: Double,
                               minMaskProbability: Double, maxMaskProbability : Int,
                               notRespectingIsolationMaxProbability: Double,
-                              lockDownStart:Double, lockDownEnd: Double): Unit
+                              lockDownStart:Double, lockDownEnd: Double,
+                              closedPlaceSet: Set[Class[_ <:Place]]): Unit
 
   def covidInfectionParameters: CovidInfectionParameters
 
