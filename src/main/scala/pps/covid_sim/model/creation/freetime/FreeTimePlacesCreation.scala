@@ -5,7 +5,7 @@ import pps.covid_sim.model.people.People.Worker
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
 
-case class FreeTimePlacesCreation() {
+private[creation] case class FreeTimePlacesCreation() {
 
   def create(city: City, workerPerFreeTimePlace: List[Int], worker: List[Worker],
              random: Random = new Random()): List[Place] = {

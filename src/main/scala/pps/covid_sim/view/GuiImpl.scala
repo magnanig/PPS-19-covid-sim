@@ -2,17 +2,16 @@ package pps.covid_sim.view
 import java.util.Calendar
 
 import javax.swing.{JPanel, SwingUtilities}
-import org.jfree.chart.plot.PiePlot
 import pps.covid_sim.controller.Controller
 import pps.covid_sim.model.creation.CitiesObject
 import pps.covid_sim.model.places.Education.{School, University}
-import pps.covid_sim.model.places.FreeTime.{Bar, Disco, OpenDisco, Pub, Restaurant}
+import pps.covid_sim.model.places.FreeTime._
 import pps.covid_sim.model.places.Hobbies.Gym
 import pps.covid_sim.model.places.Jobs.{Company, Factory}
-import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.places.Locality.{Area, Province, Region}
 import pps.covid_sim.model.places.OpenPlaces.{Beach, Park, Square}
 import pps.covid_sim.model.places.Shops.Shop
+import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.samples.Provinces
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
 import pps.covid_sim.util.time.Time.ScalaCalendar
@@ -22,7 +21,7 @@ import scala.collection.mutable.ArrayBuffer
 import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}
 import scala.swing.TabbedPane.Page
 import scala.swing.event.{ButtonClicked, EditDone, SelectionChanged}
-import scala.swing.{Action, BorderPanel, BoxPanel, Button, ButtonGroup, CheckBox, CheckMenuItem, ComboBox, Component, Dialog, FlowPanel, Frame, Label, ListView, MainFrame, Menu, MenuBar, MenuItem, Orientation, RadioButton, RadioMenuItem, Separator, SplitPane, Swing, TabbedPane, TextField}
+import scala.swing.{BorderPanel, BoxPanel, Button, CheckBox, ComboBox, Component, Dialog, FlowPanel, Frame, Label, ListView, MainFrame, Menu, MenuBar, Orientation, SplitPane, TabbedPane, TextField}
 
 class GuiImpl() extends View {
 
@@ -558,9 +557,9 @@ class GuiImpl() extends View {
         contents += new Label("In attesa fine simulazione..")
       }))
   //creare i chart
-    chartSet = Set(LineChart("Evolution of infections over time", "Days", "Infections", "Infections trend"),
-      LineChart("Evolution of recovered over time", "Days", "Recovered", "Recovered trend"),
-      LineChart("Evolution of deaths over time", "Days", "Deaths", "Deaths trend"))
+    chartSet = Set(LineChart("Evolution of infections over time", controller.simulationInterval.from, "Days", "Infections", "Infections trend"),
+      LineChart("Evolution of recovered over time", controller.simulationInterval.from, "Days", "Recovered", "Recovered trend"),
+      LineChart("Evolution of deaths over time", controller.simulationInterval.from, "Days", "Deaths", "Deaths trend"))
     //aggiungere anche gli altri
 
     //aggiungere al set
@@ -573,7 +572,7 @@ class GuiImpl() extends View {
     chartSet.foreach(c=>this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList))))))
     //aggiungere le heat e gli altri
 
-    virusStagesChart = LineChart("Evolution of infections over time for each stage","Days", "Infections", "Infections trend")
+    virusStagesChart = LineChart("Evolution of infections over time for each stage", controller.simulationInterval.from, "Days", "Infections", "Infections trend")
     //this.insertTab(new Page(virusStagesChart.title, convertJavaToScalaComponent(virusStagesChart.???(simulationsManager.?????))))//weeklyCovidStages
     barChart = BarChart("Number of infections per place", "Places", "Infections")
     //this.insertTab(new Page(barChart.title, convertJavaToScalaComponent(barChart.drawChart(simulationsManager.average(simulationsManager.map(_.infectionPlaces).toList))))//TODO Capire sorted

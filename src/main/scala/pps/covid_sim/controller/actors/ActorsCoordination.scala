@@ -106,7 +106,7 @@ object ActorsCoordination {
 
 
 
-      context.setReceiveTimeout(Duration.create(1200, TimeUnit.MILLISECONDS))
+      //context.setReceiveTimeout(Duration.create(1200, TimeUnit.MILLISECONDS))
       //currentTime = currentTime + 1
 
 
@@ -195,7 +195,7 @@ object ActorsCoordination {
     private def spreadTick(region :Region, currentTime: Calendar) :Unit = { //esempio test
       // println(region)
       this.waitingAck = _subordinatedActors
-      context.setReceiveTimeout(Duration.create(500, TimeUnit.MILLISECONDS))
+      //context.setReceiveTimeout(Duration.create(500, TimeUnit.MILLISECONDS))
       this._subordinatedActors.foreach(s => s ! HourTick(currentTime))
     }
 
@@ -252,7 +252,7 @@ object ActorsCoordination {
     private def spreadTick(currentTime: Calendar): Unit = { //esempio test
       this._subordinatedActors.foreach(s => s ! HourTick(currentTime))
       this.waitingAck = _subordinatedActors
-      context.setReceiveTimeout(Duration.create(200, TimeUnit.MILLISECONDS))
+      //context.setReceiveTimeout(Duration.create(200, TimeUnit.MILLISECONDS))
     }
 
     private def genericGetPlaceByProvince(province: Province,placeClass: Class[_ <: Place], datesInterval: Option[DatesInterval],sender: ActorRef):Unit = {

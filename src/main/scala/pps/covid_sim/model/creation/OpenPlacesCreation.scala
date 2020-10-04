@@ -5,8 +5,7 @@ import pps.covid_sim.model.places.OpenPlaces.{Field, Park, Square}
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.samples.Places
 
-// TODO scalaDoc
-case class OpenPlacesCreation() {
+private[creation] case class OpenPlacesCreation() {
 
   def create(city: City): List[Place] = {
     var openPlaces: List[Place] = List()

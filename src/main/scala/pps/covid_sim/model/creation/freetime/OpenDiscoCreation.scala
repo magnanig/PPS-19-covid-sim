@@ -13,7 +13,7 @@ import pps.covid_sim.util.time.TimeIntervalsImplicits._
 
 import scala.util.Random
 
-case class OpenDiscoCreation() {
+private[freetime] case class OpenDiscoCreation() {
 
   def create(city: City,
              workers: List[Worker],

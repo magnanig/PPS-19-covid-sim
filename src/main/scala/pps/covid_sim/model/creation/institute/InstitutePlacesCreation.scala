@@ -6,7 +6,7 @@ import pps.covid_sim.model.places.Place
 import pps.covid_sim.parameters.CreationParameters
 import pps.covid_sim.util.Statistic
 
-case class InstitutePlacesCreation() {
+private[creation] case class InstitutePlacesCreation() {
 
   def create(city: City,
              teachers: List[Teacher],

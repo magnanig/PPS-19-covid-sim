@@ -14,7 +14,7 @@ import pps.covid_sim.util.time.TimeIntervalsImplicits._
 
 import scala.util.Random
 
-case class FootballTeamCreation() {
+private[hobbies] case class FootballTeamCreation() {
 
   def create(city: City,
              workers: List[Worker],

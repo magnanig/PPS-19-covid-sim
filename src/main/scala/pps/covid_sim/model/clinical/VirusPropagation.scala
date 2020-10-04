@@ -36,6 +36,24 @@ object VirusPropagation {
   //  https://vimeo.com/402577241
   //  https://medium.com/@Cancerwarrior/covid-19-why-we-should-all-wear-masks-there-is-new-scientific-rationale-280e08ceee71
 
-  def infectionReducingFactor(distance: Double): Double = 1 // TODO
-
+  //considering that droplets does not spread over 6 meters but the most travel at most 2 meters and at leas 1,5
+  //80 - 20
+  /**
+   * the factor that reduce the probability of being infected based on the distance
+   * @param distance to consider
+   * @return the factor that will be multiplied to the actual probability
+   */
+  def infectionReducingFactor(distance: Double): Double = {
+    if (distance>6){
+      0
+    } else if(distance>2){
+      1-(distance/6 )//0.77max 0min
+    }else{
+      if(distance > 0){
+        1-(distance/8.8)
+      }else{
+        1
+      }
+    }
+  }
 }

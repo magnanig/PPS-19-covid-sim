@@ -6,18 +6,15 @@ import javax.swing.JPanel
 import pps.covid_sim.controller.actors.ActorsCoordination
 import pps.covid_sim.model.creation.CitiesObject
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
+import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
 import pps.covid_sim.model.{CovidInfectionParameters, Model}
 import pps.covid_sim.util.time.DatesInterval
-import pps.covid_sim.util.time.Time.ScalaCalendar
-import pps.covid_sim.view.{HeatMap, LineChart, View}
+import pps.covid_sim.view.{LineChart, View}
 
-import scala.collection.SortedMap
 import scala.collection.parallel.ParSeq
 import scala.swing.Component
-import scala.swing.TabbedPane.Page
 
 class ControllerImpl(model: Model, view: View) extends Controller {
 
@@ -28,9 +25,9 @@ class ControllerImpl(model: Model, view: View) extends Controller {
 
 
   override def startSimulation(area: Area, from: Calendar, until: Calendar, runs: Int): Unit = {
-    view.notifyStart
     model.initWorld(area)
     model.initSimulation(area, from, until, runs)
+    view.notifyStart
     startActors(model.simulationsManager)
 
 
@@ -153,9 +150,10 @@ class ControllerImpl(model: Model, view: View) extends Controller {
   }
 
   private def startActors(simulationsManager: SimulationsManager[Simulation]): Unit = {
-    ActorsCoordination.create(simulationsManager.area, this,
-      new DatesInterval(simulationsManager.from,simulationsManager.until))
+    ActorsCoordination.create(simulationsManager.area, this, simulationsManager.period)
   }
 
   override def covidInfectionParameters: CovidInfectionParameters = model.covidInfectionParameters
+
+  override def simulationInterval: DatesInterval = model.simulationsManager.period
 }

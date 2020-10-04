@@ -8,7 +8,7 @@ import pps.covid_sim.util.Statistic
 
 import scala.util.Random
 
-case class WorkPlacesCreation() {
+private[creation] case class WorkPlacesCreation() {
 
   def create(city: City, workerPerWorkPlace: List[Int], workers: List[Worker],
              random: Random = new Random()): List[Place] = {

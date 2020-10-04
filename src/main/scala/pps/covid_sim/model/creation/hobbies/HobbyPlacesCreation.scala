@@ -6,8 +6,7 @@ import pps.covid_sim.model.places.Place
 
 import scala.util.Random
 
-//TODO scalaDoc
-case class HobbyPlacesCreation() {
+private[creation] case class HobbyPlacesCreation() {
 
   def create(city: City,
              workerPerHobbyPlace: List[Int],
