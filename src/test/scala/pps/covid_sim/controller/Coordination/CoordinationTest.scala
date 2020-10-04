@@ -1,5 +1,54 @@
 package pps.covid_sim.controller.Coordination
 
+
+import akka.actor.{ActorSystem, Props}
+import akka.testkit.{ImplicitSender, TestActors, TestKit}
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
+import pps.covid_sim.controller.actors.ActorsCoordination.ProvinceCoordinator
+import pps.covid_sim.model.container.PlacesContainer.getPlaces
+import pps.covid_sim.model.people.actors.Communication.{GetPlacesByProvince, RequestedPlaces}
+import pps.covid_sim.model.places.FreeTime.Restaurant
+import pps.covid_sim.model.samples.Provinces
+
+class CoordinationTest()
+  extends TestKit(ActorSystem("CoordinationTest"))
+    with ImplicitSender
+    with AnyWordSpecLike
+    with Matchers
+    with BeforeAndAfterAll {
+
+  override def afterAll(): Unit = {
+    TestKit.shutdownActorSystem(system)
+  }
+
+  //Test funzionamento ActorSystem
+  "An Echo actor" must {
+    "send back messages unchanged" in {
+      val echo = system.actorOf(TestActors.echoActorProps)
+      echo ! "hello world"
+      expectMsg("hello world")
+    }
+  }
+
+  //funzionamento Coordinators testing a specific type of message and the response
+  "An ProvinceCoordinator actor" must {
+
+    "send back messages of the place requested" in {
+      val echo = system.actorOf(Props[ProvinceCoordinator])
+      echo ! GetPlacesByProvince(Provinces.FORLI_CESENA, classOf[Restaurant], Option.empty)
+      val res = getPlaces(Provinces.FORLI_CESENA, classOf[Restaurant])
+      expectMsg(RequestedPlaces(res))
+    }
+  }
+
+}
+
+
+
+/*package pps.covid_sim.controller.Coordination
+
 import java.util.Calendar
 
 import akka.actor.{ActorSystem, Props}
@@ -22,7 +71,7 @@ import pps.covid_sim.util.time.DatesInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
 
-class CoordinationTest {
+class CoordinationTestToDelete {
 
 
   /*@Test
@@ -248,3 +297,5 @@ class CoordinationTest {
   val interval = new DatesInterval(start,end)
   ActorsCoordination.create(c,interval)
 }*/
+*/
+
