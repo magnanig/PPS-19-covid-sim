@@ -21,13 +21,22 @@ import scala.swing.TabbedPane.Page
 
 class ControllerImpl(model: Model, view: View) extends Controller {
 
+
+  var lineChart: LineChart = _ // spostare
+
   //val lineChart: LineChart = LineChart("Evoluzioni contagi", "asse x", "asse y", "legend") //TODO spostare => rimuovere
+
 
   override def startSimulation(area: Area, from: Calendar, until: Calendar, runs: Int): Unit = {
     view.notifyStart
     model.initWorld(area)
     model.initSimulation(area, from, until, runs)
     startActors(model.simulationsManager)
+
+
+    lineChart = LineChart("Evoluzioni contagi", from, "asse x", "asse y", "legend")
+
+    val forli: City = City(1, "Forlì", 118000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA), 44.22268559, 12.04068608)
 
     /*val forli: City = City(1, "Forlì", 118000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA), 44.22268559, 12.04068608)
     val cesena: City = City(1, "Cesena", 98000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA), 44.13654899, 12.24217492)
@@ -49,8 +58,7 @@ class ControllerImpl(model: Model, view: View) extends Controller {
     view.insertTab(page)
 
     val data: SortedMap[Calendar, Int] = SortedMap(ScalaCalendar(2020, 9, 1, 15) -> 10, ScalaCalendar(2020, 9, 2, 15) -> 15, ScalaCalendar(2020, 9, 3, 15) -> 8)
-    val chart = LineChart("Infections trend", "Days", "# infections", "Infections trend")
-    chart.init(ScalaCalendar(2020, 9, 1, 15))
+    val chart = LineChart("Infections trend", from, "Days", "# infections", "Infections trend")
     chart.drawLockDownStart(ScalaCalendar(2020, 9, 1, 15), 10)
     chart.drawLockDownEnd(ScalaCalendar(2020, 9, 2, 15), 15)
     chart.drawLockDownStart(ScalaCalendar(2020, 9, 3, 15), 8)
