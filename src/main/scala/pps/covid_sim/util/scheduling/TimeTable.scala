@@ -80,9 +80,10 @@ case class TimeTable(period: MonthsInterval = MonthsInterval.ALL_YEAR,
           .find(_.contains(time.hour))
           .map(hours => {
             val until = time + HoursInterval(time.hour, hours.until).size
-            DatesInterval(time, Seq(until +
+            val d = DatesInterval(time, Seq(until +
               (if(until.hour == 0 && isDefinedAt(until)) _get(until -> datesInterval.until, take - 1).map(_.size).getOrElse(0); else 0),
               datesInterval.until).min)
+            if(d.from == d.until) null else d
           })
         case _ => None
       }
