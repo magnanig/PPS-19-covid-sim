@@ -10,7 +10,7 @@ import pps.covid_sim.util.scheduling.Planning.{StudentPlan, WorkPlan}
 import pps.covid_sim.util.time.Time.{Day, Month}
 import pps.covid_sim.util.time.TimeIntervalsImplicits._
 
-case class SchoolCreation() {
+private[institute] case class SchoolCreation() {
 
   /*
    * Lista di studenti composta almeno di 25 x 2 studenti (2 aule)

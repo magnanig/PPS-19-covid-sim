@@ -7,7 +7,7 @@ import pps.covid_sim.util.RandomGeneration
 
 import scala.util.Random
 
-case class HabitationsCreation(){
+private[creation] case class HabitationsCreation(){
 
   private val averageNumPeople = 4
 

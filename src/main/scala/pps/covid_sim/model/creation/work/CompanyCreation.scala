@@ -12,7 +12,7 @@ import pps.covid_sim.util.time.TimeIntervalsImplicits._
 
 import scala.util.Random
 
-case class CompanyCreation() {
+private[work] case class CompanyCreation() {
 
   def create(city: City,
              workers: List[Worker],

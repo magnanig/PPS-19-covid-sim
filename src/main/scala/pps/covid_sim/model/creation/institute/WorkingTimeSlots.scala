@@ -5,7 +5,7 @@ import pps.covid_sim.util.time.DaysInterval
 import pps.covid_sim.util.time.Time.Day
 import pps.covid_sim.util.time.Time.Day.Day
 
-case class WorkingTimeSlots(rooms: List[Classroom],
+private[institute] case class WorkingTimeSlots(rooms: List[Classroom],
                             daysInterval: DaysInterval = DaysInterval(Day.MONDAY, Day.SATURDAY),
                             fromHour: Int = 8,
                             toHour: Int = 13) {
