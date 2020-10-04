@@ -57,7 +57,7 @@ class ModelImpl extends Model {
   }
 
   override def tick(time: Calendar): Unit = {
-    //places.foreach(place => place.propagateVirus(time, place))///TODO tolta per testare!
+    places.foreach(place => place.propagateVirus(time, place))///TODO tolta per testare!
     //TODO [PASO]
     // trainLines.trains.foreach(transport => transport.propagateVirus(time, transport))
     // busLines.busses.foreach(transport => transport.propagateVirus(time, transport))
