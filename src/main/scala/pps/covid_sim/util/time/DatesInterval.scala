@@ -17,7 +17,7 @@ import pps.covid_sim.util.time.Time.ScalaCalendar
 case class DatesInterval(override val from: Calendar,
                          until: Calendar)
   extends Interval[Calendar](from, until - 1, _ + 1, identity) with Ordered[DatesInterval] {
-  require(until > from)
+  //require(until > from, s"Can't create DatesInterval(${from.getTime} -> ${until.getTime})") TODO
 
   /**
    * Limits current dates interval by the specified amount of hours, starting from the beginning.

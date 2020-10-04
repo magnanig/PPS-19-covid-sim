@@ -2,16 +2,22 @@ package pps.covid_sim.model.simulation
 
 import java.util.Calendar
 
-import pps.covid_sim.model.places.Locality.Area
+import pps.covid_sim.model.container.CitiesContainer
+import pps.covid_sim.model.people.Person
+import pps.covid_sim.model.places.Locality.{Area, City}
 import pps.covid_sim.model.places.Place
+import pps.covid_sim.util.Statistic
 
 import scala.collection.SortedMap
+import scala.collection.parallel.ParSeq
 
 case class SimulationsManager[+S <: Simulation](simulations: Seq[S],
                                                area: Area,
                                                 from: Calendar,
                                                 until: Calendar) extends Iterable[S] {
   private var current: Int = 0
+  private var _citiesInfection: SortedMap[Calendar, SortedMap[City, Int]] = SortedMap()
+  private var covidStages: SortedMap[Calendar, Map[Int, Int]] = SortedMap()
 
   def apply(index: Int): S = simulations(index)
 
@@ -36,9 +42,23 @@ case class SimulationsManager[+S <: Simulation](simulations: Seq[S],
 
   def currentSimulation: S = simulations(current)
 
-  def takeScreenshot(time: Calendar): Unit = {
+  def takeScreenshot(time: Calendar, people: ParSeq[Person]): Unit = {
     simulations(current).takeScreenshot(time)
+    if(current == 0) {
+      covidStages += (time -> Statistic(people).covidStages())
+      _citiesInfection += (time -> Statistic(people).cityPositives(CitiesContainer.getCities(area)))
+    }
   }
+
+  def citiesInfection: SortedMap[Calendar, SortedMap[City, Int]] = _citiesInfection
+
+  def weeklyCovidStages: SortedMap[Calendar, Map[Int, Int]] = SortedMap[Calendar, Map[Int, Int]]() ++
+    covidStages.toList.grouped(7)
+    .map(group => (group.last._1, group
+      .flatMap(_._2)
+      .groupBy(_._1)
+      .mapValues(_.map(_._2).sum)
+    )).toMap
 
   override def iterator: Iterator[S] = simulations.iterator
 

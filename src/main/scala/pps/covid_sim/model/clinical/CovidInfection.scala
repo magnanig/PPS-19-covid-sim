@@ -12,6 +12,7 @@ import scala.util.Random
 
 case class CovidInfection(override val from: Calendar,
                           override val at: Place,
+                          stage: Int,
                           override val person: Person) extends Infection {
 
   /**

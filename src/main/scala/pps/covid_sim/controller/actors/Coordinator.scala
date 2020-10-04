@@ -3,7 +3,7 @@ package pps.covid_sim.controller.actors
 import akka.actor.{Actor, ActorRef}
 import pps.covid_sim.controller.actors.ActorsCoordination.system
 
-import scala.collection.parallel.ParSet
+import scala.collection.parallel.immutable.ParSet
 
 trait Coordinator extends Actor{
 

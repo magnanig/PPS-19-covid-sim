@@ -20,8 +20,11 @@ object VirusPropagation {
           infectionReducingFactor(socialDistance) *
           (1 - infectedPerson.wornMask.map(_.outgoingFiltering).getOrElse(0.0)) *
           (1 - healthyPerson.wornMask.map(_.incomingFiltering).getOrElse(0.0))
-        if (new Random().nextDouble() < contagionProbability) healthyPerson.infects(place, time)
-        else healthyPerson.metInfectedPerson(infectedPerson)
+        if (new Random().nextDouble() < contagionProbability){
+          healthyPerson.infects(place, time, infectedPerson.covidStage.get)
+        } else {
+          healthyPerson.metInfectedPerson(infectedPerson)
+        }
       }
     }
   }

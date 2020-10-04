@@ -2,7 +2,6 @@ package pps.covid_sim.model.movements
 
 import java.util.Calendar
 
-import org.junit.Assert._
 import org.junit.Test
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.movements.MovementFunctions.{linearPathWithWallFollowing, randomPath}
@@ -10,9 +9,9 @@ import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{City, Province}
 import pps.covid_sim.model.places.OpenPlaces.{Beach, Park}
-import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.places.Shops.SuperMarket
 import pps.covid_sim.model.places.rooms.{DiscoRoom, GymRoom}
+import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.util.geometry.{Coordinates, Speed}
 import pps.covid_sim.util.scheduling.TimeTable
 import pps.covid_sim.util.time.MonthsInterval
@@ -58,8 +57,6 @@ class MovementsTest {
 
     override def isDeath: Boolean = false
 
-    override def infects(place: Place, time: Calendar): Unit = ???
-
     override def infectedPeopleMet: Set[Person] = ???
 
     override def metInfectedPerson(person: Person): Unit = ???
@@ -91,14 +88,14 @@ class MovementsTest {
 
   @Test
   def testRandomMovementFunctionInBeach(): Unit = {
-    /*(0 until 5).foreach(i => beach.enter(groupsOfTwo(i), time))
+    (0 until 5).foreach(i => beach.enter(groupsOfTwo(i), time))
     (0 until 5).foreach(i => beach.enter(groupsOfThree(i), time))
     beach.currentGroups.flatten.foreach(_.position = Coordinates.randomOnBorder(beach.dimension))
     println(beach.dimension)
 
     val pathsSampling = randomPath(beach.dimension, beach.obstacles, Speed.FAST, 6)
     val paths = pathsSampling((groupsOfTwo.slice(0, 5) ++ groupsOfThree.slice(0, 5)).toSet)
-    println(paths)*/
+    println(paths)
   }
 
   @Test

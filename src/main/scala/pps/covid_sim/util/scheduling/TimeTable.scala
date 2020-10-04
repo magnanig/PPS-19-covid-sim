@@ -80,8 +80,9 @@ case class TimeTable(period: MonthsInterval = MonthsInterval.ALL_YEAR,
           .find(_.contains(time.hour))
           .map(hours => {
             val until = time + HoursInterval(time.hour, hours.until).size
-            DatesInterval(time, until +
-              (if(until.hour == 0) _get(until -> datesInterval.until, take - 1).map(_.size).getOrElse(0); else 0))
+            DatesInterval(time, Seq(until +
+              (if(until.hour == 0 && isDefinedAt(until)) _get(until -> datesInterval.until, take - 1).map(_.size).getOrElse(0); else 0),
+              datesInterval.until).min)
           })
         case _ => None
       }
@@ -100,14 +101,14 @@ case class TimeTable(period: MonthsInterval = MonthsInterval.ALL_YEAR,
   override def isDefinedOn(day: Day): Boolean = timeTable.get(day).exists(_.nonEmpty)
 
   override def isDefinedOn(day: Day, hoursInterval: HoursInterval): Boolean = timeTable.get(day)
-    .exists(_.exists(_.overlaps(hoursInterval)))
+    .exists(_.exists(h => HoursInterval(h.from, if(h.until < h.from) 0 else h.until).overlaps(hoursInterval)))
 
   /**
    * Check whether current place is opened at specified time.
    * @param time the current time
    * @return true if place is open when desired, false otherwise
    */
-  def isDefined(time: Calendar): Boolean = timeTable.get(time.day) match {
+  override def isDefinedAt(time: Calendar): Boolean = timeTable.get(time.day) match {
     case Some(hourIntervals) => hourIntervals.count(_.contains(time.hour)) > 0
     case _ => false
   }

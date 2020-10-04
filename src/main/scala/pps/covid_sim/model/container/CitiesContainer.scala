@@ -1,46 +1,58 @@
 package pps.covid_sim.model.container
 
-import pps.covid_sim.model.places.Locality.{City, Province, Region}
+import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
 
 object CitiesContainer {
 
   private var _cities: Set[City] = Set()
 
+  /**
+   * Adds a city in the container.
+   */
   def add(city: City): Unit = {
     _cities += city
   }
 
+  /**
+   * Adds a list of cities in the container.
+   */
   def add(cities: Set[City]): Unit = {
     _cities ++= cities
   }
 
+  /**
+   * Get all cities
+   *
+   * @return  all cities in the current simulation
+   */
   def getCities: Set[City] = _cities
 
   /**
-   * Get all cities that are in a specific province
+   * Get all cities that are in a specific province.
    *
    * @param provinceAbbreviation abbreviation code of the province of which you want all the cities
-   * @return all cities that are in a specific province
+   * @return all cities that are in a specific province.
    */
   def getCities(provinceAbbreviation: String): Set[City] =
     getCities.filter(city => city.province.abbreviation.equals(provinceAbbreviation))
 
   /**
-   * Get all cities that are in a specific province
+   * Get all cities that are in a specific area
    *
-   * @param province the province of which you want all the cities
-   * @return all cities that are in the specified province
+   * @param area  the area of which you want all the cities
+   * @return      all cities that are in the specified area
    */
-  def getCities(province: Province): Set[City] =
+  def getCities(area: Area): Set[City] = area match {
+    case province: Province => getCities(province)
+    case region: Region => getCities(region)
+    case city: City => Set(city)
+    case _ => getCities
+  }
+
+  private def getCities(province: Province): Set[City] =
     getCities.filter(city => city.province == province)
 
-  /**
-   * Get all cities that are in a specific region
-   *
-   * @param region region of which you want all the cities
-   * @return all cities that are in a specific region
-   */
-  def getCities(region: Region): Set[City] =
+  private def getCities(region: Region): Set[City] =
     getProvince(region).flatMap(province => getCities(province.abbreviation))
 
   /**

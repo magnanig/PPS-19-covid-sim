@@ -62,7 +62,7 @@ class StatisticTest {
 
     val statistic: Statistic = util.Statistic(people.par)
 
-    assertEquals(CitiesObject.getCities(Region.FRIULI_VENEZIA_GIULIA).size, statistic.numCurrentPositive())
+    assertEquals(CitiesObject.getCities(Region.FRIULI_VENEZIA_GIULIA).size, statistic.numCurrentPositive)
 
     assertEquals(0, statistic.numCurrentPositive(CitiesObject.getProvince("RA")))
 
@@ -87,7 +87,7 @@ class StatisticTest {
 
     val statistic: Statistic = util.Statistic(people.par)
 
-    assertEquals(CitiesObject.getCities(Region.EMILIA_ROMAGNA).size, statistic.numRecovered())
+    assertEquals(CitiesObject.getCities(Region.EMILIA_ROMAGNA).size, statistic.numRecovered)
 
     assertEquals(0, statistic.numRecovered(CitiesObject.getProvince("FI")))
 
@@ -110,7 +110,7 @@ class StatisticTest {
 
     val statistic: Statistic = util.Statistic(people.par)
 
-    assertEquals(CitiesObject.getCities(Region.CAMPANIA).size, statistic.numDeaths())
+    assertEquals(CitiesObject.getCities(Region.CAMPANIA).size, statistic.numDeaths)
 
     assertEquals(0, statistic.numDeaths(CitiesObject.getProvince("TO")))
 
@@ -137,7 +137,7 @@ class StatisticTest {
     val statistic: Statistic = util.Statistic(people.par)
 
     assertEquals(CitiesObject.getCities(Region.CALABRIA).size + CitiesObject.getCities(Region.VENETO).size +
-      CitiesObject.getCities(Region.MOLISE).size, statistic.numConfirmedCases())
+      CitiesObject.getCities(Region.MOLISE).size, statistic.numConfirmedCases)
 
     assertEquals(CitiesObject.getCities(Region.MOLISE).size, statistic.numConfirmedCases(Region.MOLISE))
 

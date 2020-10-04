@@ -20,7 +20,7 @@ class CovidInfectionTest {
 
   val infectionBegin: Calendar = ScalaCalendar(2020, 1, 1)
   val covidInfections: ParSeq[CovidInfection] = (1 to numPeople).par // better performance on multi-core computers
-    .map(_ => CovidInfection(infectionBegin, null, student))
+    .map(_ => CovidInfection(infectionBegin, null, 0, student))
   val asymptomaticNumber: Int = covidInfections.count(_.isAsymptomatic)
 
   @Test

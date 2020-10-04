@@ -2,7 +2,7 @@ package pps.covid_sim.util.scheduling
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import pps.covid_sim.util.time.Time.Day
+import pps.covid_sim.util.time.Time.{Day, ScalaCalendar}
 import pps.covid_sim.util.time.TimeIntervalsImplicits._
 import pps.covid_sim.util.time.{DaysInterval, HoursInterval}
 
@@ -41,6 +41,24 @@ class TimeTableTest {
     assert(timeTable.isDefinedOn(Day.SUNDAY, 0 -> 4))
     assert(!timeTable.isDefinedOn(Day.SATURDAY, 0 -> 22))
     assert(!timeTable.isDefinedOn(Day.SUNDAY, 4 -> 0))
+  }
+
+  @Test
+  def testGet(): Unit = {
+    val timeTable: TimeTable = TimeTable()
+      .add(Day.MONDAY, 10 -> 15)
+      .add(Day.SATURDAY, 22 -> 4)
+      .add(Day.TUESDAY, 22 -> 0)
+    assertEquals(Some(ScalaCalendar(2020, 10, 3, 22) -> ScalaCalendar(2020, 10, 4, 3)),
+      timeTable.get(ScalaCalendar(2020, 10, 3, 19) -> ScalaCalendar(2020, 10, 4, 3)))
+    assertEquals(Some(ScalaCalendar(2020, 10, 3, 22) -> ScalaCalendar(2020, 10, 4, 4)),
+      timeTable.get(ScalaCalendar(2020, 10, 3) -> ScalaCalendar(2020, 10, 4, 4)))
+    assertEquals(Some(ScalaCalendar(2020, 10, 5, 11) -> ScalaCalendar(2020, 10, 5, 15)),
+      timeTable.get(ScalaCalendar(2020, 10, 5, 11) -> ScalaCalendar(2020, 10, 5, 20)))
+    assertEquals(Some(ScalaCalendar(2020, 10, 4) -> ScalaCalendar(2020, 10, 4, 1)),
+      timeTable.get(ScalaCalendar(2020, 10, 4) -> ScalaCalendar(2020, 10, 4, 1)))
+    assertEquals(Some(ScalaCalendar(2020, 10, 6, 23) -> ScalaCalendar(2020, 10, 7)),
+      timeTable.get(ScalaCalendar(2020, 10, 6, 23) -> ScalaCalendar(2020, 10, 7)))
   }
 
   private def testAllCombinations(timeTable: TimeTable, daysInterval: DaysInterval,

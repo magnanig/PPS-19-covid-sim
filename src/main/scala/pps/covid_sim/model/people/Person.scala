@@ -92,13 +92,15 @@ trait Person {
 
   def infectionPlace: Option[Class[_ <: Place]] = infectionPlaceInstance.map(_.getClass)
 
+  def covidStage: Option[Int] = covidInfection.map(_.stage)
+
   /**
    * Infects current person.
    * @param place   the place where infection has happened
    * @param time    the time when infection has happened
    */
-  def infects(place: Place, time: Calendar): Unit = synchronized {
-    covidInfection = Some(CovidInfection(time, place, this))
+  def infects(place: Place, time: Calendar, stage: Int): Unit = synchronized {
+    covidInfection = Some(CovidInfection(time, place, stage, this))
   }
 
   /**
