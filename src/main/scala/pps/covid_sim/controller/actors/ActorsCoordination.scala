@@ -66,6 +66,7 @@ object ActorsCoordination {
         }
         simulationInterval = di
         currentTime = di.from
+        //currentTime = currentTime + 1
         this.nextAvailableLockdown = di.from
         println("Started")
         tick()
@@ -96,10 +97,19 @@ object ActorsCoordination {
       checkLockdown(currentTime)
       controller.tick(currentTime)
       println();println("----->Tick<-----")
-      _subordinatedActors.foreach(_ ! HourTick(currentTime))
-      context.setReceiveTimeout(Duration.create(1200, TimeUnit.MILLISECONDS))
+
       currentTime = currentTime + 1
-      print(currentTime.hour)
+      _subordinatedActors.foreach(_ ! HourTick(currentTime))
+
+      print(currentTime.hour)//todo remove
+      print(waitingAck)//todo remove
+
+
+
+      context.setReceiveTimeout(Duration.create(1200, TimeUnit.MILLISECONDS))
+      //currentTime = currentTime + 1
+
+
     }
 
     private[controller] def stopSimulation(): Unit = synchronized {
@@ -208,9 +218,9 @@ object ActorsCoordination {
         this._myPeople = controller.people.filter(p=>p.residence.province==_province)
         this.createActors(this._myPeople)
       case Acknowledge() if this.waitingAck.contains(sender) => this.waitingAck -= sender
-        if (this.waitingAck.isEmpty) sendAck()
+        if (this.waitingAck.isEmpty) {println("Sending CORRECT cumulative ACK");sendAck()}
       case HourTick(currentTime) => this.spreadTick(currentTime)
-      case ReceiveTimeout => sendAck(); println("WARNING: Timeout! Sono un sotto coordinatore: Province:" + _province)
+      case ReceiveTimeout => println("Sending INCORRECT cumulative ACK");sendAck(); println("WARNING: Timeout! Sono un sotto coordinatore: Province:" + _province + "size: " +waitingAck.size)
       case Stop() => this.endSimulation()
       case GetPlacesByProvince(province, placeClass, datesInterval) => this.genericGetPlaceByProvince(province, placeClass, datesInterval,sender)
       case GetPlacesByCity(city, placeClass, datesInterval) => this.genericGetPlaceByCity(city, placeClass, datesInterval,sender)
@@ -234,7 +244,7 @@ object ActorsCoordination {
     }
 
     private def sendAck(): Unit = {
-      println("Sending cumulative ACK");
+
       this.waitingAck = _subordinatedActors
       this._upperCoordinator ! Acknowledge()
     }

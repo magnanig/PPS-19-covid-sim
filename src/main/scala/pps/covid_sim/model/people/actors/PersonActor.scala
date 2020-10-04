@@ -63,10 +63,13 @@ abstract class PersonActor extends Actor {
   private val numShopPerWeek: Int = RandomGeneration.randomIntInRange(1, maxNumShopPerWeek)
   private implicit val actorName: String = self.toString()
 
+  //DELETE
+  var t: Int = _
+
   override def receive: Receive = {
     case SetPerson(person) => this.coordinator = sender; this.person = person
     case ActorsFriendsMap(friends) => this.friends = friends
-    case HourTick(time) => person.hourTick(time); nextAction(time)
+    case HourTick(time) => person.hourTick(time); nextAction(time); t = time.hour
     case AddPlan(plan) => agenda.addPlan(plan)
     case RemovePlan(oldPlan) => agenda.removePlan(oldPlan)
     case Lockdown(enabled) => lockdown = enabled; if(!inPandemic) inPandemic = true
@@ -102,6 +105,7 @@ abstract class PersonActor extends Actor {
   }
 
   private def sendAckIfReady(): Unit = {
+    print("Sent at hour" + t)
     if(waitingResponses.isEmpty) coordinator ! Acknowledge()
   }
 

@@ -292,6 +292,7 @@ class GuiImpl() extends View {
                   provinceComboboxItems ++= nuovaListaItemProvince.map(p => p.name)
                   println(nuovaListaItemProvince.map(p => p.name))
                   //provinceComboBox: ComboBox[String]= new ComboBox[String](provinceComboboxItems)
+                  repaint()
                 }
               })
 
