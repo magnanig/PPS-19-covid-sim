@@ -1,6 +1,7 @@
 package pps.covid_sim.view
 import java.util.Calendar
 
+import javax.swing.SwingUtilities
 import pps.covid_sim.controller.Controller
 import pps.covid_sim.model.creation.CitiesObject
 import pps.covid_sim.model.places.Locality
@@ -9,6 +10,7 @@ import pps.covid_sim.model.samples.Regions
 import pps.covid_sim.util.time.Time.ScalaCalendar
 import pps.covid_sim.view.viewUtil.Checkers._
 
+import scala.collection.mutable.ArrayBuffer
 import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}
 import scala.swing.event.{ButtonClicked, EditDone, SelectionChanged}
 import scala.swing.{Action, BorderPanel, BoxPanel, Button, ButtonGroup, CheckBox, CheckMenuItem, ComboBox, FlowPanel, Frame, Label, ListView, MainFrame, Menu, MenuBar, MenuItem, Orientation, RadioButton, RadioMenuItem, Separator, SplitPane, Swing, TabbedPane, TextField}
@@ -192,10 +194,12 @@ class GuiImp() extends View {
 
 
         // TODO ricordarsi il "seleziona"
-        var regionComboboxItems: Seq[String] = Seq(new Locality.Italy().name,"second","third")//ci stanno le regioni
+        var regionComboboxItems: Seq[String] = Seq(new Locality.Italy().name)//ci stanno le regioni
         //val italy : Area = new Locality.Italy()
 
-        val regionSet: Set[Region] = Set() //CitiesObject.getRegions
+        val regionSet: Set[Region] = CitiesObject.getRegions
+        regionComboboxItems ++= regionSet.map(r=>r.name)
+
         val provinceSet: Set[Province] = regionSet.flatMap(r => CitiesObject.getProvince(r))
         //println(italy)
         //println(regionSet)
@@ -205,7 +209,7 @@ class GuiImp() extends View {
         //CitiesObject.getProvince(/**/)
 
         // TODO ricordarsi il "seleziona"   e prima della selezione di regione mettere a disposizione solo un elemento che avvisi che prima deve selezionare la regione se vuole fare per provincia
-        var provinceComboboxItems: Seq[String] = Seq("Seleziona","second","third")//ci stanno le provincie della regione selezionata
+        var provinceComboboxItems: ArrayBuffer[String] = ArrayBuffer("Seleziona","second","third")//ci stanno le provincie della regione selezionata
 
         //val areasSimulation = CitiesObject.getRegions.map(r => r.name)
 
@@ -230,29 +234,41 @@ class GuiImp() extends View {
             case EditDone(`runsField`) => checkPositive(runsField)
 
             case SelectionChanged(`provinceComboBox`) => {
-              if(provinceComboBox.selection.item=="Seleziona"){
-                selectedProvince = Option.empty
-              }else{
-                val provinceSelected: Province = provinceSet.filter(p=> p.name == provinceComboBox.selection.item).head
-                selectedProvince = Option(provinceSelected)
-              }
+              SwingUtilities.invokeLater(() => {
+                if (provinceComboBox.selection.item == "Seleziona") {
+                  selectedProvince = Option.empty
+                } else {
+                  val provinceSelected: Province = provinceSet.filter(p => p.name == provinceComboBox.selection.item).head
+                  selectedProvince = Option(provinceSelected)
+                }
+              })
             }
 
             case SelectionChanged(`regionComboBox`) => {
-              println(regionComboBox.selection.item)
-              if(regionComboBox.selection.item == "Italia"){
+
+              SwingUtilities.invokeLater(() => {
+                println(regionComboBox.selection.item)
+                if (regionComboBox.selection.item == "Italia") {
                   provinceComboBox.visible = false
                   selectedRegion = Option.empty
                   selectedProvince = Option.empty
-              }else{
-                provinceComboBox.visible = true
-                //aggiorno gli elementi di province
-                val regionSelected: Region = regionSet.filter(r=> r.name == regionComboBox.selection.item).head
-                selectedRegion = Option(regionSelected)
+                  provinceComboboxItems.clear()
+                  provinceComboboxItems += "Seleziona"
+                } else {
+                  provinceComboBox.visible = true
+                  //aggiorno gli elementi di province
+                  val regionSelected: Region = regionSet.filter(r => r.name == regionComboBox.selection.item).head
+                  selectedRegion = Option(regionSelected)
 
-                val nuovaListaItemProvince = CitiesObject.getProvince(regionSelected).toList;
-                provinceComboboxItems = nuovaListaItemProvince.map(p=> p.name)
-              }
+                  val nuovaListaItemProvince = CitiesObject.getProvince(regionSelected).toList;
+                  provinceComboboxItems.clear()
+                  provinceComboboxItems += "Seleziona"
+                  provinceComboboxItems ++= nuovaListaItemProvince.map(p => p.name)
+                  println(nuovaListaItemProvince.map(p => p.name))
+                  //provinceComboBox: ComboBox[String]= new ComboBox[String](provinceComboboxItems)
+                }
+              })
+
             }
           }
         }
