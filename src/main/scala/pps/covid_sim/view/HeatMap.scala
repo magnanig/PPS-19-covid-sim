@@ -14,7 +14,7 @@ import pps.covid_sim.model.places.Locality.{City, Province, Region}
 
 import scala.swing.Dimension
 
-
+/*
 object HeatMap {
   /**
    * @param args the command line arguments
@@ -41,7 +41,7 @@ object HeatMap {
 
   }
 }
-
+*/
 
 
 class HeatMap() {
@@ -57,7 +57,7 @@ class HeatMap() {
     revalidate()
     repaint()
     this.setVisible(true)
-    
+
     private class GraphicsComponent(infectionsInADay: Map[City, Int]) extends JComponent {
       private val italyOutlineMap: BufferedImage = ImageIO.read(new File("./res/italy_outline_map.png"))
       private val mapWidth: Int = italyOutlineMap.getWidth
