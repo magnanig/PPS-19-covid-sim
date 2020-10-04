@@ -4,6 +4,7 @@ import java.util.Calendar
 
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.Area
+import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
 
 import scala.collection.parallel.ParSeq
@@ -20,7 +21,7 @@ trait Model {
                               contagionProbability: Double,
                               minMaskProbability: Double, maxMaskProbability : Int,
                               notRespectingIsolationMaxProbability: Double,
-                              lockDownStart:Double, lockDownEnd: Double): Unit
+                              lockDownStart:Double, lockDownEnd: Double, closedPlaceSet: Set[Class[_ <:Place]]): Unit
 
   def initWorld(area: Area): Unit
 

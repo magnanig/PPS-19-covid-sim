@@ -53,10 +53,11 @@ class ModelImpl extends Model {
   }
 
   override def tick(time: Calendar): Unit = {
-    places.foreach(place => place.propagateVirus(time, place))
+    //places.foreach(place => place.propagateVirus(time, place))///TODO tolta per testare!
     if(time.hour == 0) {
       simulationsManager.takeScreenshot(time, people)
     }
+    //TODO [PASO]
     // trainLines.trains.foreach(transport => transport.propagateVirus(time, transport))
     // busLines.busses.foreach(transport => transport.propagateVirus(time, transport))
   }
@@ -65,7 +66,7 @@ class ModelImpl extends Model {
 
   override def simulationsManager: SimulationsManager[Simulation] = _simulationsManager
 
-  override def setSimulationParameters(safeZone: Double, minRecoverTime: Int, maxRecoverTime: Int, minInfectionDetectionTime: Int, maxInfectionDetectionTime: Int, multipleInfectionProbability: Double, asymptomaticProbability: Double, asymptomaticDetectionCondProbability: Double, contagionProbability: Double, minMaskProbability: Double, maxMaskProbability: Int, notRespectingIsolationMaxProbability: Double, lockDownStart: Double, lockDownEnd: Double): Unit = {
+  override def setSimulationParameters(safeZone: Double, minRecoverTime: Int, maxRecoverTime: Int, minInfectionDetectionTime: Int, maxInfectionDetectionTime: Int, multipleInfectionProbability: Double, asymptomaticProbability: Double, asymptomaticDetectionCondProbability: Double, contagionProbability: Double, minMaskProbability: Double, maxMaskProbability: Int, notRespectingIsolationMaxProbability: Double, lockDownStart: Double, lockDownEnd: Double, closedPlaceSet: Set[Class[_ <:Place]]): Unit = {
     covidInfectionParameters.safeZone = safeZone
     covidInfectionParameters.minRecoverTime = minRecoverTime
     covidInfectionParameters.maxRecoverTime = maxRecoverTime
@@ -80,5 +81,6 @@ class ModelImpl extends Model {
     covidInfectionParameters.notRespectingIsolationMaxProbability = notRespectingIsolationMaxProbability
     covidInfectionParameters.lockDownStart = lockDownStart
     covidInfectionParameters.lockDownEnd = lockDownEnd
+    covidInfectionParameters.placeToclose = closedPlaceSet
   }
 }

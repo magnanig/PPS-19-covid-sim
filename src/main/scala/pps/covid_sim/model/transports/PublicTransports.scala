@@ -14,12 +14,21 @@ object PublicTransports {
     private var _coveredCities: Set[City] = Set()
     val scheduledTime: HoursInterval
 
+    /**
+     * Method called to set the cities covered from the line
+     * @param newSet of cities that will be covered
+     */
     def setCoveredCities(newSet: Set[City]): Unit = {
       _coveredCities = newSet
     }
 
     def tryUse(group: Group, time:Calendar): Any
 
+    /**
+     * Inform of the viability of the line in the specified hour
+     * @param hour to check if the line is available
+     * @return if the line is available
+     */
     def isOpen(hour: Int): Boolean = {
       if (hour >= 0  && hour < 24) {
         scheduledTime.contains(hour)
