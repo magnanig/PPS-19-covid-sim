@@ -24,7 +24,7 @@ case class TimeTable(period: MonthsInterval = MonthsInterval.ALL_YEAR,
    * @return a new TimeTable instance updated as desired
    */
   def add(day: Day, hoursInterval: HoursInterval): TimeTable = {
-    if (hoursInterval.until > hoursInterval.from)
+    if (hoursInterval.until == 0 || hoursInterval.until > hoursInterval.from)
       TimeTable(period, timeTable + (day -> (timeTable.getOrElse(day, Seq()) :+ hoursInterval)))
     else
       TimeTable(period, timeTable +
@@ -80,10 +80,9 @@ case class TimeTable(period: MonthsInterval = MonthsInterval.ALL_YEAR,
           .find(_.contains(time.hour))
           .map(hours => {
             val until = time + HoursInterval(time.hour, hours.until).size
-            val d = DatesInterval(time, Seq(until +
+            DatesInterval(time, Seq(until +
               (if(until.hour == 0 && isDefinedAt(until)) _get(until -> datesInterval.until, take - 1).map(_.size).getOrElse(0); else 0),
               datesInterval.until).min)
-            if(d.from == d.until) null else d
           })
         case _ => None
       }
