@@ -1,5 +1,8 @@
 package pps.covid_sim.model.transports
 
+/**
+ * Different kind of private transports.
+ */
 object PrivateTransports {
 
   trait PrivateTransport extends Transport {

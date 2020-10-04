@@ -2,6 +2,11 @@ package pps.covid_sim.util.geometry
 
 import pps.covid_sim.util.RandomGeneration
 
+/**
+ * Utility class modeling a rectangle entity.
+ * @param topLeftCorner         the top left corner of the entity
+ * @param bottomRightCorner     the bottom right corner of the entity
+ */
 case class Rectangle(topLeftCorner: Coordinates, bottomRightCorner: Coordinates) extends GeometryEntity {
 
   /**
@@ -12,7 +17,7 @@ case class Rectangle(topLeftCorner: Coordinates, bottomRightCorner: Coordinates)
   )
 
   override def -(point: Coordinates): Double = {
-    // thanks https://stackoverflow.com/a/18157551
+    // thanks to https://stackoverflow.com/a/18157551
     val dx = Math.max(0, Math.max(topLeftCorner.x - point.x, point.x - bottomRightCorner.x))
     val dy = Math.max(0, Math.max(topLeftCorner.y - point.y, point.y - bottomRightCorner.y))
     Math.sqrt(dx * dx + dy * dy)
@@ -88,6 +93,5 @@ object Rectangle {
     if ((dimension % fillFactor) == 0) ((dimension / fillFactor) - 1).toInt
     else (dimension / fillFactor).toInt
   }
-
 
 }

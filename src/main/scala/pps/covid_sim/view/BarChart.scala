@@ -9,8 +9,6 @@ import java.util.Date
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.data.category.DefaultCategoryDataset
 
-import scala.collection.SortedMap
-
 /**
  * Class that manages the creation of a bar chart.
  * @param title         the title of the chart
@@ -24,6 +22,11 @@ case class BarChart(title: String,
   private var chart: JFreeChart = _
   private val dataset: DefaultCategoryDataset = new DefaultCategoryDataset()
 
+  /**
+   * Method that draws a bar chart representing the distribution of the infected in the different places.
+   * @param infectionPlaces     a map containing the number of infected (map value) for each place (map key)
+   * @return                    a ChartPanel containing the bar chart
+   */
   def drawChart(infectionPlaces: Map[Class[_ <: Place], Int]): ChartPanel = {
     infectionPlaces.foreach(elem => dataset.addValue(elem._2, elem._1.getSimpleName, elem._1.getSimpleName))
 
@@ -39,10 +42,14 @@ case class BarChart(title: String,
     chartPanel
   }
 
+  /**
+   * Save the bar chart in png format.
+   */
   def saveChartAsPNG(): Unit = {
     val path = Paths.get("./sim_res")
     if (!Files.exists(path)) Files.createDirectory(path)
-    ChartUtils.saveChartAsPNG(new File(s"./sim_res/barchart_${new Date().toString}.png"), chart, 450, 400)
+    ChartUtils.saveChartAsPNG(new File(s"./sim_res/barchart_${new Date().toString}.png"), chart,
+      450, 400)
   }
 
 }
