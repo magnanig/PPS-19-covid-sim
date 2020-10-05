@@ -140,7 +140,7 @@ object ActorsCoordination {
       }.toMap*/
 
       val regionActors = regions.par.collect {
-        case region if(controller.people.count(_.residence.province.region == region) > 0) => system.actorOf(Props[RegionCoordinator]) -> region
+        case region if controller.people.count(_.residence.province.region == region) > 0 => system.actorOf(Props[RegionCoordinator]) -> region
       }.toMap
       _subordinatedActors = regionActors.keySet.toSet
       println(s"Total regions considered in the simulation: ${regionActors.size}"+ "coordinatore principale crea: " + _subordinatedActors)
@@ -179,7 +179,7 @@ object ActorsCoordination {
     private def createActors(provinces: Set[Province]): Unit = {
       val numProvince = provinces.size
       val provinceActors = provinces.par.collect {
-        case province if(controller.people.count(_.residence.province == province) > 0) => system.actorOf(Props[ProvinceCoordinator]) -> province
+        case province if controller.people.count(_.residence.province == province) > 0 => system.actorOf(Props[ProvinceCoordinator]) -> province
       }.toMap
       println(s"Total province considered in the simulation: ${provinceActors.size} "+ "of region: "+ _region)
       this._subordinatedActors = provinceActors.keySet.toSet
@@ -194,7 +194,7 @@ object ActorsCoordination {
     }
 
     private def spreadTick(region :Region, currentTime: Calendar) :Unit = { //esempio test
-      // println(region)
+      println(region)
       this.waitingAck = _subordinatedActors
       //context.setReceiveTimeout(Duration.create(50, TimeUnit.MILLISECONDS))
       this._subordinatedActors.foreach(s => s ! HourTick(currentTime))
@@ -225,7 +225,7 @@ object ActorsCoordination {
       case Stop() => this.endSimulation()
       case GetPlacesByProvince(province, placeClass, datesInterval) => this.genericGetPlaceByProvince(province, placeClass, datesInterval,sender)
       case GetPlacesByCity(city, placeClass, datesInterval) => this.genericGetPlaceByCity(city, placeClass, datesInterval,sender)
-      case msg => println(s"Not expected [Province]: $msg" +"is sender in peoples: "+waitingAck.contains(sender) +" "+(sender.toString()));
+      case msg => println(s"Not expected [Province]: $msg" +"is sender in peoples: "+waitingAck.contains(sender) +" "+ sender.toString());
     }
 
     private def createActors(people: ParSeq[Person]): Unit = {
