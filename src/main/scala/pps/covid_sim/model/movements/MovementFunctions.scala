@@ -48,7 +48,6 @@ object MovementFunctions {
 
       partitioning
     }
-
   }
 
   /**

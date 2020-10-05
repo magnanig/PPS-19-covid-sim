@@ -142,6 +142,7 @@ object PublicTransports {
   }
 
   case class Bus(override val capacity: Int) extends PublicTransport {
+
   }
 
   case class Carriage(override val capacity: Int) extends Transport {
