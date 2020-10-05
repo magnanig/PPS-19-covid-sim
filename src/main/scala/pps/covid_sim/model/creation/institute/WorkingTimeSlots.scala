@@ -11,7 +11,7 @@ case class WorkingTimeSlots(rooms: List[Classroom],
                             toHour: Int = 13) extends Iterable[(Classroom, Day, Int)]{
 
   override def iterator: Iterator[(Classroom, Day, Int)] = {
-    (for(i <- 1 until 5 * 6; room <- rooms; day <- daysInterval; hour <- (fromHour until toHour).toList)
+    (for(_ <- 1 until 5 * 6; room <- rooms; day <- daysInterval; hour <- (fromHour until toHour).toList)
       yield (room, day, hour)).iterator
   }
 }
