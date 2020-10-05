@@ -4,7 +4,6 @@ import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.util.geometry.{Coordinates, Dimension, Direction, Rectangle, Speed}
 
-import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 

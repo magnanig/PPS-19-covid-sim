@@ -55,7 +55,8 @@ case class PieChart(title: String) {
     val path = Paths.get("." + File.separator + "sim_res")
     if (!Files.exists(path)) Files.createDirectory(path)
     ChartUtils.saveChartAsPNG(new File("." + File.separator + "sim_res" +
-      File.separator + s"piechart_${new Date().toString.replaceAll(":","_")}.png"), chart, 450, 400)
+      File.separator + s"piechart_${new Date().toString.replaceAll(":","_")}.png"),
+      chart, 450, 400)
   }
 
 }

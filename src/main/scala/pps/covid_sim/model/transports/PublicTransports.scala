@@ -6,6 +6,7 @@ import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.Locality.{City, Region}
 import pps.covid_sim.model.places.{Locations, Place}
 import pps.covid_sim.util.time.HoursInterval
+import pps.covid_sim.util.time.Time.ScalaCalendar
 
 /**
  * Different kind of public transports.
@@ -80,7 +81,7 @@ object PublicTransports {
      *                  If there is no public transport available in the line None is returned.
      */
     override def tryUse(group: Group, time:Calendar): Option[PublicTransport] =  {
-      if (this.isOpen(time.getTime.getHours) && !this.isOneMemberAlreadyIn(group)) {
+      if (this.isOpen(time.hour) && !this.isOneMemberAlreadyIn(group)) {
         val availableBuses = busList.filter(b => b.capacity - b.numCurrentPeople >= group.size)
         if (availableBuses.nonEmpty) {
           val selectedMeans: Bus = availableBuses min Ordering[Int].on[Bus] (_.numCurrentPeople)
@@ -123,7 +124,7 @@ object PublicTransports {
      * @return          a pair consisting of the train and carriage available
      */
     override def tryUse(group: Group, time: Calendar): (Option[PublicTransport], Option[Transport]) = {
-      if (this.isOpen(time.getTime.getHours)) {
+      if (this.isOpen(time.hour)) {
         val availableTrains = trainList.filter(t => t.capacity - t.numCurrentPeople >= group.size)
         if (availableTrains.nonEmpty) {
           val availableTrain = Some(availableTrains.head)

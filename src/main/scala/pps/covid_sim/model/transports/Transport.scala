@@ -6,7 +6,6 @@ import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.PeopleGroup.Single
 import pps.covid_sim.model.places.Locations.{LimitedPeopleLocation, Location}
-import pps.covid_sim.model.places.Place
 
 /**
  * A generic means of transport that people can take (can be either a public or private transport).

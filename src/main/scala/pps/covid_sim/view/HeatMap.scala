@@ -6,12 +6,9 @@ import java.awt.{BorderLayout, Color, Graphics, Graphics2D, RenderingHints}
 import java.awt.geom.Ellipse2D
 import java.awt.image.BufferedImage
 import java.io.File
-import java.nio.file.{Files, Paths}
-import java.util.Date
 
 import javax.imageio.ImageIO
-import pps.covid_sim.model.places.Locality
-import pps.covid_sim.model.places.Locality.{City, Province}
+import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.parameters.CreationParameters
 
 import scala.collection.SortedMap

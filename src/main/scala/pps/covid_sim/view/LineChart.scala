@@ -33,7 +33,6 @@ case class LineChart(title: String,
   private var chart: JFreeChart = _
   private var plot: XYPlot = _
   private val dataset: XYSeriesCollection = new XYSeriesCollection()
-  //private val mainSeries: XYSeries = new XYSeries(legend)
   private val startLockdownSeries: XYSeries = new XYSeries("Start Lockdown")
   private val endLockdownSeries: XYSeries = new XYSeries("End Lockdown")
   private var seriesCount = 0
@@ -50,7 +49,7 @@ case class LineChart(title: String,
    */
   def drawChart(infected: SortedMap[Calendar, Int], avg: Boolean = false): ChartPanel = {
     seriesCount = seriesCount + 1
-    val seriesName = if (!avg) legend+" "+seriesCount else "AVG"
+    val seriesName = if (!avg) legend + " " + seriesCount else "AVG"
     val mainSeries = new XYSeries(seriesName)
 
     infected.zipWithIndex.foreach(elem => mainSeries.add(elem._2, elem._1._2))
@@ -139,11 +138,6 @@ case class LineChart(title: String,
 
     val renderer = new XYLineAndShapeRenderer()
 
-    //renderer.setSeriesPaint(dataset.getSeriesIndex(legend), Color.RED)
-    //renderer.setSeriesLinesVisible(dataset.getSeriesIndex(legend), true)
-
-    //renderer.setSeriesStroke(0, new BasicStroke(2.0f))
-
     plot.setRenderer(renderer)
     plot.setBackgroundPaint(Color.white)
 
@@ -187,7 +181,8 @@ case class LineChart(title: String,
     val path = Paths.get("." + File.separator + "sim_res")
     if (!Files.exists(path)) Files.createDirectory(path)
     ChartUtils.saveChartAsPNG(new File("." + File.separator + "sim_res" +
-      File.separator + s"linechart_${new Date().toString.replaceAll(":","_")}.png"), chart, 450, 400)
+      File.separator + s"linechart_${new Date().toString.replaceAll(":","_")}.png"),
+      chart, 450, 400)
   }
 
 }
