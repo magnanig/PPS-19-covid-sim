@@ -52,10 +52,10 @@ case class PieChart(title: String) {
    * Save the pie chart in png format.
    */
   def saveChartAsPNG(): Unit = {
-    val path = Paths.get("./sim_res")
+    val path = Paths.get("." + File.separator + "sim_res")
     if (!Files.exists(path)) Files.createDirectory(path)
-    ChartUtils.saveChartAsPNG(new File(s"./sim_res/piechart_${new Date().toString}.png"), chart,
-      450, 400)
+    ChartUtils.saveChartAsPNG(new File("." + File.separator + "sim_res" +
+      File.separator + s"piechart_${new Date().toString}.png"), chart, 450, 400)
   }
 
 }
