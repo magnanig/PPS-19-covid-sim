@@ -62,8 +62,8 @@ class ModelImpl extends Model {
 
   override def tick(time: Calendar): Unit = {
     places.foreach(place => place.propagateVirus(time, place)(covidInfectionParameters))
-     TransportLinesContainer.getTrainLines.foreach(trainLine =>trainLine.trainList.foreach(train=> train.propagateVirus(time, train)(covidInfectionParameters)) )//TODO
-     TransportLinesContainer.getBusLines.foreach(busLine => busLine.busList.foreach(bus=> bus.propagateVirus(time, bus )(covidInfectionParameters)))//TODO
+     TransportLinesContainer.getTrainLines.foreach(trainLine =>trainLine.trainList.foreach(train=> train.propagateVirus(time, train)(covidInfectionParameters)))
+     TransportLinesContainer.getBusLines.foreach(busLine => busLine.busList.foreach(bus=> bus.propagateVirus(time, bus )(covidInfectionParameters)))
     if(time.hour == 0) {
       simulationsManager.takeScreenshot(time, people)
     }
