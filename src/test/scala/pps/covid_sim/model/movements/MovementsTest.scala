@@ -20,7 +20,7 @@ import pps.covid_sim.util.time.Time.{Month, ScalaCalendar}
 
 class MovementsTest {
 
-  val cityTest: City = City(1, "Forlì", 118000, Province(1, "FC", "Forlì", Locality.Region.EMILIA_ROMAGNA))
+  val cityTest: City = City(1, "Forlì", 118000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA))
   val timeTable: TimeTable = TimeTable(MonthsInterval(Month.JANUARY, Month.DECEMBER))
   val time: Calendar = ScalaCalendar(2020, 9, 1, 15)
 

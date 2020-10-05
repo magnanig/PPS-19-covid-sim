@@ -56,7 +56,7 @@ object Locations {
         println(s"WARNING: ${group.leader} Already entered in the ${getClass.getSimpleName}!")
         Some(this)
       } else if(canEnter(group, time)) preEnter(group, time) match {
-        case location @ Some(_) => onEntered(group); location
+        case location @ Some(_) => onEntered(group); Some(this) //location
         case _ => println(s"WARNING: $group cannot enter to the ${getClass.getSimpleName} at ${time.getTime}"); None
       } else {
         None
