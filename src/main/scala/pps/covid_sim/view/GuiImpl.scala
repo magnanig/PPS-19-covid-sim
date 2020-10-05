@@ -1,4 +1,5 @@
 package pps.covid_sim.view
+import java.awt.Dimension
 import java.util.Calendar
 
 import javax.swing.JPanel
@@ -14,6 +15,7 @@ import pps.covid_sim.model.places.Shops.Shop
 import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.simulation.SimulationsManager.classOrdering
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
+import pps.covid_sim.util.time.Time
 import pps.covid_sim.util.time.Time.ScalaCalendar
 import pps.covid_sim.view.viewUtil.Checkers._
 
@@ -142,7 +144,7 @@ class GuiImpl() extends View {
     val companyCheckbox = new CheckBox("Aziende")
     val factoryCheckbox = new CheckBox("Fabbriche")
     val shopCheckbox = new CheckBox("Negozi")
-    val fieldCheckbox = new CheckBox("Campi da Calcio")
+    val fieldCheckbox = new CheckBox("Campi da calcio")
     val gymCheckbox = new CheckBox("Palestre")
 
     val placeAndCheckMap : Map[CheckBox,Class[_ <:Place]]= Map(beachCheckbox->classOf[Beach],squareCheckbox -> classOf[Square],
@@ -298,7 +300,7 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>tempo minimo di guarigione dal virus:</p></html>")//minInfectionDetectionTime
+          contents += new Label("<html><p>Tempo minimo di guarigione dal virus:</p></html>")//minInfectionDetectionTime
           contents += minHealingTimingField
           contents += new Label("Giorni")
           listenTo(minHealingTimingField)
@@ -308,7 +310,7 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>tempo massimo di guarigione dal virus:</p></html>")//maxInfectionDetectionTime
+          contents += new Label("<html><p>Tempo massimo di guarigione dal virus:</p></html>")//maxInfectionDetectionTime
           contents += maxHealingTimingField
           contents += new Label("Giorni")
           listenTo(maxHealingTimingField)
@@ -318,7 +320,7 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>tempo minimo di riconoscimento dal virus:</p></html>")//minInfectionDetectionTime
+          contents += new Label("<html><p>Tempo minimo di riconoscimento dal virus:</p></html>")//minInfectionDetectionTime
           contents += minInfectionDetectionTimeField
           contents += new Label("Giorni")
           listenTo(minInfectionDetectionTimeField)
@@ -328,7 +330,7 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>tempo massimo di riconoscimento dal virus:</p></html>")//maxInfectionDetectionTime
+          contents += new Label("<html><p>Tempo massimo di riconoscimento dal virus:</p></html>")//maxInfectionDetectionTime
           contents += maxInfectionDetectionTimeField
           contents += new Label("Giorni")
           listenTo(maxInfectionDetectionTimeField)
@@ -337,7 +339,7 @@ class GuiImpl() extends View {
           }
         }
         contents += new FlowPanel {
-          contents += new Label("<html><p>percentuale di asintomatici che riescono ad accorgiersi di essere infetti:</p></html>")//asymptomaticDetectionCondProbability
+          contents += new Label("<html><p>Percentuale di asintomatici che riescono ad accorgiersi di essere infetti:</p></html>")//asymptomaticDetectionCondProbability
           //val cunningAsymptomaticField = new TextField(3)
           contents += cunningAsymptomaticField
           contents += new Label("%")
@@ -348,7 +350,7 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>distanza ad di sopra della quale è garantito che il virus non può transitare da persona a persona:</p></html>")//safeZone
+          contents += new Label("<html><p>Distanza ad di sopra della quale è garantito che il virus non può transitare da persona a persona:</p></html>")//safeZone
           //val distField = new TextField(3)
           contents += distField
           contents += new Label("cm")
@@ -359,7 +361,7 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>percentuale di persone che violano l'isolamento(lockdown o accertata positività):</p></html>")//notRespectingIsolationMaxProbability
+          contents += new Label("<html><p>Percentuale di persone che violano l'isolamento (lockdown o accertata positività):</p></html>")//notRespectingIsolationMaxProbability
           //val breakingPeopkeField = new TextField(3)
           contents += breakingPeopkeField
           contents += new Label("%")
@@ -370,7 +372,7 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>percentuale di persone che indossano la mascherina nei posti dove richiesto:</p></html>")//minMaskProbability    max è sempre 1
+          contents += new Label("<html><p>Percentuale di persone che indossano la mascherina nei posti dove richiesto:</p></html>")//minMaskProbability    max è sempre 1
           //val peopleWearingMaskField = new TextField(3)
           contents += peopleWearingMaskField
           contents += new Label("%")
@@ -381,7 +383,7 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>percentuale di persone che rispettano le distanze di sicurezza:</p></html>")
+          contents += new Label("<html><p>Percentuale di persone che rispettano le distanze di sicurezza:</p></html>")
           //val peopleSecureDistanceField = new TextField(3)
           contents += peopleSecureDistanceField
           contents += new Label("%")
@@ -391,7 +393,7 @@ class GuiImpl() extends View {
           }
         }
         contents += new FlowPanel {
-          contents += new Label("<html><p>percentuale di persone per far partire il lockdown:</p></html>")//lockDownStart
+          contents += new Label("<html><p>Percentuale di persone per far partire il lockdown:</p></html>")//lockDownStart
           //val peopleSecureDistanceField = new TextField(3)
           contents += lockdownStartField
           contents += new Label("%")
@@ -402,7 +404,7 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>percentuale di persone per fermare lockdown ruspetto max infezioni precedente:</p></html>")//percentage respect with last max infections
+          contents += new Label("<html><p>Percentuale di persone per fermare lockdown ruspetto max infezioni precedente:</p></html>")//percentage respect with last max infections
           //val peopleSecureDistanceField = new TextField(3)
           contents += lockdownEndField
           contents += new Label("%")
@@ -508,8 +510,7 @@ class GuiImpl() extends View {
       }))
   //creare i chart
     chartSet = Set(LineChart("Evolution of infections over time", controller.simulationInterval.from, "Days", "Infections", "Infections trend"),
-      LineChart("Evolution of recovered over time", controller.simulationInterval.from, "Days", "Recovered", "Recovered trend"),
-      /*LineChart("Evolution of deaths over time", controller.simulationInterval.from, "Days", "Deaths", "Deaths trend")*/)
+      LineChart("Evolution of recovered over time", controller.simulationInterval.from, "Days", "Recovered", "Recovered trend"))
 
   }
 
@@ -517,33 +518,27 @@ class GuiImpl() extends View {
     this.clearTabs()
     saveMenu.visible = true
 
-    //chartSet.foreach(c=>this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList))))))
-
     chartSet.foreach {
       case c if c.yAxisLabel == "Infections" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList)))))
       case c if c.yAxisLabel == "Recovered" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.recovered).toList)))))
-      //case c if c.yAxisLabel=="Deaths" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.deaths).toList)))))
     }
-    //aggiungere le heat e gli altri
 
     virusStagesChart = LineChart("Evolution of infections over time for each stage", controller.simulationInterval.from, "Days", "Infections", "Infections trend")
-    //this.insertTab(new Page(virusStagesChart.title, convertJavaToScalaComponent(virusStagesChart.drawMultiSeriesChart(simulationsManager.?????))))//weeklyCovidStages
+    //this.insertTab(new Page(virusStagesChart.title, convertJavaToScalaComponent(virusStagesChart.drawMultiSeriesChart(simulationsManager.))))//weeklyCovidStages
     barChart = BarChart("Number of infections per place", "Places", "Infections")
     this.insertTab(new Page(barChart.title, convertJavaToScalaComponent(barChart.drawChart(simulationsManager.average(simulationsManager.map(_.infectionPlaces).toList)))))
 
-    simulationsManager.weeklyCovidStages.foreach(w=> this.insertTab(new Page(w._1.getWeekYear.toString+" week",convertJavaToScalaComponent(PieChart(w._1.getWeekYear.toString+" week").drawChart(w._2)))))
+    simulationsManager.weeklyCovidStages.zipWithIndex.foreach(w=> this.insertTab(new Page("Week "+ (w._2+1),convertJavaToScalaComponent(PieChart("Week "+ (w._2+1)).drawChart((w._1)._2)))))
 
     //heat
     this.insertTab(new Page("HeatMap Infections",convertJavaToScalaComponent(new HeatMap().drawMap(simulationsManager.citiesInfection.last._2))))
   }
 
   override def startLockdown(time: Calendar, infections: Int): Unit = {
-    //lineChart.drawLockDownStart(time, infections)
     chartSet.foreach(c=>c.drawLockDownStart(time, infections))
   }
 
   override def endLockdown(time: Calendar, infections: Int): Unit = {
-    //lineChart.drawLockDownEnd(time, infections)
     chartSet.foreach(c=>c.drawLockDownEnd(time, infections))
   }
 

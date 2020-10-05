@@ -22,7 +22,7 @@ import scala.swing.Dimension
 class HeatMap() {
 
   private val italyOutlineMap: BufferedImage = ImageIO.read(new File("./res/italy_outline_map.png"))
-  private val g2 = italyOutlineMap.createGraphics()
+  //private val g2 = italyOutlineMap.createGraphics()
 
   /**
    * Method that draws a heat map representing the situation of the epidemic spread at a certain time.
@@ -118,13 +118,13 @@ class HeatMap() {
     val path = Paths.get("." + File.separator + "sim_res")
     if (!Files.exists(path)) Files.createDirectory(path)
     ImageIO.write(italyOutlineMap, "png", new File("." + File.separator + "sim_res" +
-      File.separator + s"heatmap_${new Date().toString}.png"))
+      File.separator + s"heatmap_${new Date().toString.replaceAll(":","_")}.png"))
   }
 
 }
 
 object Testttt extends App {
-
+/*
   val forli: City = City(1, "Forlì", 118000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA), 44.22268559, 12.04068608)
   val cesena: City = City(1, "Cesena", 98000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA), 44.13654899, 12.24217492)
   val fake: City = City(1, "Cesena", 98000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA), 44.80436680, 11.34172080)
@@ -135,8 +135,8 @@ object Testttt extends App {
 
   val x = new HeatMap()
   x.drawMap(infectionsInADay)
-  x.saveMapAsPNG()
-  /*
+  x.saveMapAsPNG()*/
+
   val italyOutlineMap: BufferedImage = ImageIO.read(new File("./res/italy_outline_map.png"))
 
     //val (x, y) = convertGpsCoordsToMapCoords(elem._1.longitude, elem._1.latitude)
@@ -156,9 +156,9 @@ object Testttt extends App {
   val path = Paths.get("." + File.separator + "sim_res")
   if (!Files.exists(path)) Files.createDirectory(path)
   ImageIO.write(italyOutlineMap, "png", new File("." + File.separator + "sim_res" +
-    File.separator + s"heatmap_${new Date().toString}.png"))
+    File.separator + s"heatmap_${new Date().toString.replaceAll(":","_")}.png"))
 
-   */
+
 
 }
 
