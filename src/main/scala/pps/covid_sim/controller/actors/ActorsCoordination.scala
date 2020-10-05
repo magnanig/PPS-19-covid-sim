@@ -5,6 +5,7 @@ import java.util.Calendar
 import akka.actor.{ActorRef, ActorSystem, Props, ReceiveTimeout}
 import pps.covid_sim.controller.Controller
 import pps.covid_sim.controller.actors.CoordinatorCommunication.{SetProvince, SetRegion}
+import pps.covid_sim.model.container.PeopleContainer
 import pps.covid_sim.model.container.PlacesContainer.getPlaces
 import pps.covid_sim.model.people.People.{Student, Worker}
 import pps.covid_sim.model.people.Person
@@ -131,21 +132,22 @@ object ActorsCoordination {
 
     private def createActors(regions: Set[Region]): Unit = {
       val numRegion = regions.size
-      println(numRegion)
-      println(regions)
-      println(regions.map(r => r-> controller.people.count(_.residence.province.region == r)))
 
-      /*val regionActors = regions.par.map {
-        case region => system.actorOf(Props[RegionCoordinator]) -> region
+      /*val regionActors = regions.par.collect {
+        case region if controller.people.count(_.residence.province.region == region) > 0 => system.actorOf(Props[RegionCoordinator]) -> region
       }.toMap*/
 
-      val regionActors = regions.par.collect {
-        case region if controller.people.count(_.residence.province.region == region) > 0 => system.actorOf(Props[RegionCoordinator]) -> region
-      }.toMap
+      val regionActors = controller.people.groupBy(_.residence.province.region).map(entry => {
+        println(s"TOPC: Total people considered in the simulation: ${entry._2.size} "+ "coordinatore principale crea: " + entry._1.name)
+        val actor = system.actorOf(Props[RegionCoordinator])
+        actor ! SetRegion(entry._1)
+        actor -> entry._1
+      })
+
       _subordinatedActors = regionActors.keySet.toSet
-      println(s"Total regions considered in the simulation: ${regionActors.size}"+ "coordinatore principale crea: " + _subordinatedActors)
+      //println(s"Total regions considered in the simulation: ${regionActors.size}"+ "coordinatore principale crea: " + _subordinatedActors)
       this.waitingAck = _subordinatedActors
-      regionActors.foreach({ case (actor, region) => actor ! SetRegion(region) })
+      //regionActors.foreach({ case (actor, region) => actor ! SetRegion(region) })
     }
 
     def createProvinceActors(province: Province):Unit = {
@@ -178,14 +180,21 @@ object ActorsCoordination {
 
     private def createActors(provinces: Set[Province]): Unit = {
       val numProvince = provinces.size
-      val provinceActors = provinces.par.collect {
+      /*val provinceActors = provinces.par.collect {
         case province if controller.people.count(_.residence.province == province) > 0 => system.actorOf(Props[ProvinceCoordinator]) -> province
-      }.toMap
-      println(s"Total province considered in the simulation: ${provinceActors.size} "+ "of region: "+ _region)
+      }.toMap*/
+
+      val provinceActors = controller.people.groupBy(_.residence.province).map(entry => {
+        println(s"REGC: Total people considered in the simulation: ${entry._2.size} "+ "of region: "+ entry._1)
+        val actor = system.actorOf(Props[ProvinceCoordinator])
+        actor ! SetProvince(entry._1)
+        actor -> entry._1
+      })
+
       this._subordinatedActors = provinceActors.keySet.toSet
       this.waitingAck = _subordinatedActors
 
-      provinceActors.foreach({ case (actor, province) => actor ! SetProvince(province) })
+      //provinceActors.foreach({ case (actor, province) => actor ! SetProvince(province) })
     }
 
     private def sendAck(): Unit = {
@@ -216,7 +225,8 @@ object ActorsCoordination {
     override def receive: Receive = {
       case SetProvince(province) =>
         this._province = province;  this._upperCoordinator = sender
-        this._myPeople = controller.people.filter(p=>p.residence.province==_province)
+        this._myPeople = PeopleContainer.getPeople(_province).par
+        //this._myPeople = controller.people.filter(p=>p.residence.province==_province)
         this.createActors(this._myPeople)
       case Acknowledge() if this.waitingAck.contains(sender) => this.waitingAck -= sender
         if (this.waitingAck.isEmpty) {println("Sending CORRECT cumulative ACK");sendAck()}
@@ -237,7 +247,7 @@ object ActorsCoordination {
         case person => system.actorOf(Props[UnemployedActor]) -> person
       }.toMap
 
-      println(s"Total people considered in the simulation: $numPerson")
+      println(s"PROC: Total people considered in the simulation: $numPerson")
       this._subordinatedActors = peopleActors.keySet.toSet
       this.waitingAck = _subordinatedActors
 
