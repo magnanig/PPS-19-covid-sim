@@ -12,19 +12,15 @@ import scala.collection.mutable
 object WorldCreation {
 
   private var regions: mutable.Map[Int, Region] = mutable.Map[Int, Region]() // id_region -> Region
-  private var created: Boolean = false
 
   /**
    * For each Italian region: cities, people and commonplaces of
    * aggregation are created.
    */
   def create(): Unit = {
-    if (!created) {
-      regionsCreation()
-      regions.foreach(el => RegionCreation.create(el._2))
-      //PeopleContainer.checkAssignedWork()
-      created = true
-    }
+    regionsCreation()
+    regions.values.foreach( RegionCreation.create)
+    //PeopleContainer.checkAssignedWork()
   }
 
   private def regionsCreation(): Unit = {
