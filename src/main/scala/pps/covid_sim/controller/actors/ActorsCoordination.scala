@@ -104,9 +104,7 @@ object ActorsCoordination {
       print(currentTime.hour)//todo remove
       print(waitingAck)//todo remove
 
-
-
-      //context.setReceiveTimeout(Duration.create(1200, TimeUnit.MILLISECONDS))
+      //context.setReceiveTimeout(Duration.create(120, TimeUnit.MILLISECONDS))
       //currentTime = currentTime + 1
 
 
@@ -117,7 +115,7 @@ object ActorsCoordination {
       system.terminate()
     }
 
-    private def checkLockdown(time: Calendar): Unit = {//TODO gestire il messaggio lockdown per i coordinatori figli!
+    private def checkLockdown(time: Calendar): Unit = {
       if (!lockdown && time >= nextAvailableLockdown && currentInfections > controller.covidInfectionParameters.lockDownStart * controller.people.size) {
         println("Start lockdown")
         controller.startLockdown(time, currentInfections)
@@ -134,7 +132,7 @@ object ActorsCoordination {
     }
 
     private def createActors(regions: Set[Region]): Unit = {
-      val numRegion = regions.size //TODO farlo in base ai parametri di simulazione
+      val numRegion = regions.size
       println(regions)
       val regionActors = regions.par.map {
         case region => system.actorOf(Props[RegionCoordinator]) -> region
@@ -151,7 +149,7 @@ object ActorsCoordination {
       val provinceActor = system.actorOf(Props[ProvinceCoordinator])
       this._subordinatedActors = ParSet(provinceActor)
       this.waitingAck = _subordinatedActors
-      provinceActor ! SetProvince(province)//TODO controllare che vada anche così. Qui, sostanzialmente, ho saltato la creazione del region coordinator
+      provinceActor ! SetProvince(province)
     }
   }
 
@@ -176,7 +174,7 @@ object ActorsCoordination {
     }
 
     private def createActors(provinces: Set[Province]): Unit = {
-      val numProvince = provinces.size //TODO farlo in base ai parametri di simulazione
+      val numProvince = provinces.size
       val provinceActors = provinces.par.map {
         case province => system.actorOf(Props[ProvinceCoordinator]) -> province
       }.toMap
@@ -195,7 +193,7 @@ object ActorsCoordination {
     private def spreadTick(region :Region, currentTime: Calendar) :Unit = { //esempio test
       // println(region)
       this.waitingAck = _subordinatedActors
-      //context.setReceiveTimeout(Duration.create(500, TimeUnit.MILLISECONDS))
+      //context.setReceiveTimeout(Duration.create(50, TimeUnit.MILLISECONDS))
       this._subordinatedActors.foreach(s => s ! HourTick(currentTime))
     }
 
@@ -228,7 +226,7 @@ object ActorsCoordination {
     }
 
     private def createActors(people: ParSeq[Person]): Unit = {
-      val numPerson = people.size //TODO farlo in base ai parametri di simulazione
+      val numPerson = people.size
       var numWorker = 0
       val peopleActors = people.par.map {
         case student@Student(_, _) => system.actorOf(Props[StudentActor]) -> student
@@ -252,7 +250,7 @@ object ActorsCoordination {
     private def spreadTick(currentTime: Calendar): Unit = { //esempio test
       this._subordinatedActors.foreach(s => s ! HourTick(currentTime))
       this.waitingAck = _subordinatedActors
-      //context.setReceiveTimeout(Duration.create(200, TimeUnit.MILLISECONDS))
+      //context.setReceiveTimeout(Duration.create(20, TimeUnit.MILLISECONDS))
     }
 
     private def genericGetPlaceByProvince(province: Province,placeClass: Class[_ <: Place], datesInterval: Option[DatesInterval],sender: ActorRef):Unit = {

@@ -19,54 +19,11 @@ import scala.swing.Component
 class ControllerImpl(model: Model, view: View) extends Controller {
 
 
-  var lineChart: LineChart = _ // spostare
-
-  //val lineChart: LineChart = LineChart("Evoluzioni contagi", "asse x", "asse y", "legend") //TODO spostare => rimuovere
-
-
   override def startSimulation(area: Area, from: Calendar, until: Calendar, runs: Int): Unit = {
     model.initWorld(area)
     model.initSimulation(area, from, until, runs)
     view.notifyStart
     startActors(model.simulationsManager)
-
-
-    lineChart = LineChart("Evoluzioni contagi", from, "asse x", "asse y", "legend")
-
-    val forli: City = City(1, "Forlì", 118000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA), 44.22268559, 12.04068608)
-
-    /*val forli: City = City(1, "Forlì", 118000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA), 44.22268559, 12.04068608)
-    val cesena: City = City(1, "Cesena", 98000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA), 44.13654899, 12.24217492)
-    val fake: City = City(1, "Cesena", 98000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA), 44.80436680, 11.34172080)
-    val rimini: City = City(1, "Rimini", 300000, Province(3, "Rimini", "RN", Locality.Region.EMILIA_ROMAGNA), 44.06090086, 12.56562951)
-    val bologna: City = City(1, "Bologna", 1118000, Province(4, "Bologna", "BO", Locality.Region.EMILIA_ROMAGNA), 44.49436680, 11.34172080)
-
-    val infectionsInADay = Map(forli -> 100 , cesena -> 4890, rimini -> 15001, bologna -> 800000, fake -> 100)
-
-    //new HeatMap().drawMap(infectionsInADay)
-    //new HeatMap().drawMap(infectionsInADay)
-    val c = new HeatMap().drawMap(infectionsInADay)
-
-    val scalaComp = new Component {
-      override lazy val peer: JPanel = c
-    }
-
-    val page = new Page("titolo", scalaComp)
-    view.insertTab(page)
-
-    val data: SortedMap[Calendar, Int] = SortedMap(ScalaCalendar(2020, 9, 1, 15) -> 10, ScalaCalendar(2020, 9, 2, 15) -> 15, ScalaCalendar(2020, 9, 3, 15) -> 8)
-    val chart = LineChart("Infections trend", from, "Days", "# infections", "Infections trend")
-    chart.drawLockDownStart(ScalaCalendar(2020, 9, 1, 15), 10)
-    chart.drawLockDownEnd(ScalaCalendar(2020, 9, 2, 15), 15)
-    chart.drawLockDownStart(ScalaCalendar(2020, 9, 3, 15), 8)
-
-
-    val scalaComp2 = new Component {
-      override lazy val peer: JPanel = chart.drawChart(data)
-    }
-
-    val page2 = new Page("titolo2", scalaComp2)
-    view.insertTab(page2)*/
 
   }
 
@@ -75,17 +32,6 @@ class ControllerImpl(model: Model, view: View) extends Controller {
   }
 
   override def notifyRunEnded(): Unit = {
-    //TODO aggiungere, sulla view, la seguente simulazione/run (linea 2D):
-    // model.simulationsManager.currentSimulation.{infected/recovered/deaths}
-
-    //view.insertTab(/*grafico*/)
-
-    // chiamare un metodo sulla gui che gli dica di mostrare i grafici e glieli passo come argomenti:
-    // i grafici saranno di tipo page che contine titolo page(nome del grafico) e panel del grafico
-
-    // N.B. aggiornare il grafico PRIMA delle seguenti righe
-
-
 
     model.simulationsManager.runCompleted()
     if(!model.simulationsManager.hasEnded) {
@@ -93,25 +39,8 @@ class ControllerImpl(model: Model, view: View) extends Controller {
 
       startActors(model.simulationsManager)
     } else {
-      // TODO: notificare alla view che la simulazione è completamente terminata.
-      //  Non c'è da fare molto, se non riattivare il pulsante "Start" per poter
-      //  avviare una nuova simulazione
-      // Line Chart
-
-      //model.simulationsManager.average(model.simulationsManager.map(_.recovered).toList)
-      //model.simulationsManager.average(model.simulationsManager.map(_.deaths).toList))
-
-      //
-      //model.simulationsManager.average(model.simulationsManager.map(_.infectionPlaces).toList)
-
       view.notifyEnd(model.simulationsManager)
-
       view.setVisibleConfirmButton()//riattiva il button
-
-
-      //val page3 = new Page("Infections", convertJavaToScalaComponent(lineChart.drawChart(model.simulationsManager.average(model.simulationsManager.map(_.infected).toList))))
-      //view.insertTab(page3)
-
     }
   }
 

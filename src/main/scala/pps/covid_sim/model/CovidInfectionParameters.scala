@@ -4,8 +4,6 @@ import pps.covid_sim.model.places.Place
 
 case class CovidInfectionParameters() {
 
-  //TODO fare setter e getter!!!
-
   /**
    * Distance of possible infection, if the distance between two person is higher than this there is no risk of contagion
    */

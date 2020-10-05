@@ -13,6 +13,7 @@ import pps.covid_sim.model.places.OpenPlaces.{Beach, Park, Square}
 import pps.covid_sim.model.places.Shops.Shop
 import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.samples.Provinces
+import pps.covid_sim.model.simulation.SimulationsManager.classOrdering
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
 import pps.covid_sim.util.time.Time.ScalaCalendar
 import pps.covid_sim.view.viewUtil.Checkers._
@@ -21,7 +22,7 @@ import scala.collection.mutable.ArrayBuffer
 import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}
 import scala.swing.TabbedPane.Page
 import scala.swing.event.{ButtonClicked, EditDone, SelectionChanged}
-import scala.swing.{BorderPanel, BoxPanel, Button, CheckBox, ComboBox, Component, Dialog, FlowPanel, Frame, Label, ListView, MainFrame, Menu, MenuBar, Orientation, SplitPane, TabbedPane, TextField}
+import scala.swing.{Action, BorderPanel, BoxPanel, Button, CheckBox, ComboBox, Component, Dialog, FlowPanel, Frame, Label, ListView, MainFrame, Menu, MenuBar, MenuItem, Orientation, SplitPane, TabbedPane, TextField}
 
 class GuiImpl() extends View {
 
@@ -156,7 +157,7 @@ class GuiImpl() extends View {
 
     /*
      * Create a menu bar with a couple of menus and menu items and
-     * set the result as this frame's menu bar. TODO chose what to show in the menu.. maybe we can give the user the possibility to download the simulation data and maybe give a functionality that allow to load a graph from a file
+     * set the result as this frame's menu bar.
      */
     menuBar = new MenuBar {
       contents += new Menu("Authors") {
@@ -166,32 +167,17 @@ class GuiImpl() extends View {
         contents += new Label("Meluzzi Marco")
         contents += new Label("Pasolini Nicolas")
       }
-      /*contents += new Menu("File") {
-        //probably if we want to use these components we should declare them out of this method
+      contents += new Menu("File") {
         contents += new MenuItem(Action("Save Simulation") {
-          println("Action '" + title + "' invoked")
+          chartSet.foreach(c=>c.saveChartAsPNG())
+          virusStagesChart.saveChartAsPNG()
+          weeklyStages.foreach(c=>c.saveChartAsPNG())
+          barChart.saveChartAsPNG()
         })
         contents += new MenuItem(Action("Load Simulation") {
           println("Action '" + title + "' invoked")
         })
-      }*/
-      /*contents += new Menu("Another example Menu") {
-        contents += new MenuItem("An item")
-        contents += new MenuItem(Action("An action item") {
-          println("Action '" + title + "' invoked")
-        })
-        contents += new Separator
-        contents += new CheckMenuItem("Check me")
-        contents += new CheckMenuItem("Me too!")
-        contents += new Separator
-        val a = new RadioMenuItem("a")
-        val b = new RadioMenuItem("b")
-        val c = new RadioMenuItem("c")
-        val mutex = new ButtonGroup(a, b, c)
-        contents ++= mutex.buttons
       }
-      //another menu if needed
-      contents += new Menu("Empty Menu")*/
     }
 
     contents = new BorderPanel {
@@ -217,88 +203,77 @@ class GuiImpl() extends View {
        */
       val leftPanel: BoxPanel = new BoxPanel(Orientation.Vertical){
 
-
-        // TODO ricordarsi il "seleziona"
-        var regionComboboxItems: Seq[String] = Seq(new Locality.Italy().name)//ci stanno le regioni
+        var regionComboboxItems: Seq[String] = Seq(Locality.Italy().name)//ci stanno le regioni
         //val italy : Area = new Locality.Italy()
 
         val regionSet: Set[Region] = CitiesObject.getRegions
         regionComboboxItems ++= regionSet.map(r=>r.name)
 
         val provinceSet: Set[Province] = regionSet.flatMap(r => CitiesObject.getProvince(r))
-        //println(italy)
-        //println(regionSet)
-        //println(ProvinceSet)
-        //Locality.Italy()
-        //CitiesObject.getRegions
-        //CitiesObject.getProvince(/**/)
 
-        // TODO ricordarsi il "seleziona"   e prima della selezione di regione mettere a disposizione solo un elemento che avvisi che prima deve selezionare la regione se vuole fare per provincia
-        var provinceComboboxItems: ArrayBuffer[String] = ArrayBuffer("Seleziona","second","third")//ci stanno le provincie della regione selezionata
+        val provincesSetOfCombobox: Map[Region,ComboBox[String]] = regionSet.map(r=>(r, new ComboBox[String]("Seleziona"+:CitiesObject.getProvince(r).map(p=>p.name).toSeq))).toMap    //regionSet.flatMap(r=> (r => CitiesObject.getProvince(r)))
 
-        //val areasSimulation = CitiesObject.getRegions.map(r => r.name)
+        provincesSetOfCombobox.foreach(el=>{
+          listenTo(el._2.selection)
+          reactions += {
+            case SelectionChanged(el._2) => {
+              print(el._2.selection.item)
+              if (el._2.selection.item == "Seleziona") {
+                selectedProvince = Option.empty
+              } else {
+                val provinceSelected: Province = provinceSet.filter(p => p.name == el._2.selection.item).head
+                selectedProvince = Option(provinceSelected)
+              }
+            }
+          }
+          }
+        )
 
         val regionComboBox: ComboBox[String]= new ComboBox[String](regionComboboxItems)
-        val provinceComboBox: ComboBox[String]= new ComboBox[String](provinceComboboxItems)
+        //val provinceComboBox: ComboBox[String]= new ComboBox[String](provinceComboboxItems)
 
         contents += new FlowPanel {
           contents += new Label("<html><p>Simulazione di/dell':</p></html>")
           //val probInfectionField = new TextField(3)
           contents += regionComboBox
-          //regionComboBox.selection.item
 
-          contents += provinceComboBox
-          //provinceComboBox.selection.item
-          provinceComboBox.visible = false
+          provincesSetOfCombobox.foreach(el=> {
+            contents += el._2
+            el._2.visible = false;
+          })
+
 
           //runs
           contents += new Label("   Runs:")
           contents += runsField
-          listenTo(runsField, regionComboBox.selection, provinceComboBox.selection)
+          listenTo(runsField, regionComboBox.selection/*, provinceComboBox.selection*/)
           reactions += {
             case EditDone(`runsField`) => checkPositive(runsField)
-
-            case SelectionChanged(`provinceComboBox`) => {
-              SwingUtilities.invokeLater(() => {
-                if (provinceComboBox.selection.item == "Seleziona") {
-                  selectedProvince = Option.empty
-                } else {
-                  val provinceSelected: Province = provinceSet.filter(p => p.name == provinceComboBox.selection.item).head
-                  selectedProvince = Option(provinceSelected)
-                }
-              })
-            }
-
             case SelectionChanged(`regionComboBox`) => {
-
-              SwingUtilities.invokeLater(() => {
                 println(regionComboBox.selection.item)
                 if (regionComboBox.selection.item == "Italia") {
-                  provinceComboBox.visible = false
+                  //provinceComboBox.visible = false
+                  provincesSetOfCombobox.foreach(el=> {
+                    el._2.visible = false;
+                  })
                   selectedRegion = Option.empty
                   selectedProvince = Option.empty
-                  provinceComboboxItems.clear()
-                  provinceComboboxItems += "Seleziona"
                 } else {
-                  provinceComboBox.visible = true
-                  //aggiorno gli elementi di province
                   val regionSelected: Region = regionSet.filter(r => r.name == regionComboBox.selection.item).head
                   selectedRegion = Option(regionSelected)
 
-                  val nuovaListaItemProvince = CitiesObject.getProvince(regionSelected).toList;
-                  provinceComboboxItems.clear()
-                  provinceComboboxItems += "Seleziona"
-                  provinceComboboxItems ++= nuovaListaItemProvince.map(p => p.name)
-                  println(nuovaListaItemProvince.map(p => p.name))
-                  //provinceComboBox: ComboBox[String]= new ComboBox[String](provinceComboboxItems)
-                  repaint()
+                  provincesSetOfCombobox.foreach(el=> {
+                    el._2.visible = false;
+                  })
+                  provincesSetOfCombobox.foreach(el=> {
+                    if(el._1.name == regionSelected.name){
+                      el._2.visible = true
+                    }
+                  })
                 }
-              })
-
             }
           }
         }
-
 
         contents += new FlowPanel {
           contents += new Label("Data Inizio:")
@@ -375,16 +350,6 @@ class GuiImpl() extends View {
             case EditDone(`maxInfectionDetectionTimeField`) => checkPositive(maxInfectionDetectionTimeField)
           }
         }
-        /*contents += new FlowPanel {
-          contents += new Label("<html><p>Percentuale stimata di asintomatici per facie di età:</p></html>")//TODO asymptomaticProbability   gli assegnerei poi => valore fisso frega dell'età
-          //val asymptomaticAgeField = new TextField(3)
-          contents += asymptomaticAgeField
-          contents += new Label("%")
-          listenTo(asymptomaticAgeField)
-          reactions += {
-            case EditDone(`asymptomaticAgeField`) => checkPercent(asymptomaticAgeField)
-          }
-        }*/
         contents += new FlowPanel {
           contents += new Label("<html><p>percentuale di asintomatici che riescono ad accorgiersi di essere infetti:</p></html>")//asymptomaticDetectionCondProbability
           //val cunningAsymptomaticField = new TextField(3)
@@ -491,6 +456,7 @@ class GuiImpl() extends View {
               //li usi per fare partire la simulazione
               println("confirm!!!!")
               //tabs.pages += new Page("Painting", btnPanel.buttons )
+              //tabs.pages += new Page("Painting", btnPanel.buttons )
               var dataInizio: Calendar = ScalaCalendar(yearStartField.text.toInt,monthStartField.text.toInt,dayStartField.text.toInt,0)
               var dataFine: Calendar = ScalaCalendar(yearEndField.text.toInt,monthEndField.text.toInt,dayEndField.text.toInt,0)
 
@@ -514,16 +480,13 @@ class GuiImpl() extends View {
                   lockdownEndField.text.toDouble/100,
                   placeAndCheckMap.filter(el=> el._1.selected).map(el=>el._2).toSet)
 
-                //italia => WorldCreation.generateAll()
-                /*Regione => */ //RegionPlacesCreation.create(regioneSelezionata)
-                /*Province => */ // RegionPlacesCreation.create(ProvinciaSelezionata)
                 var selectedArea: Area = new Locality.Italy{}
                 if(selectedRegion.isDefined && selectedProvince.isDefined) {
                   selectedArea = selectedProvince.get
                 }else if (selectedRegion.isDefined && selectedProvince.isEmpty){
                   selectedArea = selectedRegion.get
                 }
-                controller.startSimulation(Provinces.AOSTA, /*selectedArea*/ dataInizio,dataFine,runsField.text.toInt) // TODO: specificare l'area (es. città o regione...)
+                controller.startSimulation(Provinces.AOSTA/*CitiesObject.getProvince("IS")*/, /*selectedArea*/ dataInizio,dataFine,runsField.text.toInt) // TODO: specificare l'area (es. città o regione...)
               }else{
                 Dialog.showMessage(contents.head, "The inserted dates are incorrect!", title="You pressed me")
                 confirmButton.visible = true
@@ -559,7 +522,7 @@ class GuiImpl() extends View {
   //creare i chart
     chartSet = Set(LineChart("Evolution of infections over time", controller.simulationInterval.from, "Days", "Infections", "Infections trend"),
       LineChart("Evolution of recovered over time", controller.simulationInterval.from, "Days", "Recovered", "Recovered trend"),
-      LineChart("Evolution of deaths over time", controller.simulationInterval.from, "Days", "Deaths", "Deaths trend"))
+      /*LineChart("Evolution of deaths over time", controller.simulationInterval.from, "Days", "Deaths", "Deaths trend")*/)
     //aggiungere anche gli altri
 
     //aggiungere al set
@@ -569,13 +532,19 @@ class GuiImpl() extends View {
   override def notifyEnd(simulationsManager: SimulationsManager[Simulation] ): Unit = {
     this.clearTabs()
 
-    chartSet.foreach(c=>this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList))))))
+    //chartSet.foreach(c=>this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList))))))
+
+    chartSet.foreach(c=> c match {
+      case c if c.yAxisLabel=="Infections" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList)))))
+      case c if c.yAxisLabel=="Recovered" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.recovered).toList)))))
+      //case c if c.yAxisLabel=="Deaths" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.deaths).toList)))))
+    })
     //aggiungere le heat e gli altri
 
     virusStagesChart = LineChart("Evolution of infections over time for each stage", controller.simulationInterval.from, "Days", "Infections", "Infections trend")
-    //this.insertTab(new Page(virusStagesChart.title, convertJavaToScalaComponent(virusStagesChart.???(simulationsManager.?????))))//weeklyCovidStages
+    //this.insertTab(new Page(virusStagesChart.title, convertJavaToScalaComponent(virusStagesChart.drawMultiSeriesChart(simulationsManager.?????))))//weeklyCovidStages
     barChart = BarChart("Number of infections per place", "Places", "Infections")
-    //this.insertTab(new Page(barChart.title, convertJavaToScalaComponent(barChart.drawChart(simulationsManager.average(simulationsManager.map(_.infectionPlaces).toList))))//TODO Capire sorted
+    this.insertTab(new Page(barChart.title, convertJavaToScalaComponent(barChart.drawChart(simulationsManager.average(simulationsManager.map(_.infectionPlaces).toList)))))
 
     simulationsManager.weeklyCovidStages.foreach(w=> this.insertTab(new Page(w._1.getWeekYear.toString+" week",convertJavaToScalaComponent(PieChart(w._1.getWeekYear.toString+" week").drawChart(w._2)))))
 

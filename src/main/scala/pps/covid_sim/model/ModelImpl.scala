@@ -35,7 +35,7 @@ class ModelImpl extends Model {
       // case city: City => ProvinceCreation.create(city.province)
     }
     places = PlacesContainer.getPlaces.par
-    _people = PeopleContainer.getPeople.take(1000).par
+    _people = PeopleContainer.getPeople./*take(1000).*/par
     println(s"Created ${_people.size} people")
     //trainLines = TrainLinesContainer.getLines.par
     //busLines = BusLinesContainer.getLines.par
@@ -43,7 +43,7 @@ class ModelImpl extends Model {
 
   override def initSimulation(area: Area, from: Calendar, until: Calendar, runs: Int): Unit = {
     import pps.covid_sim.util.time.TimeIntervalsImplicits._
-    Random.shuffle(_people.seq).take(5).foreach(_.infects(Places.BAR, from, 0))
+    Random.shuffle(_people.seq).take(100).foreach(_.infects(Places.BAR, from, 0))
     _simulationsManager = area match {
       case city: City =>  SimulationsManager[CitySimulation]((1 to runs)
         .map(_ => CitySimulation(city)),area, from -> until)

@@ -134,7 +134,7 @@ class CoordinationTestToDelete {
 
       override def tick(time: Calendar): Unit = ???
 
-      override def simulationEnded(simulation: Simulation): Unit = {}//TODO
+      override def simulationEnded(simulation: Simulation): Unit = {}
 
       override def startLockdown(time: Calendar, infections: Int): Unit = ???
 
@@ -245,23 +245,13 @@ class CoordinationTestToDelete {
 
 
 
-
-
-
-
-
-
-
-
-
-
 /*object TestingCoordination extends App {
   val c = new ControllerImpl() {
     override def startSimulation(from: Calendar, until: Calendar, runs: Int): Unit = ???
 
     override def tick(time: Calendar): Unit = ???
 
-    override def simulationEnded(simulation: Simulation): Unit = {}//TODO
+    override def simulationEnded(simulation: Simulation): Unit = {}
 
     override def startLockdown(time: Calendar, infections: Int): Unit = ???
 
