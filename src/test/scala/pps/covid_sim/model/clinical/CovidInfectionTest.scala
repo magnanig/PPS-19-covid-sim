@@ -5,7 +5,8 @@ import java.util.Calendar
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import pps.covid_sim.model.people.People.Student
-import pps.covid_sim.parameters.CovidInfectionParameters._
+import pps.covid_sim.model.samples.CovidParameters
+import pps.covid_sim.model.samples.CovidParameters._
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
 import scala.collection.parallel.ParSeq
@@ -20,7 +21,7 @@ class CovidInfectionTest {
 
   val infectionBegin: Calendar = ScalaCalendar(2020, 1, 1)
   val covidInfections: ParSeq[CovidInfection] = (1 to numPeople).par // better performance on multi-core computers
-    .map(_ => CovidInfection(infectionBegin, null, 0, student))
+    .map(_ => CovidInfection(infectionBegin, null, 0, CovidParameters, student))
   val asymptomaticNumber: Int = covidInfections.count(_.isAsymptomatic)
 
   @Test

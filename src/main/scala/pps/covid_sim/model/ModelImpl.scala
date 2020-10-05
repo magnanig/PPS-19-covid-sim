@@ -11,6 +11,7 @@ import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.samples.Places
 import pps.covid_sim.model.simulation.Aggregation.{NationSimulation, ProvinceSimulation, RegionSimulation}
 import pps.covid_sim.model.simulation.{CitySimulation, Simulation, SimulationsManager}
+import pps.covid_sim.util.RandomGeneration
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
 import scala.collection.parallel.ParSeq
@@ -35,7 +36,8 @@ class ModelImpl extends Model {
       // case city: City => ProvinceCreation.create(city.province)
     }
     places = PlacesContainer.getPlaces.par
-    _people = PeopleContainer.getPeople./*take(1000).*/par
+    _people = PeopleContainer.getPeople.take(1000).par
+    initPeopleFriends(_people)
     println(s"Created ${_people.size} people")
     //trainLines = TrainLinesContainer.getLines.par
     //busLines = BusLinesContainer.getLines.par
@@ -43,7 +45,7 @@ class ModelImpl extends Model {
 
   override def initSimulation(area: Area, from: Calendar, until: Calendar, runs: Int): Unit = {
     import pps.covid_sim.util.time.TimeIntervalsImplicits._
-    Random.shuffle(_people.seq).take(100).foreach(_.infects(Places.BAR, from, 0))
+    Random.shuffle(_people.seq).take(100).foreach(_.infects(Places.BAR, from, 0)(covidInfectionParameters))
     _simulationsManager = area match {
       case city: City =>  SimulationsManager[CitySimulation]((1 to runs)
         .map(_ => CitySimulation(city)),area, from -> until)
@@ -57,7 +59,7 @@ class ModelImpl extends Model {
   }
 
   override def tick(time: Calendar): Unit = {
-    places.foreach(place => place.propagateVirus(time, place))///TODO tolta per testare!
+    places.foreach(place => place.propagateVirus(time, place)(covidInfectionParameters))///TODO tolta per testare!
     //TODO [PASO]
     // trainLines.trains.foreach(transport => transport.propagateVirus(time, transport))
     // busLines.busses.foreach(transport => transport.propagateVirus(time, transport))
@@ -66,7 +68,10 @@ class ModelImpl extends Model {
     }
   }
 
-  override def reset(): Unit = { places.foreach(_.clear()) }
+  override def reset(): Unit = {
+    places.foreach(_.clear())
+    people.foreach(_.resetState())
+  }
 
   override def simulationsManager: SimulationsManager[Simulation] = _simulationsManager
 
@@ -85,6 +90,20 @@ class ModelImpl extends Model {
     covidInfectionParameters.notRespectingIsolationMaxProbability = notRespectingIsolationMaxProbability
     covidInfectionParameters.lockDownStart = lockDownStart
     covidInfectionParameters.lockDownEnd = lockDownEnd
-    covidInfectionParameters.placeToclose = closedPlaceSet
+    covidInfectionParameters.placeToClose = closedPlaceSet
+  }
+
+  private def initPeopleFriends(people: ParSeq[Person]): Unit = {
+    people.foreach(p => {
+      // each person can have from 2 to 10 close friends
+      val friendsCount = RandomGeneration.randomIntInRange(2, 10)
+      (1 to friendsCount).foreach(_ => {
+        val friend: Person = people(Random.nextInt(people.size)) //TODO filter by residence
+        if (p != friend) {
+          p.addFriend(friend)
+          if (Random.nextFloat() < 0.8) friend.addFriend(p) // if you add me to your friends list, I'll add you at 80%
+        }
+      })
+    })
   }
 }

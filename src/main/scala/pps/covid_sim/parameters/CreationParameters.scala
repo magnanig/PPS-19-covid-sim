@@ -2,6 +2,9 @@ package pps.covid_sim.parameters
 
 object CreationParameters {
 
+  val citizensPercentage = 0.25
+  val minCitizens = 100
+
   val oneHundredPercent = 100.0
   val population = 60405646
   val daysInYear = 365

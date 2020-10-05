@@ -2,6 +2,7 @@ package pps.covid_sim.model.places
 
 import java.util.Calendar
 
+import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.util.geometry.Coordinates
@@ -33,8 +34,8 @@ trait MovementSpace extends DelimitedSpace {
    * @param time  the time when the infection could occur
    * @param place the place where the person is
    */
-  override def propagateVirus(time: Calendar, place: Place): Unit = {
-    super.propagateVirus(time, place)
+  override def propagateVirus(time: Calendar, place: Place)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+    super.propagateVirus(time, place)(covidInfectionParameters)
     if (currentGroups.exists(group => group.people.exists(person => person.canInfect))) {
       // People from the same group will follow the same path
       val sampling = pathSampling(currentGroups)
@@ -47,7 +48,7 @@ trait MovementSpace extends DelimitedSpace {
         if (map.keys.exists(group => group.people.exists(person => person.canInfect)))
           map.foreach(group => group._1.people.toList.combinations(2).foreach(pair =>
             if (checkForNotMaintainingSafetyDistance(pair.head.position, pair.last.position))
-              VirusPropagation.tryInfect(pair.head, pair.last, place, time)))))
+              VirusPropagation(covidInfectionParameters).tryInfect(pair.head, pair.last, place, time)))))
     }
   }
 

@@ -61,7 +61,7 @@ case class CovidInfectionParameters() {
   /**
    * Probability of being asymptomatic, starting from the person's age.
    */
-  var asymptomaticProbability: Int => Double = age => if (age < 40) 0.6 else if (age < 60) 0.5 else 0.2
+  val asymptomaticProbability: Int => Double = age => if (age < 40) 0.6 else if (age < 60) 0.5 else 0.2
 
   /**
    * Probability that an asymptomatic person discovers the infection (conditional probability).
@@ -130,10 +130,10 @@ case class CovidInfectionParameters() {
   /**
    * Set containig the class of the places that will be closed during Lockdown
    */
-  private var _placeToclose: Set[Class[_ <:Place]] = Set()
-  private[model] def placeToclose_=(places :Set[Class[_ <:Place]]):Unit ={
-    _placeToclose = places
+  private var _placeToClose: Set[Class[_ <:Place]] = Set()
+  private[model] def placeToClose_=(places :Set[Class[_ <:Place]]):Unit ={
+    _placeToClose = places
   }
-  def placeToclose: Set[Class[_ <:Place]] = _placeToclose
+  def placeToClose: Set[Class[_ <:Place]] = _placeToClose
 
 }

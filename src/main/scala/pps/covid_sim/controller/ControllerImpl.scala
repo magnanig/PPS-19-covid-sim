@@ -7,11 +7,11 @@ import pps.covid_sim.controller.actors.ActorsCoordination
 import pps.covid_sim.model.creation.CitiesObject
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
-import pps.covid_sim.model.places.{Locality, Place}
+import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
 import pps.covid_sim.model.{CovidInfectionParameters, Model}
 import pps.covid_sim.util.time.DatesInterval
-import pps.covid_sim.view.{LineChart, View}
+import pps.covid_sim.view.View
 
 import scala.collection.parallel.ParSeq
 import scala.swing.Component
@@ -24,7 +24,6 @@ class ControllerImpl(model: Model, view: View) extends Controller {
     model.initSimulation(area, from, until, runs)
     view.notifyStart
     startActors(model.simulationsManager)
-
   }
 
   override def tick(time: Calendar): Unit = {
@@ -32,11 +31,9 @@ class ControllerImpl(model: Model, view: View) extends Controller {
   }
 
   override def notifyRunEnded(): Unit = {
-
     model.simulationsManager.runCompleted()
+    model.reset()
     if(!model.simulationsManager.hasEnded) {
-      model.reset()
-
       startActors(model.simulationsManager)
     } else {
       view.notifyEnd(model.simulationsManager)

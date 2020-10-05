@@ -2,6 +2,7 @@ package pps.covid_sim.model.places.arranging
 
 import java.util.Calendar
 
+import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.arranging.Placement.{Arrangement, ItemGroup, Placeholder}
 import pps.covid_sim.model.places.rooms.Room
@@ -20,11 +21,11 @@ trait Arrangeable[A, T <: ItemGroup] extends DelimitedSpace {
    * @param time    current time
    * @param place   current place
    */
-  override def propagateVirus(time: Calendar, place: Place): Unit = {
+  override def propagateVirus(time: Calendar, place: Place)(covidInfectionParameters: CovidInfectionParameters): Unit = {
     arrangement.rows
       .flatMap(_.itemGroups)
       .filter(!_.isFree)
-      .foreach(_.propagateVirus(place, time))
+      .foreach(_.propagateVirus(place, time)(covidInfectionParameters))
   }
 
   override def clear(): Unit = {

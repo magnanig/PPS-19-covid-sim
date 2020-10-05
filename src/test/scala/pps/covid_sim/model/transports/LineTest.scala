@@ -9,6 +9,7 @@ import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple, Single}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{City, Province}
 import pps.covid_sim.model.places.{Locality, Place}
+import pps.covid_sim.model.samples.CovidParameters
 import pps.covid_sim.model.transports.PublicTransports._
 import pps.covid_sim.util.time.HoursInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
@@ -169,7 +170,7 @@ class LineTest {
     assertEquals(None, bus.get.enter(lorenzo, time))
     assertEquals(10, bus.get.numCurrentPeople)
     println("People who have been infected:")
-    bus.get.propagateVirus(time, place)
+    bus.get.propagateVirus(time, place)(CovidParameters)
   }
 
   @Test
@@ -181,7 +182,7 @@ class LineTest {
     assertEquals((None,None), trainLine.tryUse(lorenzo, time))
     assertEquals(40, train.get.numCurrentPeople)
     println("People who have been infected:")
-    train.get.propagateVirus(time, place)
+    train.get.propagateVirus(time, place)(CovidParameters)
   }
 
   def enterPeopleFromList(from: Int, until: Int, listPeople: Seq[Group], line: Line): Unit = {

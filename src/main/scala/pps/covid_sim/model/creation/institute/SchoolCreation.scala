@@ -74,7 +74,7 @@ private[institute] case class SchoolCreation() {
   private def assignTeachersToSchool(teachers: List[Teacher], school: School): Unit = {
     val classRooms: List[Classroom] = school.getRooms.toList
     val slotPerProf: Int = Math.round(((5 * 6 * classRooms.size) / teachers.size).toFloat)
-    val slots: WorkingTimeSlots = WorkingTimeSlots(classRooms)
+    val slots = WorkingTimeSlots(classRooms).iterator
 
     for (teacher <- teachers) {
       val profPlan: WorkPlan[Classroom] = WorkPlan(Month.SEPTEMBER -> Month.MAY)

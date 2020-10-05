@@ -2,13 +2,13 @@ package pps.covid_sim.model.clinical
 
 import java.util.Calendar
 
+import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Place
-import pps.covid_sim.parameters.CovidInfectionParameters
 
 import scala.util.Random
 
-object VirusPropagation {
+case class VirusPropagation(covidInfectionParameters: CovidInfectionParameters) {
 
   def tryInfect(p1: Person, p2: Person, place: Place, time: Calendar)
                (implicit socialDistance: Double = Math.min(p1.socialDistance, p2.socialDistance)): Unit = {
@@ -16,12 +16,12 @@ object VirusPropagation {
       val infectedPerson = if (p1.canInfect) p1 else p2
       val healthyPerson = if (infectedPerson eq p1) p2 else p1
       if (!healthyPerson.infectedPeopleMet.contains(infectedPerson)) {
-        val contagionProbability = CovidInfectionParameters.contagionProbability *
+        val contagionProbability = covidInfectionParameters.contagionProbability *
           infectionReducingFactor(socialDistance) *
           (1 - infectedPerson.wornMask.map(_.outgoingFiltering).getOrElse(0.0)) *
           (1 - healthyPerson.wornMask.map(_.incomingFiltering).getOrElse(0.0))
         if (new Random().nextDouble() < contagionProbability){
-          healthyPerson.infects(place, time, infectedPerson.covidStage.get)
+          healthyPerson.infects(place, time, infectedPerson.covidStage.get + 1)(covidInfectionParameters)
         } else {
           healthyPerson.metInfectedPerson(infectedPerson)
         }
@@ -29,7 +29,7 @@ object VirusPropagation {
     }
   }
 
-  def inSafeZone(distance: Double): Boolean = distance > CovidInfectionParameters.safeZone
+  def inSafeZone(distance: Double): Boolean = distance > covidInfectionParameters.safeZone
 
   // TODO: values to be properly deducted from
   //  https://fastlifehacks.com/n95-vs-ffp/,

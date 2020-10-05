@@ -1,7 +1,7 @@
 package pps.covid_sim.view
 import java.util.Calendar
 
-import javax.swing.{JPanel, SwingUtilities}
+import javax.swing.JPanel
 import pps.covid_sim.controller.Controller
 import pps.covid_sim.model.creation.CitiesObject
 import pps.covid_sim.model.places.Education.{School, University}
@@ -18,7 +18,6 @@ import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
 import pps.covid_sim.util.time.Time.ScalaCalendar
 import pps.covid_sim.view.viewUtil.Checkers._
 
-import scala.collection.mutable.ArrayBuffer
 import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}
 import scala.swing.TabbedPane.Page
 import scala.swing.event.{ButtonClicked, EditDone, SelectionChanged}
@@ -88,9 +87,9 @@ class GuiImpl() extends View {
     val maxHealingTimingField = new TextField(4)
     maxHealingTimingField.text = "40"
     val minInfectionDetectionTimeField = new TextField(4)
-    minInfectionDetectionTimeField.text = "3"
+    minInfectionDetectionTimeField.text = "2"
     val maxInfectionDetectionTimeField = new TextField(4)
-    maxInfectionDetectionTimeField.text = "1"
+    maxInfectionDetectionTimeField.text = "7"
     val multipleInfectionProbabilityField = new TextField(3)
     multipleInfectionProbabilityField.text = "10"
     //val asymptomaticAgeField = new TextField(3)
@@ -332,7 +331,7 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>tempo minimo di guarigione dal virus:</p></html>")//minInfectionDetectionTime
+          contents += new Label("<html><p>tempo minimo di riconoscimento dal virus:</p></html>")//minInfectionDetectionTime
           contents += minInfectionDetectionTimeField
           contents += new Label("Giorni")
           listenTo(minInfectionDetectionTimeField)
@@ -342,7 +341,7 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>tempo massimo di guarigione dal virus:</p></html>")//maxInfectionDetectionTime
+          contents += new Label("<html><p>tempo massimo di riconoscimento dal virus:</p></html>")//maxInfectionDetectionTime
           contents += maxInfectionDetectionTimeField
           contents += new Label("Giorni")
           listenTo(maxInfectionDetectionTimeField)

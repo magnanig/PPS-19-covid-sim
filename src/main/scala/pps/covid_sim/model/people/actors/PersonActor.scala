@@ -3,6 +3,7 @@ package pps.covid_sim.model.people.actors
 import java.util.Calendar
 
 import akka.actor.{Actor, ActorRef}
+import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.container.PlacesContainer
@@ -15,7 +16,6 @@ import pps.covid_sim.model.places.OpenPlaces.OpenPlace
 import pps.covid_sim.model.places.Shops.SuperMarket
 import pps.covid_sim.model.places.{Habitation, LimitedHourAccess, Place}
 import pps.covid_sim.model.samples.Places
-import pps.covid_sim.parameters.CovidInfectionParameters.{maxMaskProbability, minMaskProbability, notRespectingIsolationMaxProbability}
 import pps.covid_sim.parameters.GoingOutParameters
 import pps.covid_sim.parameters.GoingOutParameters.maxNumShopPerWeek
 import pps.covid_sim.util.CommonPlacesByTime.randomPlaceWithPreferences
@@ -37,6 +37,7 @@ abstract class PersonActor extends Actor {
     .add(MonthsInterval.ALL_YEAR, DaysInterval.ALL_WEEK, 1)
 
   private var coordinator: ActorRef = _
+  private var covidInfectionParameters: CovidInfectionParameters = _
 
   private lazy val agenda: Agenda = Agenda(person)
 
@@ -44,11 +45,11 @@ abstract class PersonActor extends Actor {
     RandomGeneration.randomIntInRange(1, 5) else
     RandomGeneration.randomIntInRange(1, 3)
 
-  private val maskProbability: Double = RandomGeneration.randomDoubleInRange(minMaskProbability,
-    maxMaskProbability)
+  private lazy val maskProbability: Double = RandomGeneration.randomDoubleInRange(covidInfectionParameters.minMaskProbability,
+    covidInfectionParameters.maxMaskProbability)
 
-  private val notRespectingIsolation: Double = RandomGeneration.randomDoubleInRange(0,
-    notRespectingIsolationMaxProbability)
+  private lazy val notRespectingIsolation: Double = RandomGeneration.randomDoubleInRange(0,
+    covidInfectionParameters.notRespectingIsolationMaxProbability)
 
   private var inPandemic: Boolean = false
   private var lockdown: Boolean = false
@@ -63,13 +64,11 @@ abstract class PersonActor extends Actor {
   private val numShopPerWeek: Int = RandomGeneration.randomIntInRange(1, maxNumShopPerWeek)
   private implicit val actorName: String = self.toString()
 
-  //DELETE
-  var t: Int = _
-
   override def receive: Receive = {
     case SetPerson(person) => this.coordinator = sender; this.person = person
+    case SetCovidInfectionParameters(covidInfectionParameters) => this.covidInfectionParameters = covidInfectionParameters
     case ActorsFriendsMap(friends) => this.friends = friends
-    case HourTick(time) => person.hourTick(time); nextAction(time); t = time.hour
+    case HourTick(time) => person.hourTick(time); nextAction(time)
     case AddPlan(plan) => agenda.addPlan(plan)
     case RemovePlan(oldPlan) => agenda.removePlan(oldPlan)
     case Lockdown(enabled) => lockdown = enabled; if(!inPandemic) inPandemic = true
@@ -105,7 +104,6 @@ abstract class PersonActor extends Actor {
   }
 
   private def sendAckIfReady(): Unit = {
-    print("Sent at hour" + t)
     if(waitingResponses.isEmpty) coordinator ! Acknowledge()
   }
 
@@ -131,16 +129,18 @@ abstract class PersonActor extends Actor {
     sendAckIfReady()
   }
 
-  private def nextCommitment(time: Calendar): Unit = currentCommitment = agenda.nextCommitment(time) match {
-    case Some((datesInterval, location, Some(group))) if group.leader eq this.person => goOut()
-      person.setMask(chooseMask(location))
-      Some(datesInterval, tryEnterInPlace(location, time, group), Some(group))
-    case commitment @ Some(_) => goOut()
-      person.setMask(chooseMask(commitment.get._2))
-      commitment
-    case _ if time.hour > 8 && shopTime() => goShopping(time); None
-    case _ if time.hour > 8 && mayGoOut() && !friendsFound => organizeGoingOut(time); None
-    case _ => None
+  private def nextCommitment(time: Calendar): Unit = {
+    currentCommitment = agenda.nextCommitment(time) match {
+      case Some((datesInterval, location, Some(group))) if group.leader eq this.person => goOut()
+        person.setMask(chooseMask(location))
+        Some(datesInterval, tryEnterInPlace(location, time, group), Some(group))
+      case commitment@Some(_) => goOut()
+        person.setMask(chooseMask(commitment.get._2))
+        commitment
+      case _ if time.hour > 8 && shopTime() => goShopping(time); None
+      case _ if time.hour > 8 && mayGoOut() && !friendsFound => organizeGoingOut(time); None
+      case _ => None
+    }
   }
 
   private def shopTime(): Boolean = (person eq person.habitation.leader) && hasToDoShopping

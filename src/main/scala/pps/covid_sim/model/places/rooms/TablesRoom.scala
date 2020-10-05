@@ -2,6 +2,7 @@ package pps.covid_sim.model.places.rooms
 
 import java.util.Calendar
 
+import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.arranging.Arrangeable
@@ -29,9 +30,9 @@ case class TablesRoom(private val minCapacity: Int,
    */
   def getTableGroup(group: Group): Option[TablesGroup] = synchronized { arrangement.getItemGroup(group) }
 
-  override def propagateVirus(time: Calendar, place: Place): Unit = {
-    super.propagateVirus(time, place)
-    lookForFriends(place, time)
+  override def propagateVirus(time: Calendar, place: Place)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+    super.propagateVirus(time, place)(covidInfectionParameters)
+    lookForFriends(place, time)(covidInfectionParameters)
   }
 
   override def toString: String = s"Room($numCurrentPeople / $capacity)\n  Tables state:\n" +

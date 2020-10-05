@@ -2,6 +2,7 @@ package pps.covid_sim.model.places
 
 import java.util.Calendar
 
+import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.clinical.{Masks, VirusPropagation}
 import pps.covid_sim.model.places.Locality.City
@@ -29,11 +30,13 @@ object Jobs {
 
     override val mask: Option[Mask] = Some(Masks.Surgical)
 
-    override def propagateVirus(time: Calendar, place: Place): Unit = currentGroups
-      .flatMap(_.people)
-      .toList
-      .combinations(2)
-      .foreach(pair => VirusPropagation.tryInfect(pair.head, pair.last, place, time))
+    override def propagateVirus(time: Calendar, place: Place)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+      currentGroups
+        .flatMap(_.people)
+        .toList
+        .combinations(2)
+        .foreach(pair => VirusPropagation(covidInfectionParameters).tryInfect(pair.head, pair.last, place, time))
+    }
 
     override val obstacles: Set[Rectangle] = placeObstacles(dimension)
 

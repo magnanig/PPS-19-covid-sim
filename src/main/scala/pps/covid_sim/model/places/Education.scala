@@ -2,6 +2,7 @@ package pps.covid_sim.model.places
 
 import java.util.Calendar
 
+import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.people.People.{Student, Teacher}
@@ -92,9 +93,9 @@ object Education {
       case _ => super.canEnter(group, time)
     }
 
-    override def propagateVirus(time: Calendar, place: Place): Unit = {
-      super.propagateVirus(time, place)
-      if(time.minutes == 0) lookForFriends(place, time)
+    override def propagateVirus(time: Calendar, place: Place)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+      super.propagateVirus(time, place)(covidInfectionParameters)
+      if(time.minutes == 0) lookForFriends(place, time)(covidInfectionParameters)
     }
 
     override protected[places] def findAccommodation(group: Group): Option[(Room, Seq[Desk])] = Some(

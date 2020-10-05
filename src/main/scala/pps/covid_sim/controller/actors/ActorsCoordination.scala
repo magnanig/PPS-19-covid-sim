@@ -1,7 +1,6 @@
 package pps.covid_sim.controller.actors
 
 import java.util.Calendar
-import java.util.concurrent.TimeUnit
 
 import akka.actor.{ActorRef, ActorSystem, Props, ReceiveTimeout}
 import pps.covid_sim.controller.Controller
@@ -19,7 +18,6 @@ import pps.covid_sim.util.time.Time.ScalaCalendar
 
 import scala.collection.parallel.ParSeq
 import scala.collection.parallel.immutable.ParSet
-import scala.concurrent.duration.Duration
 
 object ActorsCoordination {
 
@@ -238,7 +236,18 @@ object ActorsCoordination {
       this._subordinatedActors = peopleActors.keySet.toSet
       this.waitingAck = _subordinatedActors
 
-      peopleActors.foreach({ case (actor, person) => actor ! SetPerson(person) })
+      peopleActors.foreach({ case (actor, person) =>
+        actor ! SetPerson(person)
+        actor ! SetCovidInfectionParameters(controller.covidInfectionParameters)
+        actor ! ActorsFriendsMap(peopleActors.collect({ case (a, p) if person.friends.contains(p) => p -> a }).seq)
+        person match {
+          case worker: Worker if worker.workPlace == null => numWorker = numWorker + 1
+          case worker: Worker => actor ! AddPlan(worker.workPlace.getWorkPlan(worker).get)
+          case student: Student if student.institute != null && student.lesson != null =>
+            actor ! AddPlan(student.institute.getStudentPlan(student.lesson).get)
+          case _ =>
+        }
+      })
     }
 
     private def sendAck(): Unit = {

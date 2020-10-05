@@ -2,6 +2,7 @@ package pps.covid_sim.model.places
 
 import java.util.Calendar
 
+import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.PeopleGroup.Group
@@ -112,11 +113,11 @@ object Locations {
      * @param time  current time
      * @param place current place
      */
-    def propagateVirus(time: Calendar, place: Place): Unit = synchronized {
+    def propagateVirus(time: Calendar, place: Place)(covidInfectionParameters: CovidInfectionParameters): Unit = synchronized {
       _currentGroups
         .foreach(group => {
-          if (group.size > 1) inGroupVirusPropagation(group, place, time)
-          lookForFriends(group, place, time)
+          if (group.size > 1) inGroupVirusPropagation(group, place, time)(covidInfectionParameters)
+          lookForFriends(group, place, time)(covidInfectionParameters)
         })
     }
 
@@ -126,10 +127,13 @@ object Locations {
      * @param place   the place where virus propagation takes place
      * @param time    the infection time
      */
-    protected def inGroupVirusPropagation(group: Group, place: Place, time: Calendar): Unit = synchronized {
+    protected def inGroupVirusPropagation(group: Group,
+                                          place: Place,
+                                          time: Calendar)
+                                         (covidInfectionParameters: CovidInfectionParameters): Unit = synchronized {
       group.toList
         .combinations(2)
-        .foreach(pair => VirusPropagation.tryInfect(pair.head, pair.last, place, time))
+        .foreach(pair => VirusPropagation(covidInfectionParameters).tryInfect(pair.head, pair.last, place, time))
     }
 
     /**
@@ -139,11 +143,14 @@ object Locations {
      * @param place   the place where virus propagation takes place
      * @param time    the infection time
      */
-    protected def lookForFriends(group: Group, place: Place, time: Calendar): Unit = synchronized {
+    protected def lookForFriends(group: Group,
+                                 place: Place,
+                                 time: Calendar)
+                                (covidInfectionParameters: CovidInfectionParameters): Unit = synchronized {
       group
         .foreach(person => person.friends
           .intersect((_currentGroups - group).flatMap(_.people))
-          .foreach(VirusPropagation.tryInfect(person, _, place, time)))
+          .foreach(VirusPropagation(covidInfectionParameters).tryInfect(person, _, place, time)))
     }
 
     /**
@@ -152,8 +159,10 @@ object Locations {
      * @param place   the place where virus propagation takes place
      * @param time    the infection time
      */
-    protected def lookForFriends(place: Place, time: Calendar): Unit = synchronized {
-      _currentGroups.foreach(lookForFriends(_, place, time))
+    protected def lookForFriends(place: Place,
+                                 time: Calendar)
+                                (covidInfectionParameters: CovidInfectionParameters): Unit = synchronized {
+      _currentGroups.foreach(lookForFriends(_, place, time)(covidInfectionParameters))
     }
 
     /**

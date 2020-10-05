@@ -3,6 +3,7 @@ package pps.covid_sim.model.people.actors
 import java.util.Calendar
 
 import akka.actor.ActorRef
+import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{City, Province}
 import pps.covid_sim.model.places.Locations.Location
@@ -60,6 +61,12 @@ object Communication {
    * @param person    the person to be wrapped by receiver actor
    */
   case class SetPerson(person: Person)
+
+  /**
+   * Set desired covid infection parameters.
+   * @param covidInfectionParameters  the covid infection parameters
+   */
+  case class SetCovidInfectionParameters(covidInfectionParameters: CovidInfectionParameters)
 
   /**
    * Adds the specified plan to the receiver actor's plans.

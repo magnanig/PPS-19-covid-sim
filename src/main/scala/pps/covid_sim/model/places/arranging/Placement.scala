@@ -2,6 +2,7 @@ package pps.covid_sim.model.places.arranging
 
 import java.util.Calendar
 
+import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.Place
 
@@ -77,7 +78,7 @@ object Placement {
      * @param place   the place where infection takes place
      * @param time    the time when infection happens
      */
-    def propagateVirus(place: Place, time: Calendar): Unit
+    def propagateVirus(place: Place, time: Calendar)(covidInfectionParameters: CovidInfectionParameters): Unit
   }
 
 

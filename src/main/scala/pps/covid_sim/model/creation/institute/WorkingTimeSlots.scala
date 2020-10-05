@@ -5,21 +5,13 @@ import pps.covid_sim.util.time.DaysInterval
 import pps.covid_sim.util.time.Time.Day
 import pps.covid_sim.util.time.Time.Day.Day
 
-private[institute] case class WorkingTimeSlots(rooms: List[Classroom],
+case class WorkingTimeSlots(rooms: List[Classroom],
                             daysInterval: DaysInterval = DaysInterval(Day.MONDAY, Day.SATURDAY),
                             fromHour: Int = 8,
-                            toHour: Int = 13) {
+                            toHour: Int = 13) extends Iterable[(Classroom, Day, Int)]{
 
-  private var index: Int = 0
-  private val slots = for(room <- rooms; day <- daysInterval; hour <- (fromHour until toHour).toList)
-    yield (room, day, hour)
-
-  def hasNext: Boolean = index < (rooms.size * 5 * 6)
-
-  def next: (Classroom, Day, Int) = {
-    val _return = slots(index)
-    index += 1
-    _return
+  override def iterator: Iterator[(Classroom, Day, Int)] = {
+    (for(i <- 1 until 5 * 6; room <- rooms; day <- daysInterval; hour <- (fromHour until toHour).toList)
+      yield (room, day, hour)).iterator
   }
-
 }

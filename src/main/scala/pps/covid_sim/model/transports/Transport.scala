@@ -2,7 +2,8 @@ package pps.covid_sim.model.transports
 
 import java.util.Calendar
 
-import pps.covid_sim.model.clinical.VirusPropagation.tryInfect
+import pps.covid_sim.model.CovidInfectionParameters
+import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.PeopleGroup.Single
 import pps.covid_sim.model.places.Locations.LimitedPeopleLocation
 import pps.covid_sim.model.places.Place
@@ -17,12 +18,16 @@ trait Transport extends LimitedPeopleLocation {
    * @param place     the place where people are
    * @param time      current time
    */
-  def extraGroupVirusPropagation(place: Place, time: Calendar): Unit = synchronized {
-    currentGroups
-      .flatMap(group => group.toList)
-      .toList
-      .combinations(2)
-      .foreach(pair => if (Single(pair.head).leader != Single(pair.last).leader) tryInfect(pair.head, pair.last, place, time))
+  def extraGroupVirusPropagation(place: Place, time: Calendar)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+    synchronized {
+      currentGroups
+        .flatMap(group => group.toList)
+        .toList
+        .combinations(2)
+        .foreach(pair => if (Single(pair.head).leader != Single(pair.last).leader){
+          VirusPropagation(covidInfectionParameters).tryInfect(pair.head, pair.last, place, time)
+        })
+    }
   }
 
   /**
@@ -31,9 +36,9 @@ trait Transport extends LimitedPeopleLocation {
    * @param time  current time
    * @param place current place
    */
-  override def propagateVirus(time: Calendar, place: Place): Unit = {
-    super.propagateVirus(time, place)
-    extraGroupVirusPropagation(place, time)
+  override def propagateVirus(time: Calendar, place: Place)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+    super.propagateVirus(time, place)(covidInfectionParameters)
+    extraGroupVirusPropagation(place, time)(covidInfectionParameters)
   }
 
 }

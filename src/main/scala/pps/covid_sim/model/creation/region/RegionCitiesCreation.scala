@@ -1,6 +1,7 @@
 package pps.covid_sim.model.creation.region
 
 import pps.covid_sim.model.places.Locality.{City, Province, Region}
+import pps.covid_sim.parameters.CreationParameters
 
 import scala.collection.mutable
 
@@ -26,8 +27,10 @@ private class RegionCitiesCreation(val region: Region) {
     val bufferedSource = io.Source.fromFile("res/italy_cities.csv")
     for (line <- bufferedSource.getLines) {
       val Array(istat, name, abbreviation, region_name, _, _, num_residents, longitude, latitude) = line.split(";")
-      if (region.name.equals(region_name)) {
-        cities += City(istat.toInt, name, num_residents.toInt, provinces(abbreviation),
+      if (region.name.equals(region_name) &&
+        num_residents.toInt * CreationParameters.citizensPercentage > CreationParameters.minCitizens) {
+        cities += City(istat.toInt, name,
+          Math.round(num_residents.toInt * CreationParameters.citizensPercentage).toInt, provinces(abbreviation),
           latitude.toDouble, longitude.toDouble)
       }
     }

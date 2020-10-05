@@ -2,6 +2,7 @@ package pps.covid_sim.model.places
 
 import java.util.Calendar
 
+import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.Person
@@ -52,13 +53,13 @@ case class Habitation(override val city: City,
    * @param time    current time
    * @param place   current place
    */
-  override def propagateVirus(time: Calendar, place: Place): Unit = {
+  override def propagateVirus(time: Calendar, place: Place)(covidInfectionParameters: CovidInfectionParameters): Unit = {
     val socialDistance = 0.5
     if (!sleepingHours.contains(time.hour)) currentGroups
       .flatMap(_.people)
       .toList
       .combinations(2)
-      .foreach(pair => VirusPropagation.tryInfect(pair.head, pair.last, place, time)(socialDistance))
+      .foreach(pair => VirusPropagation(covidInfectionParameters).tryInfect(pair.head, pair.last, place, time)(socialDistance))
   }
 
   override def mask: Option[Mask] = None

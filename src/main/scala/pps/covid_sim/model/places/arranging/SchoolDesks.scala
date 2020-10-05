@@ -2,6 +2,7 @@ package pps.covid_sim.model.places.arranging
 
 import java.util.Calendar
 
+import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.People.Student
 import pps.covid_sim.model.people.PeopleGroup.Group
@@ -62,13 +63,12 @@ object SchoolDesks {
 
     override def release(): Unit = adjacentDesks.foreach(_.release())
 
-    override def propagateVirus(place: Place, time: Calendar): Unit = {
+    override def propagateVirus(place: Place, time: Calendar)(covidInfectionParameters: CovidInfectionParameters): Unit = {
       adjacentDesks.map(_.assignee).sliding(2)
         .collect({ case List(Some(student1), Some(student2)) => (student1, student2) })
-        .foreach(e => VirusPropagation.tryInfect(e._1, e._2, place, time))
+        .foreach(e => VirusPropagation(covidInfectionParameters).tryInfect(e._1, e._2, place, time))
     }
   }
-
 
   case class Desk() extends Placeholder[Student] {
     private var _assignee: Option[Student] = None

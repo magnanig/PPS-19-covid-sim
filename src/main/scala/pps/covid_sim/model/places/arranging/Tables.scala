@@ -2,10 +2,11 @@ package pps.covid_sim.model.places.arranging
 
 import java.util.Calendar
 
+import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.Place
-import pps.covid_sim.model.places.arranging.Placement.{ItemArrangement, ItemGroup, Placeholder, Row}
+import pps.covid_sim.model.places.arranging.Placement.{ItemArrangement, ItemGroup, Row}
 import pps.covid_sim.util.RandomGeneration
 
 object Tables {
@@ -78,11 +79,13 @@ object Tables {
 
     override def release(): Unit = { assignee = None }
 
-    override def propagateVirus(place: Place, time: Calendar): Unit = assignee match {
-      case Some(group) => (group.last :: group.toList)
-        .sliding(2)
-        .foreach(pair => VirusPropagation.tryInfect(pair.head, pair.last, place, time))
-      case None =>
+    override def propagateVirus(place: Place, time: Calendar)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+      assignee match {
+        case Some(group) => (group.last :: group.toList)
+          .sliding(2)
+          .foreach(pair => VirusPropagation(covidInfectionParameters).tryInfect(pair.head, pair.last, place, time))
+        case None =>
+      }
     }
   }
 

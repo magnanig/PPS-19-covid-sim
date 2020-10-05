@@ -2,6 +2,7 @@ package pps.covid_sim.model.people
 
 import java.util.Calendar
 
+import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.CovidInfection
 import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.places.Locality.City
@@ -99,8 +100,10 @@ trait Person {
    * @param place   the place where infection has happened
    * @param time    the time when infection has happened
    */
-  def infects(place: Place, time: Calendar, stage: Int): Unit = synchronized {
-    covidInfection = Some(CovidInfection(time, place, stage, this))
+  def infects(place: Place, time: Calendar, stage: Int)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+    synchronized {
+      covidInfection = Some(CovidInfection(time, place, stage, covidInfectionParameters, this))
+    }
   }
 
   /**
@@ -121,6 +124,10 @@ trait Person {
     _infectedPeopleMet = Set.empty
   }
 
+  def setHabitation(habitation: Habitation): Unit = {
+    _habitation = habitation
+  }
+
   override def equals(obj: Any): Boolean = obj match {
     case person: Person => this eq person
     case _ => false
@@ -128,10 +135,6 @@ trait Person {
 
   private[model] def hourTick(time: Calendar): Unit = {
     if (covidInfection.isDefined) covidInfection.get.hourTick(time)
-  }
-
-  def setHabitation(habitation: Habitation): Unit = {
-    _habitation = habitation
   }
 
   /**
