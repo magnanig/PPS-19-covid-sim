@@ -117,6 +117,6 @@ class HeatMap() {
     ImageIO.write(italyOutlineMap, "png", new File("." + File.separator + "sim_res" +
       File.separator + s"heatmap_${new Date().toString}.png"))
   }
-  
+
 }
 

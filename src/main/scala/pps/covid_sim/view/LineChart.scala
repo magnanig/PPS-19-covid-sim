@@ -187,18 +187,6 @@ case class LineChart(title: String,
 
 }
 
-object Test2 extends App {
-
-  val data: SortedMap[Calendar, Int] = SortedMap(ScalaCalendar(2020, 9, 1, 15) -> 10, ScalaCalendar(2020, 9, 2, 15) -> 15, ScalaCalendar(2020, 9, 3, 15) -> 8)
-  val chart = LineChart("Infections trend", ScalaCalendar(2020, 9, 1, 15), "Days", "# infections", "Infections trend")
-  chart.drawLockDownStart(ScalaCalendar(2020, 9, 1, 15), 10)
-  chart.drawLockDownEnd(ScalaCalendar(2020, 9, 2, 15), 15)
-  chart.drawLockDownStart(ScalaCalendar(2020, 9, 3, 15), 8)
-  chart.drawChart(data)
-  chart.saveChartAsPNG()
-
-}
-
 
 
 
