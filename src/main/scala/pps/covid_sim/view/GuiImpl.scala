@@ -12,7 +12,6 @@ import pps.covid_sim.model.places.Locality.{Area, Province, Region}
 import pps.covid_sim.model.places.OpenPlaces.{Beach, Park, Square}
 import pps.covid_sim.model.places.Shops.Shop
 import pps.covid_sim.model.places.{Locality, Place}
-import pps.covid_sim.model.samples.Provinces
 import pps.covid_sim.model.simulation.SimulationsManager.classOrdering
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
 import pps.covid_sim.util.time.Time.ScalaCalendar
@@ -30,7 +29,7 @@ class GuiImpl() extends View {
    * @param controller that will be setted on the view
    */
   def setController(controller: Controller): Unit = {
-    this.controller = controller;
+    this.controller = controller
   }
   var controller: Controller = _
 
@@ -75,6 +74,8 @@ class GuiImpl() extends View {
 
   //confirm Button
   val confirmButton = new Button("Conferma")
+
+  var saveMenu: MenuBar = _
 
   override val top: Frame = new MainFrame {
     title = "PPS-19-Covid-Sim"
@@ -141,7 +142,7 @@ class GuiImpl() extends View {
     val companyCheckbox = new CheckBox("Aziende")
     val factoryCheckbox = new CheckBox("Fabbriche")
     val shopCheckbox = new CheckBox("Negozi")
-    val fieldCheckbox = new CheckBox("Campi(Calcio)")
+    val fieldCheckbox = new CheckBox("Campi da Calcio")
     val gymCheckbox = new CheckBox("Palestre")
 
     val placeAndCheckMap : Map[CheckBox,Class[_ <:Place]]= Map(beachCheckbox->classOf[Beach],squareCheckbox -> classOf[Square],
@@ -156,7 +157,7 @@ class GuiImpl() extends View {
      * Create a menu bar with a couple of menus and menu items and
      * set the result as this frame's menu bar.
      */
-    menuBar = new MenuBar {
+    saveMenu = new MenuBar {
       contents += new Menu("File") {
         contents += new MenuItem(Action("Save Simulation") {
           chartSet.foreach(c=>c.saveChartAsPNG())
@@ -166,6 +167,8 @@ class GuiImpl() extends View {
         })
       }
     }
+    saveMenu.visible = false
+    menuBar = saveMenu
 
     contents = new BorderPanel {
       import BorderPanel.Position._
@@ -203,7 +206,7 @@ class GuiImpl() extends View {
         provincesSetOfCombobox.foreach(el=>{
           listenTo(el._2.selection)
           reactions += {
-            case SelectionChanged(el._2) => {
+            case SelectionChanged(el._2) =>
               print(el._2.selection.item)
               if (el._2.selection.item == "Seleziona") {
                 selectedProvince = Option.empty
@@ -211,13 +214,10 @@ class GuiImpl() extends View {
                 val provinceSelected: Province = provinceSet.filter(p => p.name == el._2.selection.item).head
                 selectedProvince = Option(provinceSelected)
               }
-            }
           }
-          }
-        )
+        })
 
         val regionComboBox: ComboBox[String]= new ComboBox[String](regionComboboxItems)
-        //val provinceComboBox: ComboBox[String]= new ComboBox[String](provinceComboboxItems)
 
         contents += new FlowPanel {
           contents += new Label("<html><p>Simulazione di/dell':</p></html>")
@@ -226,7 +226,7 @@ class GuiImpl() extends View {
 
           provincesSetOfCombobox.foreach(el=> {
             contents += el._2
-            el._2.visible = false;
+            el._2.visible = false
           })
 
 
@@ -236,29 +236,28 @@ class GuiImpl() extends View {
           listenTo(runsField, regionComboBox.selection/*, provinceComboBox.selection*/)
           reactions += {
             case EditDone(`runsField`) => checkPositive(runsField)
-            case SelectionChanged(`regionComboBox`) => {
-                println(regionComboBox.selection.item)
-                if (regionComboBox.selection.item == "Italia") {
-                  //provinceComboBox.visible = false
-                  provincesSetOfCombobox.foreach(el=> {
-                    el._2.visible = false;
-                  })
-                  selectedRegion = Option.empty
-                  selectedProvince = Option.empty
-                } else {
-                  val regionSelected: Region = regionSet.filter(r => r.name == regionComboBox.selection.item).head
-                  selectedRegion = Option(regionSelected)
+            case SelectionChanged(`regionComboBox`) =>
+              println(regionComboBox.selection.item)
+              if (regionComboBox.selection.item == "Italia") {
+                //provinceComboBox.visible = false
+                provincesSetOfCombobox.foreach(el=> {
+                  el._2.visible = false
+                })
+                selectedRegion = Option.empty
+                selectedProvince = Option.empty
+              } else {
+                val regionSelected: Region = regionSet.filter(r => r.name == regionComboBox.selection.item).head
+                selectedRegion = Option(regionSelected)
 
-                  provincesSetOfCombobox.foreach(el=> {
-                    el._2.visible = false;
-                  })
-                  provincesSetOfCombobox.foreach(el=> {
-                    if(el._1.name == regionSelected.name){
-                      el._2.visible = true
-                    }
-                  })
-                }
-            }
+                provincesSetOfCombobox.foreach(el=> {
+                  el._2.visible = false
+                })
+                provincesSetOfCombobox.foreach(el=> {
+                  if(el._1.name == regionSelected.name){
+                    el._2.visible = true
+                  }
+                })
+              }
           }
         }
 
@@ -435,19 +434,19 @@ class GuiImpl() extends View {
           add(confirmButton, BorderPanel.Position.East)
           listenTo(confirmButton)
           reactions += {
-            case ButtonClicked(`confirmButton`) => {
+            case ButtonClicked(`confirmButton`) =>
 
-              confirmButton.visible = false;
+              confirmButton.visible = false
               //check che i valori obbligatori siano inseriti
               //valori: beachCheckbox,squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox, barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox,companyCheckbox,factoryCheckbox , shopCheckbox, fieldCheckbox,gymCheckbox
               //li usi per fare partire la simulazione
               println("confirm!!!!")
               //tabs.pages += new Page("Painting", btnPanel.buttons )
               //tabs.pages += new Page("Painting", btnPanel.buttons )
-              var dataInizio: Calendar = ScalaCalendar(yearStartField.text.toInt,monthStartField.text.toInt,dayStartField.text.toInt,0)
-              var dataFine: Calendar = ScalaCalendar(yearEndField.text.toInt,monthEndField.text.toInt,dayEndField.text.toInt,0)
+              val dateFrom: Calendar = ScalaCalendar(yearStartField.text.toInt,monthStartField.text.toInt,dayStartField.text.toInt)
+              val dateTo: Calendar = ScalaCalendar(yearEndField.text.toInt,monthEndField.text.toInt,dayEndField.text.toInt)
 
-              if(dataInizio < dataFine){//controllo che i dates siano corretti
+              if(dateFrom < dateTo){//controllo che i dates siano corretti
                 //println(placeAndCheckMap)
                 //println(placeAndCheckMap.filter(el=> el._1.selected).map(el=>el._2).toSet)
                 controller.setSimulationParameters(
@@ -461,24 +460,24 @@ class GuiImpl() extends View {
                   cunningAsymptomaticField.text.toDouble/100,
                   probInfectionField.text.toDouble/100,
                   peopleWearingMaskField.text.toDouble/100 ,
-                  100.toInt/100 ,
+                  1,//100.toInt/100
                   breakingPeopkeField.text.toDouble/100,
                   lockdownStartField.text.toDouble/100,
                   lockdownEndField.text.toDouble/100,
-                  placeAndCheckMap.filter(el=> el._1.selected).map(el=>el._2).toSet)
+                  placeAndCheckMap.filter(el => el._1.selected).values.toSet)
 
-                var selectedArea: Area = new Locality.Italy{}
+                var selectedArea: Area = new Locality.Italy
                 if(selectedRegion.isDefined && selectedProvince.isDefined) {
                   selectedArea = selectedProvince.get
-                }else if (selectedRegion.isDefined && selectedProvince.isEmpty){
+                }else if (selectedRegion.isDefined){
                   selectedArea = selectedRegion.get
                 }
-                controller.startSimulation(Provinces.AOSTA/*CitiesObject.getProvince("IS")*/, /*selectedArea*/ dataInizio,dataFine,runsField.text.toInt) // TODO: specificare l'area (es. città o regione...)
+                println(selectedArea)
+                controller.startSimulation(selectedArea, dateFrom,dateTo,runsField.text.toInt)
               }else{
-                Dialog.showMessage(contents.head, "The inserted dates are incorrect!", title="You pressed me")
+                Dialog.showMessage(contents.head, "The inserted dates are incorrect!", title="Warning")
                 confirmButton.visible = true
               }
-            }
           }
         }
       }
@@ -495,13 +494,14 @@ class GuiImpl() extends View {
           list.selectIndices(tabs.selection.index)
         case SelectionChanged(`list`) =>
           if (list.selection.items.length == 1)
-            tabs.selection.page = list.selection.items(0)
+            tabs.selection.page = list.selection.items.head
       }
     }
   }
 
   override def notifyStart: Unit = {
     this.clearTabs()
+    saveMenu.visible = false
     this.insertTab(new Page("Waiting" ,
       new BoxPanel(Orientation.Vertical) {
         contents += new Label("In attesa fine simulazione..")
@@ -510,22 +510,20 @@ class GuiImpl() extends View {
     chartSet = Set(LineChart("Evolution of infections over time", controller.simulationInterval.from, "Days", "Infections", "Infections trend"),
       LineChart("Evolution of recovered over time", controller.simulationInterval.from, "Days", "Recovered", "Recovered trend"),
       /*LineChart("Evolution of deaths over time", controller.simulationInterval.from, "Days", "Deaths", "Deaths trend")*/)
-    //aggiungere anche gli altri
-
-    //aggiungere al set
 
   }
 
   override def notifyEnd(simulationsManager: SimulationsManager[Simulation] ): Unit = {
     this.clearTabs()
+    saveMenu.visible = true
 
     //chartSet.foreach(c=>this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList))))))
 
-    chartSet.foreach(c=> c match {
-      case c if c.yAxisLabel=="Infections" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList)))))
-      case c if c.yAxisLabel=="Recovered" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.recovered).toList)))))
+    chartSet.foreach {
+      case c if c.yAxisLabel == "Infections" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList)))))
+      case c if c.yAxisLabel == "Recovered" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.recovered).toList)))))
       //case c if c.yAxisLabel=="Deaths" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.deaths).toList)))))
-    })
+    }
     //aggiungere le heat e gli altri
 
     virusStagesChart = LineChart("Evolution of infections over time for each stage", controller.simulationInterval.from, "Days", "Infections", "Infections trend")

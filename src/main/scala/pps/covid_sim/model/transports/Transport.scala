@@ -11,7 +11,7 @@ import pps.covid_sim.model.places.Place
 /**
  * A generic means of transport that people can take (can be either a public or private transport).
  */
-trait Transport extends LimitedPeopleLocation {
+trait Transport extends LimitedPeopleLocation with Place{
 
   /**
    * Method that defines the dynamics of the virus propagation between different groups of people.

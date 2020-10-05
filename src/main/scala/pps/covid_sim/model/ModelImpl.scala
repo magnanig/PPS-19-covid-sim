@@ -1,7 +1,7 @@
 package pps.covid_sim.model
 import java.util.Calendar
 
-import pps.covid_sim.model.container.{PeopleContainer, PlacesContainer}
+import pps.covid_sim.model.container.{PeopleContainer, PlacesContainer, TransportLinesContainer}
 import pps.covid_sim.model.creation.WorldCreation
 import pps.covid_sim.model.creation.province.ProvinceCreation
 import pps.covid_sim.model.creation.region.RegionCreation
@@ -11,6 +11,7 @@ import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.samples.Places
 import pps.covid_sim.model.simulation.Aggregation.{NationSimulation, ProvinceSimulation, RegionSimulation}
 import pps.covid_sim.model.simulation.{CitySimulation, Simulation, SimulationsManager}
+import pps.covid_sim.model.transports.PublicTransports.{BusLine, TrainLine}
 import pps.covid_sim.util.RandomGeneration
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
@@ -20,8 +21,8 @@ import scala.util.Random
 class ModelImpl extends Model {
 
   private var places: ParSeq[Place] = _
-  // private val trainLines = TODO
-  // private val busLines = TODO
+   private var trainLines: ParSeq[TrainLine] = _
+   private var busLines: ParSeq[BusLine] = _
 
   private var _people: ParSeq[Person] = _
   private var _simulationsManager: SimulationsManager[Simulation] = _
@@ -35,11 +36,13 @@ class ModelImpl extends Model {
       case province: Province => ProvinceCreation.create(province)
     }
     places = PlacesContainer.getPlaces.par
-    _people = PeopleContainer.getPeople.take(1000).par
+    _people = Random.shuffle(PeopleContainer.getPeople/*.take(1000)*/).par
+    println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
+    println(_people.groupBy(_.residence.province.region).mapValues(_.size))
     initPeopleFriends(_people)
     println(s"Created ${_people.size} people")
-    //trainLines = TrainLinesContainer.getLines.par
-    //busLines = BusLinesContainer.getLines.par
+    trainLines = TransportLinesContainer.getTrainLines.par
+    busLines = TransportLinesContainer.getBusLines.par
   }
 
   override def initSimulation(area: Area, from: Calendar, until: Calendar, runs: Int): Unit = {
@@ -58,9 +61,9 @@ class ModelImpl extends Model {
   }
 
   override def tick(time: Calendar): Unit = {
-    places.foreach(place => place.propagateVirus(time, place)(covidInfectionParameters))///TODO tolta per testare!
-    // trainLines.trains.foreach(transport => transport.propagateVirus(time, transport))
-    // busLines.busses.foreach(transport => transport.propagateVirus(time, transport))
+    places.foreach(place => place.propagateVirus(time, place)(covidInfectionParameters))
+     TransportLinesContainer.getTrainLines.foreach(trainLine =>trainLine.trainList.foreach(train=> train.propagateVirus(time, train)(covidInfectionParameters)) )//TODO
+     TransportLinesContainer.getBusLines.foreach(busLine => busLine.busList.foreach(bus=> bus.propagateVirus(time, bus )(covidInfectionParameters)))//TODO
     if(time.hour == 0) {
       simulationsManager.takeScreenshot(time, people)
     }

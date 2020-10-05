@@ -20,6 +20,7 @@ private[creation] abstract class PlacesCreation {
   val _people: List[Person]
 
   def create(): Unit = {
+    println(_people.head.residence.province.region)
     PeopleContainer.add(_people)
     _people
       .groupBy(person => person.residence)
