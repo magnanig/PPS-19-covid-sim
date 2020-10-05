@@ -100,13 +100,6 @@ object ActorsCoordination {
       currentTime = currentTime + 1
       _subordinatedActors.foreach(_ ! HourTick(currentTime))
 
-      print(currentTime.hour)//todo remove
-      print(waitingAck)//todo remove
-
-      //context.setReceiveTimeout(Duration.create(120, TimeUnit.MILLISECONDS))
-      //currentTime = currentTime + 1
-
-
     }
 
     private[controller] def stopSimulation(): Unit = synchronized {
@@ -131,7 +124,7 @@ object ActorsCoordination {
     }
 
     private def createActors(regions: Set[Region]): Unit = {
-      val numRegion = regions.size
+      //val numRegion = regions.size
 
       /*val regionActors = regions.par.collect {
         case region if controller.people.count(_.residence.province.region == region) > 0 => system.actorOf(Props[RegionCoordinator]) -> region
@@ -179,7 +172,7 @@ object ActorsCoordination {
     }
 
     private def createActors(provinces: Set[Province]): Unit = {
-      val numProvince = provinces.size
+      //val numProvince = provinces.size
       /*val provinceActors = provinces.par.collect {
         case province if controller.people.count(_.residence.province == province) > 0 => system.actorOf(Props[ProvinceCoordinator]) -> province
       }.toMap*/
