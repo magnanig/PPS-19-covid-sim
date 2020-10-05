@@ -99,7 +99,8 @@ class ModelImpl extends Model {
       // each person can have from 2 to 10 close friends
       val friendsCount = RandomGeneration.randomIntInRange(2, 10)
       (1 to friendsCount).foreach(_ => {
-        val friend: Person = people(Random.nextInt(people.size)) //TODO filter by residence
+        val availablePeople = people.filter(_.residence == p.residence)
+        val friend: Person = availablePeople(Random.nextInt(availablePeople.size))
         if (p != friend) {
           p.addFriend(friend)
           if (Random.nextFloat() < 0.8) friend.addFriend(p) // if you add me to your friends list, I'll add you at 80%
