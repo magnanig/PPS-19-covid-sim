@@ -5,6 +5,7 @@ import java.util.Calendar
 import pps.covid_sim.model.container.CitiesContainer
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{Area, City}
+import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.util.Statistic
 import pps.covid_sim.util.time.DatesInterval
@@ -65,6 +66,6 @@ case class SimulationsManager[+S <: Simulation](simulations: Seq[S],
 }
 
 object SimulationsManager {
-  implicit val classOrdering: Ordering[Class[_ <: Place]] = (x: Class[_], y: Class[_]) =>
+  implicit val classOrdering: Ordering[Class[_ <: Location]] = (x: Class[_], y: Class[_]) =>
     x.getSimpleName.compareTo(y.getSimpleName)
 }

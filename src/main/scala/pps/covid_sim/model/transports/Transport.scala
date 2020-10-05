@@ -5,20 +5,20 @@ import java.util.Calendar
 import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.PeopleGroup.Single
-import pps.covid_sim.model.places.Locations.LimitedPeopleLocation
+import pps.covid_sim.model.places.Locations.{LimitedPeopleLocation, Location}
 import pps.covid_sim.model.places.Place
 
 /**
  * A generic means of transport that people can take (can be either a public or private transport).
  */
-trait Transport extends LimitedPeopleLocation with Place{
+trait Transport extends LimitedPeopleLocation {
 
   /**
    * Method that defines the dynamics of the virus propagation between different groups of people.
    * @param place     the place where people are
    * @param time      current time
    */
-  def extraGroupVirusPropagation(place: Place, time: Calendar)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+  def extraGroupVirusPropagation(place: Location, time: Calendar)(covidInfectionParameters: CovidInfectionParameters): Unit = {
     synchronized {
       currentGroups
         .flatMap(group => group.toList)
@@ -36,7 +36,7 @@ trait Transport extends LimitedPeopleLocation with Place{
    * @param time  current time
    * @param place current place
    */
-  override def propagateVirus(time: Calendar, place: Place)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+  override def propagateVirus(time: Calendar, place: Location)(covidInfectionParameters: CovidInfectionParameters): Unit = {
     super.propagateVirus(time, place)(covidInfectionParameters)
     extraGroupVirusPropagation(place, time)(covidInfectionParameters)
   }

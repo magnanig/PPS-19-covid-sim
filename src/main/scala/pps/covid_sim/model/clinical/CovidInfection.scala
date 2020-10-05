@@ -4,6 +4,7 @@ import java.util.Calendar
 
 import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.people.Person
+import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.util.RandomGeneration
 import pps.covid_sim.util.time.Time.ScalaCalendar
@@ -11,7 +12,7 @@ import pps.covid_sim.util.time.Time.ScalaCalendar
 import scala.util.Random
 
 case class CovidInfection(override val from: Calendar,
-                          override val at: Place,
+                          override val at: Location,
                           stage: Int,
                           covidInfectionParameters: CovidInfectionParameters,
                           override val person: Person) extends Infection {

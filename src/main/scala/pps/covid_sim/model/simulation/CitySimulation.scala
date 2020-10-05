@@ -4,6 +4,7 @@ import java.util.Calendar
 
 import pps.covid_sim.model.container.PeopleContainer
 import pps.covid_sim.model.places.Locality.City
+import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.util.Statistic
 
@@ -13,9 +14,9 @@ case class CitySimulation(override val area: City) extends Simulation {
   private var _infected: SortedMap[Calendar, Int] = SortedMap()
   private var _recovered: SortedMap[Calendar, Int] = SortedMap()
   private var _deaths: SortedMap[Calendar, Int] = SortedMap()
-  private var _infectionPlaces: Map[Class[_ <: Place], Int] = Map()
+  private var _infectionPlaces: Map[Class[_ <: Location], Int] = Map()
 
-  override def infectionPlaces: Map[Class[_ <: Place], Int] = _infectionPlaces
+  override def infectionPlaces: Map[Class[_ <: Location], Int] = _infectionPlaces
 
   override def infected: SortedMap[Calendar, Int] = _infected
 

@@ -6,6 +6,7 @@ import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.clinical.{Masks, VirusPropagation}
 import pps.covid_sim.model.places.Locality.City
+import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.rooms.{MultiRoom, Room}
 import pps.covid_sim.util.RandomGeneration
 import pps.covid_sim.util.geometry.{Dimension, Rectangle}
@@ -30,7 +31,7 @@ object Jobs {
 
     override val mask: Option[Mask] = Some(Masks.Surgical)
 
-    override def propagateVirus(time: Calendar, place: Place)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+    override def propagateVirus(time: Calendar, place: Location)(covidInfectionParameters: CovidInfectionParameters): Unit = {
       currentGroups
         .flatMap(_.people)
         .toList

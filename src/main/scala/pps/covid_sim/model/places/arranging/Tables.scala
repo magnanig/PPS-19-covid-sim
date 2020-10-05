@@ -5,6 +5,7 @@ import java.util.Calendar
 import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.PeopleGroup.Group
+import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.places.arranging.Placement.{ItemArrangement, ItemGroup, Row}
 import pps.covid_sim.util.RandomGeneration
@@ -79,7 +80,7 @@ object Tables {
 
     override def release(): Unit = { assignee = None }
 
-    override def propagateVirus(place: Place, time: Calendar)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+    override def propagateVirus(place: Location, time: Calendar)(covidInfectionParameters: CovidInfectionParameters): Unit = {
       assignee match {
         case Some(group) => (group.last :: group.toList)
           .sliding(2)

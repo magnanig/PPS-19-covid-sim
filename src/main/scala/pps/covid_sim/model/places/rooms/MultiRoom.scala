@@ -5,7 +5,7 @@ import java.util.Calendar
 import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.Locality.City
-import pps.covid_sim.model.places.Locations.LimitedPeopleLocation
+import pps.covid_sim.model.places.Locations.{LimitedPeopleLocation, Location}
 import pps.covid_sim.model.places.arranging.Arrangeable
 import pps.covid_sim.model.places.arranging.Placement.Placeholder
 import pps.covid_sim.model.places.arranging.Tables.TablesGroup
@@ -27,7 +27,7 @@ abstract class MultiRoom[R <: Room](override val city: City,
 
   def getRooms: Seq[R] = rooms
 
-  override def propagateVirus(time: Calendar, place: Place)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+  override def propagateVirus(time: Calendar, place: Location)(covidInfectionParameters: CovidInfectionParameters): Unit = {
     rooms.foreach(_.propagateVirus(time, place)(covidInfectionParameters))
   }
 

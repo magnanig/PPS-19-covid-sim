@@ -6,6 +6,7 @@ import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.CovidInfection
 import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.places.Locality.City
+import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.{Habitation, Place}
 import pps.covid_sim.util.geometry.Coordinates
 import pps.covid_sim.util.time.Time.ScalaCalendar
@@ -89,9 +90,9 @@ trait Person {
    */
   def isDeath: Boolean = false
 
-  def infectionPlaceInstance: Option[Place] = covidInfection.map(_.at)
+  def infectionPlaceInstance: Option[Location] = covidInfection.map(_.at)
 
-  def infectionPlace: Option[Class[_ <: Place]] = infectionPlaceInstance.map(_.getClass)
+  def infectionPlace: Option[Class[_ <: Location]] = infectionPlaceInstance.map(_.getClass)
 
   def covidStage: Option[Int] = covidInfection.map(_.stage)
 
@@ -100,7 +101,7 @@ trait Person {
    * @param place   the place where infection has happened
    * @param time    the time when infection has happened
    */
-  def infects(place: Place, time: Calendar, stage: Int)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+  def infects(place: Location, time: Calendar, stage: Int)(covidInfectionParameters: CovidInfectionParameters): Unit = {
     synchronized {
       covidInfection = Some(CovidInfection(time, place, stage, covidInfectionParameters, this))
     }

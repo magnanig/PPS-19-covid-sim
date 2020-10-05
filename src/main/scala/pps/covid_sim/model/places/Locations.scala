@@ -113,7 +113,7 @@ object Locations {
      * @param time  current time
      * @param place current place
      */
-    def propagateVirus(time: Calendar, place: Place)(covidInfectionParameters: CovidInfectionParameters): Unit = synchronized {
+    def propagateVirus(time: Calendar, place: Location)(covidInfectionParameters: CovidInfectionParameters): Unit = synchronized {
       _currentGroups
         .foreach(group => {
           if (group.size > 1) inGroupVirusPropagation(group, place, time)(covidInfectionParameters)
@@ -128,7 +128,7 @@ object Locations {
      * @param time    the infection time
      */
     protected def inGroupVirusPropagation(group: Group,
-                                          place: Place,
+                                          place: Location,
                                           time: Calendar)
                                          (covidInfectionParameters: CovidInfectionParameters): Unit = synchronized {
       group.toList
@@ -144,7 +144,7 @@ object Locations {
      * @param time    the infection time
      */
     protected def lookForFriends(group: Group,
-                                 place: Place,
+                                 place: Location,
                                  time: Calendar)
                                 (covidInfectionParameters: CovidInfectionParameters): Unit = synchronized {
       group
@@ -159,7 +159,7 @@ object Locations {
      * @param place   the place where virus propagation takes place
      * @param time    the infection time
      */
-    protected def lookForFriends(place: Place,
+    protected def lookForFriends(place: Location,
                                  time: Calendar)
                                 (covidInfectionParameters: CovidInfectionParameters): Unit = synchronized {
       _currentGroups.foreach(lookForFriends(_, place, time)(covidInfectionParameters))

@@ -8,6 +8,7 @@ import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.people.People.{Student, Teacher}
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.Locality.City
+import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.arranging.Arrangeable
 import pps.covid_sim.model.places.arranging.SchoolDesks.{Desk, DeskGroup, DesksArrangement}
 import pps.covid_sim.model.places.rooms.{MultiRoom, Room}
@@ -93,7 +94,7 @@ object Education {
       case _ => super.canEnter(group, time)
     }
 
-    override def propagateVirus(time: Calendar, place: Place)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+    override def propagateVirus(time: Calendar, place: Location)(covidInfectionParameters: CovidInfectionParameters): Unit = {
       super.propagateVirus(time, place)(covidInfectionParameters)
       if(time.minutes == 0) lookForFriends(place, time)(covidInfectionParameters)
     }

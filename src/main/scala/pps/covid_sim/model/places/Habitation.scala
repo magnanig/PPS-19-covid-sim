@@ -7,6 +7,7 @@ import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.City
+import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.util.RandomGeneration
 import pps.covid_sim.util.geometry.Dimension
 import pps.covid_sim.util.time.HoursInterval
@@ -53,7 +54,7 @@ case class Habitation(override val city: City,
    * @param time    current time
    * @param place   current place
    */
-  override def propagateVirus(time: Calendar, place: Place)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+  override def propagateVirus(time: Calendar, place: Location)(covidInfectionParameters: CovidInfectionParameters): Unit = {
     val socialDistance = 0.5
     if (!sleepingHours.contains(time.hour)) currentGroups
       .flatMap(_.people)

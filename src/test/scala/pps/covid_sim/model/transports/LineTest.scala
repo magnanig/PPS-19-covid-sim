@@ -65,10 +65,10 @@ class LineTest {
   var people: Seq[Person] = (0 to 40).map(i => TestPerson(i, false))
 
   val commuters: Seq[Single] = (1 to 40).map(s => if (s % 2 == 0) Single(people(s))
-                                                   else Single(people(s))).toList
+  else Single(people(s))).toList
 
   val groupCommuters: Seq[Group] = (1 to 39 by 2).map(s => Multiple(people(s),
-                                                       Set(people(s), people(s + 1)))).toList
+    Set(people(s), people(s + 1)))).toList
 
   println(groupCommuters)
 
@@ -82,34 +82,34 @@ class LineTest {
   @Test
   def testBusLineUsage(): Unit = {
     assertTrue(busLine.isReachable(place))
-    assertEquals(Some(Bus(2, cityTest)), busLine.tryUse(lorenzo, time))
+    assertEquals(Some(Bus(2)), busLine.tryUse(lorenzo, time))
     // Lorenzo is already in: this entry is ignored
     assertEquals(None, busLine.tryUse(lorenzo, time))
-    assertEquals(Some(Bus(2, cityTest)), busLine.tryUse(marco, time))
+    assertEquals(Some(Bus(2)), busLine.tryUse(marco, time))
     val means = busLine.tryUse(nicolas,time)
     assertTrue(means.get.isInstanceOf[Bus])
     means.get.exit(lorenzo)
-    assertEquals(Some(Bus(2, cityTest)), busLine.tryUse(gianmarco, time))
+    assertEquals(Some(Bus(2)), busLine.tryUse(gianmarco, time))
     assertEquals(None, busLine.tryUse(gianmarco, time)) // Gianmarco is already using the line
-    assertEquals(Some(Bus(2, cityTest)), busLine.tryUse(lorenzo, time))
+    assertEquals(Some(Bus(2)), busLine.tryUse(lorenzo, time))
   }
 
   @Test
   def testBusLineGroupUsage(): Unit = {
-    assertEquals(Some(Bus(2, cityTest)), busLine.tryUse(Multiple(people(1),
-                                              Set(people(1), people(2))), time))
+    assertEquals(Some(Bus(2)), busLine.tryUse(Multiple(people(1),
+      Set(people(1), people(2))), time))
     // TestPerson(2, false) is already using the line: the group does not enter
     assertEquals(None, busLine.tryUse(Multiple(people(3),
-                                      Set(people(3), people(2))), time))
+      Set(people(3), people(2))), time))
     assertEquals(None, busLine.tryUse(Multiple(people(1),
-                                      Set(people(1), people(3))), time))
+      Set(people(1), people(3))), time))
     assertEquals(None, busLine.tryUse(Multiple(people(1),
-                                      Set(people(1), people(2))), time))
-    assertEquals(Some(Bus(2, cityTest)), busLine.tryUse(Multiple(people(3),
-                                      Set(people(3), people(4))), time))
+      Set(people(1), people(2))), time))
+    assertEquals(Some(Bus(2)), busLine.tryUse(Multiple(people(3),
+      Set(people(3), people(4))), time))
     // The line is full
     assertEquals(None, busLine.tryUse(Multiple(people(5),
-                                      Set(people(5), people(6))), time))
+      Set(people(5), people(6))), time))
     // Trying to get out a group that did not get on board together
     busLine.busList(0).exit(Multiple(people(1), Set(people(1), people(3))))
     assertEquals(2, busLine.busList(0).numCurrentPeople)
@@ -135,14 +135,14 @@ class LineTest {
   @Test
   def testTrainLineGroupUsage(): Unit = {
     val (train, carriage) = trainLine.tryUse(Multiple(marco.leader, Set(marco.leader, lorenzo.leader)), time)
-    assertEquals(train, Some(Train(2, cityTest)))
-    assertEquals(carriage, Some(Carriage(20, cityTest)))
+    assertEquals(train, Some(Train(2)))
+    assertEquals(carriage, Some(Carriage(20)))
     // Filling the train
     enterPeopleFromList(0, groupCommuters.size, groupCommuters, trainLine)
     assertEquals((None, None), trainLine.tryUse(Multiple(people(1),
-                                                Set(people(1), people(3))), time))
+      Set(people(1), people(3))), time))
     assertEquals((None, None), trainLine.tryUse(Multiple(people(5),
-                                                Set(people(5), people(6))), time))
+      Set(people(5), people(6))), time))
     // Exit of a group from the first carriage
     train.get.exit(Multiple(people(3), Set(people(3), people(4))))
     assertEquals(18, carriage.get.numCurrentPeople)

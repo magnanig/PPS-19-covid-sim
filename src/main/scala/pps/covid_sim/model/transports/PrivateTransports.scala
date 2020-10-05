@@ -11,7 +11,7 @@ object PrivateTransports {
 
   }
 
-  case class Car(override val capacity: Int, override val city: City) extends PrivateTransport {
+  case class Car(override val capacity: Int) extends PrivateTransport {
   }
 
 }

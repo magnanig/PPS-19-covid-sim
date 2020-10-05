@@ -2,6 +2,7 @@ package pps.covid_sim.util
 
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
+import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.parameters.CreationParameters._
 
@@ -136,8 +137,8 @@ case class Statistic(people: ParSeq[Person]) {
    * @return a map that associates, for each type of place where the virus has spread,
    *         the number of people who have been infected
    */
-  def getInfectionsPerPlace: Map[Class[_ <: Place], Int] = {
-    val _return: mutable.Map[Class[_ <: Place], Int] = mutable.Map().withDefaultValue(0)
+  def getInfectionsPerPlace: Map[Class[_ <: Location], Int] = {
+    val _return: mutable.Map[Class[_ <: Location], Int] = mutable.Map().withDefaultValue(0)
     people.filter(p => p.isInfected || p.isRecovered).foreach(p => _return(p.infectionPlace.get) += 1)
     _return.toMap
   }

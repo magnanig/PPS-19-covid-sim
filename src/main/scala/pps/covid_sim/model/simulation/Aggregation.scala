@@ -4,6 +4,7 @@ import java.util.Calendar
 
 import pps.covid_sim.model.container.CitiesContainer
 import pps.covid_sim.model.places.Locality._
+import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.Place
 
 import scala.collection.SortedMap
@@ -14,7 +15,7 @@ object Aggregation {
 
     def apply(area: A): Option[Simulation] = simulations.find(_.area == area)
 
-    override def infectionPlaces: Map[Class[_ <: Place], Int] = simulations.flatMap(_.infectionPlaces).toMap
+    override def infectionPlaces: Map[Class[_ <: Location], Int] = simulations.flatMap(_.infectionPlaces).toMap
       .groupBy(_._1)
       .mapValues(_.values.sum)
 

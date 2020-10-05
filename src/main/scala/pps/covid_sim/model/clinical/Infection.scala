@@ -3,6 +3,7 @@ package pps.covid_sim.model.clinical
 import java.util.Calendar
 
 import pps.covid_sim.model.people.Person
+import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.Place
 
 trait Infection {
@@ -18,9 +19,9 @@ trait Infection {
   val from: Calendar
 
   /**
-   * At what place infection has been happened.
+   * At what Location infection has been happened.
    */
-  val at: Place
+  val at: Location
 
   /**
    * Verify whether patient knows to be infected or not.

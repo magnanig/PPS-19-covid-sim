@@ -6,6 +6,7 @@ import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.People.Student
 import pps.covid_sim.model.people.PeopleGroup.Group
+import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.places.arranging.Placement.{ItemArrangement, ItemGroup, Placeholder, Row}
 import pps.covid_sim.util.RandomGeneration
@@ -63,7 +64,7 @@ object SchoolDesks {
 
     override def release(): Unit = adjacentDesks.foreach(_.release())
 
-    override def propagateVirus(place: Place, time: Calendar)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+    override def propagateVirus(place: Location, time: Calendar)(covidInfectionParameters: CovidInfectionParameters): Unit = {
       adjacentDesks.map(_.assignee).sliding(2)
         .collect({ case List(Some(student1), Some(student2)) => (student1, student2) })
         .foreach(e => VirusPropagation(covidInfectionParameters).tryInfect(e._1, e._2, place, time))

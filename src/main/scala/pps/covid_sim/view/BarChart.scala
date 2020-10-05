@@ -8,6 +8,7 @@ import java.util.Date
 
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.data.category.DefaultCategoryDataset
+import pps.covid_sim.model.places.Locations.Location
 
 import scala.collection.SortedMap
 
@@ -29,7 +30,7 @@ case class BarChart(title: String,
    * @param infectionPlaces     a map containing the number of infected (map value) for each place (map key)
    * @return                    a ChartPanel containing the bar chart
    */
-  def drawChart(infectionPlaces: SortedMap[Class[_ <: Place], Int]): ChartPanel = {
+  def drawChart(infectionPlaces: SortedMap[Class[_ <: Location], Int]): ChartPanel = {
     infectionPlaces.foreach(elem => dataset.addValue(elem._2, elem._1.getSimpleName, elem._1.getSimpleName))
 
     chart = ChartFactory.createBarChart(

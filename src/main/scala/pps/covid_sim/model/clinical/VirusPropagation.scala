@@ -4,13 +4,14 @@ import java.util.Calendar
 
 import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.people.Person
+import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.Place
 
 import scala.util.Random
 
 case class VirusPropagation(covidInfectionParameters: CovidInfectionParameters) {
 
-  def tryInfect(p1: Person, p2: Person, place: Place, time: Calendar)
+  def tryInfect(p1: Person, p2: Person, place: Location, time: Calendar)
                (implicit socialDistance: Double = Math.min(p1.socialDistance, p2.socialDistance)): Unit = {
     if (p1.canInfect != p2.canInfect && !inSafeZone(socialDistance)) {
       val infectedPerson = if (p1.canInfect) p1 else p2
