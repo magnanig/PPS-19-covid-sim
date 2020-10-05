@@ -31,11 +31,11 @@ object MovementFunctions {
                  speed: Speed = Speed.MIDDLE,
                  partitions: Int): Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]] = {
     groups => {
-      @tailrec
+
       def _nextPosition(leader: Person): Coordinates = {
         val nextPos: Coordinates = Coordinates.randomClose(dimension, leader.position, speed)
         if (obstacles.exists(r => nextPos.inside(r)) || nextPos.outOfDimension(dimension)) {
-          _nextPosition(leader)
+          leader.position
         } else {
           leader.position = nextPos
           leader.position
@@ -73,7 +73,6 @@ object MovementFunctions {
       var targetReached: Boolean = false
       var turns: Int = 0
 
-      @tailrec
       def _nextPosition(leader: Person): Coordinates = {
         if (!targetReached) {
           nextPos = Coordinates.directionClose(leader.position, speed, direction) // maintaining the previous direction
@@ -93,7 +92,7 @@ object MovementFunctions {
 
         if (nextPos.outOfDimension(dimension)) {
           direction = Direction.randomDirection()
-          _nextPosition(leader)
+          leader.position
         } else {
           if (obstaclesList.exists(r => nextPos.inside(r))) {
             obstaclesList.indices.foreach(i => if (nextPos.inside(obstaclesList(i))) nextTarget = Some(obstaclesList(i)))

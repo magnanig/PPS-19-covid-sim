@@ -6,6 +6,8 @@ import java.awt.{BorderLayout, Color, Graphics, Graphics2D, RenderingHints}
 import java.awt.geom.Ellipse2D
 import java.awt.image.BufferedImage
 import java.io.File
+import java.nio.file.{Files, Paths}
+import java.util.Date
 
 import javax.imageio.ImageIO
 import pps.covid_sim.model.places.Locality.City
@@ -17,6 +19,8 @@ import scala.swing.Dimension
  * Class that manages the creation of a heat map.
  */
 class HeatMap() {
+
+  private val italyOutlineMap: BufferedImage = ImageIO.read(new File("./res/italy_outline_map.png"))
 
   /**
    * Method that draws a heat map representing the situation of the epidemic spread at a certain time.
@@ -37,7 +41,7 @@ class HeatMap() {
     this.setVisible(true)
 
     private class GraphicsComponent(infectionsInADay: SortedMap[City, Int]) extends JComponent {
-      private val italyOutlineMap: BufferedImage = ImageIO.read(new File("./res/italy_outline_map.png"))
+
       private val mapWidth: Int = italyOutlineMap.getWidth
       private val mapHeight: Int = italyOutlineMap.getHeight
 
@@ -54,7 +58,6 @@ class HeatMap() {
 
         infectionsInADay.foreach(elem => {
           val (x, y) = convertGpsCoordsToMapCoords(elem._1.longitude, elem._1.latitude)
-          println(elem._1.name, x, y)
           g2.drawImage(italyOutlineMap, 0, 0, null)
           val spotColor: Color = computeSpotColor((elem._2 * 100) / elem._1.numResidents)
           g2.setColor(spotColor)
@@ -102,5 +105,18 @@ class HeatMap() {
       }
 
     }
+
   }
+
+  /**
+   * Save the heat map in png format.
+   */
+  def saveMapAsPNG(): Unit = {
+    val path = Paths.get("." + File.separator + "sim_res")
+    if (!Files.exists(path)) Files.createDirectory(path)
+    ImageIO.write(italyOutlineMap, "png", new File("." + File.separator + "sim_res" +
+      File.separator + s"heatmap_${new Date().toString}.png"))
+  }
+
 }
+
