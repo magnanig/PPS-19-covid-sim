@@ -1,6 +1,5 @@
 package pps.covid_sim.model.creation.province
 
-import pps.covid_sim.model.places.Locality
 import pps.covid_sim.model.places.Locality.{City, Province, Region}
 import pps.covid_sim.parameters.CreationParameters
 
@@ -44,7 +43,9 @@ private class ProvinceCitiesCreation(val province: Province) {
     val bufferedSource = io.Source.fromFile("res/italy_regions.csv")
     for (line <- bufferedSource.getLines) {
       val Array(id_region, name, _, num_residents, _, _) = line.split(";")
-      regions += (id_region.toInt -> Region(id_region.toInt, name, num_residents.toInt))
+      if (id_region.toInt == province.region.id) {
+        regions += (id_region.toInt -> Region(id_region.toInt, name, num_residents.toInt))
+      }
     }
     bufferedSource.close
   }
@@ -53,8 +54,10 @@ private class ProvinceCitiesCreation(val province: Province) {
     val bufferedSource = io.Source.fromFile("res/italy_provinces.csv")
     for (line <- bufferedSource.getLines) {
       val Array(abbreviation, istat, name, id_region, longitude, latitude) = line.split(";")
-      provinces += (abbreviation -> Province(istat.toInt, name, abbreviation, regions(id_region.toInt),
-        latitude.toDouble, longitude.toDouble))
+      if (province.idProvince == istat.toInt) {
+        provinces += (abbreviation -> Province(istat.toInt, name, abbreviation, regions(id_region.toInt),
+          latitude.toDouble, longitude.toDouble))
+      }
     }
     bufferedSource.close
   }
