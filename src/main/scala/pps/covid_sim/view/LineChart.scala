@@ -33,9 +33,10 @@ case class LineChart(title: String,
   private var chart: JFreeChart = _
   private var plot: XYPlot = _
   private val dataset: XYSeriesCollection = new XYSeriesCollection()
-  private val mainSeries: XYSeries = new XYSeries(legend)
+  //private val mainSeries: XYSeries = new XYSeries(legend)
   private val startLockdownSeries: XYSeries = new XYSeries("Start Lockdown")
   private val endLockdownSeries: XYSeries = new XYSeries("End Lockdown")
+  private var seriesCount = 0
 
   dataset.addSeries(startLockdownSeries)
   dataset.addSeries(endLockdownSeries)
@@ -48,6 +49,10 @@ case class LineChart(title: String,
    * @return              a ChartPanel containing the line chart
    */
   def drawChart(infected: SortedMap[Calendar, Int], avg: Boolean = false): ChartPanel = {
+    seriesCount = seriesCount + 1
+    val seriesName = if (!avg) legend+" "+seriesCount else "AVG"
+    val mainSeries = new XYSeries(seriesName)
+
     infected.zipWithIndex.foreach(elem => mainSeries.add(elem._2, elem._1._2))
     dataset.addSeries(mainSeries)
 
@@ -75,12 +80,12 @@ case class LineChart(title: String,
 
     if (avg) {
       renderer.setSeriesStroke(0, new BasicStroke(2.0f))
-      renderer.setSeriesPaint(dataset.getSeriesIndex(legend), Color.BLACK)
+      renderer.setSeriesPaint(dataset.getSeriesIndex(seriesName), Color.BLACK)
     } else {
-      renderer.setSeriesPaint(dataset.getSeriesIndex(legend), Color.RED)
+      renderer.setSeriesPaint(dataset.getSeriesIndex(seriesName), Color.RED)
     }
 
-    renderer.setSeriesLinesVisible(dataset.getSeriesIndex(legend), true)
+    renderer.setSeriesLinesVisible(dataset.getSeriesIndex(seriesName), true)
 
     plot.setRenderer(renderer)
     plot.setBackgroundPaint(Color.white)

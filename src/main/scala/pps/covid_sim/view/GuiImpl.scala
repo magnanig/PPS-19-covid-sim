@@ -501,6 +501,13 @@ class GuiImpl() extends View {
     }
   }
 
+  override def notifyEndRun(simulation: Simulation ): Unit = {
+    chartSet.foreach {
+      case c if c.yAxisLabel == "Infections" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulation.infected))))
+      case c if c.yAxisLabel == "Recovered" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulation.recovered))))
+    }
+  }
+
   override def notifyStart: Unit = {
     this.clearTabs()
     saveMenu.visible = false
@@ -519,12 +526,12 @@ class GuiImpl() extends View {
     saveMenu.visible = true
 
     chartSet.foreach {
-      case c if c.yAxisLabel == "Infections" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList)))))
-      case c if c.yAxisLabel == "Recovered" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.recovered).toList)))))
+      case c if c.yAxisLabel == "Infections" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList),true))))
+      case c if c.yAxisLabel == "Recovered" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.recovered).toList),true))))
     }
 
     virusStagesChart = LineChart("Evolution of infections over time for each stage", controller.simulationInterval.from, "Days", "Infections", "Infections trend")
-    //this.insertTab(new Page(virusStagesChart.title, convertJavaToScalaComponent(virusStagesChart.drawMultiSeriesChart(simulationsManager.))))//weeklyCovidStages
+    this.insertTab(new Page(virusStagesChart.title, convertJavaToScalaComponent(virusStagesChart.drawMultiSeriesChart(simulationsManager.dayCovidStages))))
     barChart = BarChart("Number of infections per place", "Places", "Infections")
     this.insertTab(new Page(barChart.title, convertJavaToScalaComponent(barChart.drawChart(simulationsManager.average(simulationsManager.map(_.infectionPlaces).toList)))))
 

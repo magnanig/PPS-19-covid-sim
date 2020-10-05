@@ -31,6 +31,7 @@ class ControllerImpl(model: Model, view: View) extends Controller {
   }
 
   override def notifyRunEnded(): Unit = {
+    view.notifyEndRun(model.simulationsManager.currentSimulation)
     model.simulationsManager.runCompleted()
     model.reset()
     if(!model.simulationsManager.hasEnded) {

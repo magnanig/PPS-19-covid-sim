@@ -49,6 +49,11 @@ trait View extends SimpleSwingApplication{
    */
   def notifyEnd(simulationsManager: SimulationsManager[Simulation]): Unit
 
+  /**
+   * Notify the gui that a run has ended.
+   */
+  def notifyEndRun(simulationsManager: Simulation): Unit
+
 
   /**
    * Method called to update the charts and mark the start of the lockdown

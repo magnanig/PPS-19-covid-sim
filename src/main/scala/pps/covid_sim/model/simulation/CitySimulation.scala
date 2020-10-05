@@ -25,9 +25,8 @@ case class CitySimulation(override val area: City) extends Simulation {
   override def deaths: SortedMap[Calendar, Int] = _deaths
 
   override def takeScreenshot(time: Calendar): Unit = {
-    // TODO
     _infected = updateParameter(infected, time, Statistic(PeopleContainer.getPeople.par).numCurrentPositive(area))
-    //_recovered = updateParameter(recovered, time, Statistic(PeopleContainer.getPeople.par).numRecovered(area))
+    _recovered = updateParameter(recovered, time, Statistic(PeopleContainer.getPeople.par).numRecovered(area))
     //_deaths = updateParameter(deaths, time, Statistic(PeopleContainer.getPeople.par).numDeaths(area))
   }
 
