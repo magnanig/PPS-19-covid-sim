@@ -21,7 +21,7 @@ object WorldCreation {
   def create(): Unit = {
     if (!created) {
       regionsCreation()
-      regions.values.foreach(RegionCreation.create)
+      regions.foreach(el => RegionCreation.create(el._2))
       //PeopleContainer.checkAssignedWork()
       created = true
     }

@@ -7,16 +7,18 @@ import org.junit.Test
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple, Single}
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.places.Locality.City
+import pps.covid_sim.model.places.Locality
+import pps.covid_sim.model.places.Locality.{City, Province}
 import pps.covid_sim.model.transports.PrivateTransports.Car
 import pps.covid_sim.model.transports.PublicTransports.{Bus, Carriage, Train}
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
 class TransportsTest {
+  val cityTest: City = City(1, "Forlì", 118000, Province(1, "FC", "Forlì", Locality.Region.EMILIA_ROMAGNA))
 
-  val bus: Bus = Bus(3)
-  val train: Train = Train(2)
-  val car: Car = Car(2)
+  val bus: Bus = Bus(3, cityTest)
+  val train: Train = Train(2, cityTest)
+  val car: Car = Car(2, cityTest)
 
   // Dummy Person implementations, used for testing purposes only
   case class TestPerson(idCode: Int, infected: Boolean) extends Person  {
@@ -191,10 +193,10 @@ class TransportsTest {
   @Test
   def testTrainTurnout(): Unit = {
     enterPeopleFromList(0, commuters.size - 2, commuters, train)
-    assertEquals(Option(Carriage(20)), train.enter(marco, time))
-    assertEquals(Option(Carriage(20)), train.enter(lorenzo, time))
+    assertEquals(Option(Carriage(20, cityTest)), train.enter(marco, time))
+    assertEquals(Option(Carriage(20, cityTest)), train.enter(lorenzo, time))
     train.exit(lorenzo)
-    assertEquals(Option(Carriage(20)), train.enter(nicolas, time))
+    assertEquals(Option(Carriage(20, cityTest)), train.enter(nicolas, time))
     // The train is full
     assertEquals(None, train.enter(lorenzo, time))
   }
@@ -202,11 +204,11 @@ class TransportsTest {
   @Test
   def testTrainGroupTurnout(): Unit = {
     enterPeopleFromList(0, groupCommuters.size - 1, groupCommuters, train)
-    assertEquals(Option(Carriage(20)), train.enter(nicolas, time))
+    assertEquals(Option(Carriage(20, cityTest)), train.enter(nicolas, time))
     // The train has only one seat available: the group cannot enter
     assertEquals(None, train.enter(Multiple(marco.leader, Set(marco.leader, gianmarco.leader)), time))
     assertEquals(39, train.numCurrentPeople)
-    assertEquals(Option(Carriage(20)), train.enter(marco, time))
+    assertEquals(Option(Carriage(20, cityTest)), train.enter(marco, time))
     // Now the train is full
     assertEquals(40, train.numCurrentPeople)
     // A person entered in group cannot exit alone
@@ -224,25 +226,25 @@ class TransportsTest {
   def testExitFromTrainWithNoOneInside(): Unit = {
     train.exit(lorenzo)
     enterPeopleFromList(0, commuters.size - 2, commuters, train)
-    assertEquals(Option(Carriage(20)), train.enter(marco, time))
-    assertEquals(Option(Carriage(20)), train.enter(lorenzo, time))
+    assertEquals(Option(Carriage(20, cityTest)), train.enter(marco, time))
+    assertEquals(Option(Carriage(20, cityTest)), train.enter(lorenzo, time))
     train.exit(marco)
-    assertEquals(Option(Carriage(20)), train.enter(marco, time))
+    assertEquals(Option(Carriage(20, cityTest)), train.enter(marco, time))
   }
 
   @Test
   def testDuplicateEntriesInTrain(): Unit = {
-    assertEquals(Option(Carriage(20)), train.enter(lorenzo, time))
+    assertEquals(Option(Carriage(20, cityTest)), train.enter(lorenzo, time))
     // Lorenzo is already in: this entry is ignored
     assertEquals(Option(train), train.enter(lorenzo, time))
     assertEquals(1, train.numCurrentPeople)
-    assertEquals(Option(Carriage(20)), train.enter(gianmarco, time))
+    assertEquals(Option(Carriage(20, cityTest)), train.enter(gianmarco, time))
     assertEquals(2, train.numCurrentPeople)
   }
 
   @Test
   def testDuplicateGroupEntriesInTrain(): Unit = {
-    assertEquals(Option(Carriage(20)), train.enter(Multiple(people(1),
+    assertEquals(Option(Carriage(20, cityTest)), train.enter(Multiple(people(1),
                                                    Set(people(1), people(2))), time))
     // The group has already entered: the operation has no effect
     assertEquals(Option(train), train.enter(Multiple(people(1),

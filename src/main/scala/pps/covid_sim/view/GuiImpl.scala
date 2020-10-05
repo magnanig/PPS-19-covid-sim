@@ -76,6 +76,8 @@ class GuiImpl() extends View {
   //confirm Button
   val confirmButton = new Button("Conferma")
 
+  var saveMenu: MenuBar = _
+
   override val top: Frame = new MainFrame {
     title = "PPS-19-Covid-Sim"
 
@@ -141,7 +143,7 @@ class GuiImpl() extends View {
     val companyCheckbox = new CheckBox("Aziende")
     val factoryCheckbox = new CheckBox("Fabbriche")
     val shopCheckbox = new CheckBox("Negozi")
-    val fieldCheckbox = new CheckBox("Campi(Calcio)")
+    val fieldCheckbox = new CheckBox("Campi da Calcio")
     val gymCheckbox = new CheckBox("Palestre")
 
     val placeAndCheckMap : Map[CheckBox,Class[_ <:Place]]= Map(beachCheckbox->classOf[Beach],squareCheckbox -> classOf[Square],
@@ -156,7 +158,7 @@ class GuiImpl() extends View {
      * Create a menu bar with a couple of menus and menu items and
      * set the result as this frame's menu bar.
      */
-    menuBar = new MenuBar {
+    saveMenu = new MenuBar {
       contents += new Menu("File") {
         contents += new MenuItem(Action("Save Simulation") {
           chartSet.foreach(c=>c.saveChartAsPNG())
@@ -166,6 +168,8 @@ class GuiImpl() extends View {
         })
       }
     }
+    saveMenu.visible = false
+    menuBar = saveMenu
 
     contents = new BorderPanel {
       import BorderPanel.Position._
@@ -444,10 +448,10 @@ class GuiImpl() extends View {
               println("confirm!!!!")
               //tabs.pages += new Page("Painting", btnPanel.buttons )
               //tabs.pages += new Page("Painting", btnPanel.buttons )
-              var dataInizio: Calendar = ScalaCalendar(yearStartField.text.toInt,monthStartField.text.toInt,dayStartField.text.toInt,0)
-              var dataFine: Calendar = ScalaCalendar(yearEndField.text.toInt,monthEndField.text.toInt,dayEndField.text.toInt,0)
+              var dateFrom: Calendar = ScalaCalendar(yearStartField.text.toInt,monthStartField.text.toInt,dayStartField.text.toInt,0)
+              var dateTo: Calendar = ScalaCalendar(yearEndField.text.toInt,monthEndField.text.toInt,dayEndField.text.toInt,0)
 
-              if(dataInizio < dataFine){//controllo che i dates siano corretti
+              if(dateFrom < dateTo){//controllo che i dates siano corretti
                 //println(placeAndCheckMap)
                 //println(placeAndCheckMap.filter(el=> el._1.selected).map(el=>el._2).toSet)
                 controller.setSimulationParameters(
@@ -467,13 +471,14 @@ class GuiImpl() extends View {
                   lockdownEndField.text.toDouble/100,
                   placeAndCheckMap.filter(el=> el._1.selected).map(el=>el._2).toSet)
 
-                var selectedArea: Area = new Locality.Italy{}
+                var selectedArea: Area = new Locality.Italy
                 if(selectedRegion.isDefined && selectedProvince.isDefined) {
                   selectedArea = selectedProvince.get
-                }else if (selectedRegion.isDefined && selectedProvince.isEmpty){
+                }else if (selectedRegion.isDefined){
                   selectedArea = selectedRegion.get
                 }
-                controller.startSimulation(Provinces.AOSTA/*CitiesObject.getProvince("IS")*/, /*selectedArea*/ dataInizio,dataFine,runsField.text.toInt) // TODO: specificare l'area (es. città o regione...)
+                println(selectedArea)
+                controller.startSimulation(selectedArea, dateFrom,dateTo,runsField.text.toInt) // TODO: specificare l'area (es. città o regione...)
               }else{
                 Dialog.showMessage(contents.head, "The inserted dates are incorrect!", title="You pressed me")
                 confirmButton.visible = true
@@ -502,6 +507,7 @@ class GuiImpl() extends View {
 
   override def notifyStart: Unit = {
     this.clearTabs()
+    saveMenu.visible = false
     this.insertTab(new Page("Waiting" ,
       new BoxPanel(Orientation.Vertical) {
         contents += new Label("In attesa fine simulazione..")
@@ -510,14 +516,12 @@ class GuiImpl() extends View {
     chartSet = Set(LineChart("Evolution of infections over time", controller.simulationInterval.from, "Days", "Infections", "Infections trend"),
       LineChart("Evolution of recovered over time", controller.simulationInterval.from, "Days", "Recovered", "Recovered trend"),
       /*LineChart("Evolution of deaths over time", controller.simulationInterval.from, "Days", "Deaths", "Deaths trend")*/)
-    //aggiungere anche gli altri
-
-    //aggiungere al set
 
   }
 
   override def notifyEnd(simulationsManager: SimulationsManager[Simulation] ): Unit = {
     this.clearTabs()
+    saveMenu.visible = true
 
     //chartSet.foreach(c=>this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList))))))
 

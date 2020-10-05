@@ -2,10 +2,13 @@ package pps.covid_sim.model.transports
 
 import java.util.Calendar
 
+import pps.covid_sim.model.container.CitiesContainer
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.Locality.{City, Region}
 import pps.covid_sim.model.places.{Locations, Place}
 import pps.covid_sim.util.time.HoursInterval
+
+import scala.util.Random
 
 /**
  * Different kind of public transports.
@@ -27,6 +30,10 @@ object PublicTransports {
     def setCoveredCities(newSet: Set[City]): Unit = {
       _coveredCities = newSet
     }
+    /**
+     * Method called to get the cities covered from the line.
+     */
+    def coveredCities:Set[City] = _coveredCities
 
     /**
      * Attempt to use a line.
@@ -70,7 +77,12 @@ object PublicTransports {
                      capacity: Int,
                      override val scheduledTime: HoursInterval) extends Line {
 
-    val busList: Seq[Bus] = (1 to buses) map (_ => Bus(capacity))
+    var busList: Seq[Bus] = _
+
+    override def setCoveredCities(cities: Set[City]): Unit = {
+      super.setCoveredCities(cities)
+      busList = (1 to buses) map (_ => Bus(capacity,cities.toVector(new Random().nextInt(cities.size))))
+    }
 
     /**
      * Attempt to use the bus line.
@@ -114,7 +126,17 @@ object PublicTransports {
                        coveredRegion: Region,
                        override val scheduledTime: HoursInterval) extends Line {
 
-    val trainList: Seq[Train] = (1 to trains) map (_ => Train(carriages))
+
+    var trainList: Seq[Train] = _
+
+    override def setCoveredCities(cities: Set[City]): Unit = {
+      super.setCoveredCities(cities)
+      trainList = (1 to trains) map (_ => Train(carriages,cities.toVector(new Random().nextInt(cities.size))))
+    }
+
+
+
+
 
     /**
      * Attempt to use the train line.
@@ -141,18 +163,20 @@ object PublicTransports {
 
   }
 
-  case class Bus(override val capacity: Int) extends PublicTransport {
+  case class Bus(override val capacity: Int, city :City) extends PublicTransport {
 
   }
 
-  case class Carriage(override val capacity: Int) extends Transport {
+  case class Carriage(override val capacity: Int, city :City) extends Transport {
 
   }
 
-  case class Train(carriages: Int) extends PublicTransport {
+  case class Train(carriages: Int, city: City) extends PublicTransport {
 
     val carriageCapacity: Int = 20
-    val carriageList: Seq[Carriage] = (1 to carriages) map (_ => Carriage(carriageCapacity))
+
+    val carriageList: Seq[Carriage] = (1 to carriages) map (_ => Carriage(carriageCapacity, city))
+
     override val capacity: Int = carriageCapacity * carriages
 
     override def preEnter(group: Group, time: Calendar): Option[Locations.LimitedPeopleLocation] = {

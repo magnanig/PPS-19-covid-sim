@@ -2,7 +2,7 @@ package pps.covid_sim.parameters
 
 object CreationParameters {
 
-  val citizensPercentage = 1 //0.25
+  val citizensPercentage = 0.02 //0.25
   val minCitizens = 100
 
   val oneHundredPercent = 100.0

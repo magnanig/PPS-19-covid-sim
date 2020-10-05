@@ -44,9 +44,7 @@ private class ProvinceCitiesCreation(val province: Province) {
     val bufferedSource = io.Source.fromFile("res/italy_regions.csv")
     for (line <- bufferedSource.getLines) {
       val Array(id_region, name, _, num_residents, _, _) = line.split(";")
-      if (name.equals(Locality.Region.VALLE_DAOSTA.name)) {
-        regions += (id_region.toInt -> Region(id_region.toInt, name, num_residents.toInt))
-      }
+      regions += (id_region.toInt -> Region(id_region.toInt, name, num_residents.toInt))
     }
     bufferedSource.close
   }
@@ -55,10 +53,8 @@ private class ProvinceCitiesCreation(val province: Province) {
     val bufferedSource = io.Source.fromFile("res/italy_provinces.csv")
     for (line <- bufferedSource.getLines) {
       val Array(abbreviation, istat, name, id_region, longitude, latitude) = line.split(";")
-      if (abbreviation.equals("AO")) {
-        provinces += (abbreviation -> Province(istat.toInt, name, abbreviation, regions(id_region.toInt),
-          latitude.toDouble, longitude.toDouble))
-      }
+      provinces += (abbreviation -> Province(istat.toInt, name, abbreviation, regions(id_region.toInt),
+        latitude.toDouble, longitude.toDouble))
     }
     bufferedSource.close
   }
