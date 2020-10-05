@@ -6,7 +6,6 @@ import pps.covid_sim.model.container.CitiesContainer
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{Area, City}
 import pps.covid_sim.model.places.Locations.Location
-import pps.covid_sim.model.places.Place
 import pps.covid_sim.util.Statistic
 import pps.covid_sim.util.time.DatesInterval
 
@@ -60,6 +59,10 @@ case class SimulationsManager[+S <: Simulation](simulations: Seq[S],
       .groupBy(_._1)
       .mapValues(_.map(_._2).sum)
     )).toMap
+
+  def dayCovidStages: Map[Int, SortedMap[Calendar, Int]] = covidStages.values.flatten.toMap.keySet
+      .map(stage => stage -> (SortedMap[Calendar, Int]() ++
+        covidStages.map(e => e._1 -> e._2.getOrElse(stage, 0)))).toMap
 
   override def iterator: Iterator[S] = simulations.iterator
 
