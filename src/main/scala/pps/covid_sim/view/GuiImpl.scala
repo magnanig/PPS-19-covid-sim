@@ -1,5 +1,4 @@
 package pps.covid_sim.view
-import java.awt.Dimension
 import java.util.Calendar
 
 import javax.swing.JPanel
@@ -15,7 +14,6 @@ import pps.covid_sim.model.places.Shops.Shop
 import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.simulation.SimulationsManager.classOrdering
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
-import pps.covid_sim.util.time.Time
 import pps.covid_sim.util.time.Time.ScalaCalendar
 import pps.covid_sim.view.viewUtil.Checkers._
 
@@ -40,7 +38,7 @@ class GuiImpl() extends View {
     //aggiunta dei diversi grafici
     pages += new Page("Waiting" ,
       new BoxPanel(Orientation.Vertical) {
-        contents += new Label("In attesa insrimento parametri..")
+        contents += new Label("Waiting for input parameters...")
       })
   }
 
@@ -69,13 +67,13 @@ class GuiImpl() extends View {
     confirmButton.visible = true
   }
 
-  var chartSet: Set[LineChart] = _
+  var chartSet: Set[LineChart] = Set()
   var virusStagesChart: LineChart = _
-  var weeklyStages: Seq[PieChart] = _
+  var weeklyStages: Seq[PieChart] = Seq()
   var barChart: BarChart = _
 
   //confirm Button
-  val confirmButton = new Button("Conferma")
+  val confirmButton = new Button("Confirm")
 
   var saveMenu: MenuBar = _
 
@@ -95,7 +93,6 @@ class GuiImpl() extends View {
     maxInfectionDetectionTimeField.text = "7"
     val multipleInfectionProbabilityField = new TextField(3)
     multipleInfectionProbabilityField.text = "10"
-    //val asymptomaticAgeField = new TextField(3)
 
     val cunningAsymptomaticField = new TextField(3)
     cunningAsymptomaticField.text = "20"
@@ -131,21 +128,21 @@ class GuiImpl() extends View {
     runsField.text = "1"
 
     //CheckBoxes
-    val beachCheckbox = new CheckBox("Spiagge")
-    val squareCheckbox = new CheckBox("Piazze")
-    val parkCheckbox = new CheckBox("Parchi")
-    val resturantCheckbox = new CheckBox("Ristoranti")
+    val beachCheckbox = new CheckBox("Beaches")
+    val squareCheckbox = new CheckBox("Squares")
+    val parkCheckbox = new CheckBox("Parks")
+    val resturantCheckbox = new CheckBox("Restaurants")
     val pubCheckbox = new CheckBox("Pubs")
-    val barCheckbox = new CheckBox("Bar")
-    val discoCheckbox = new CheckBox("Discoteche")
-    val openDiscoCheckbox = new CheckBox("Discoteche all'aperto")
-    val schoolCheckbox = new CheckBox("Scuole")
-    val universityCheckBox = new CheckBox("Università")
-    val companyCheckbox = new CheckBox("Aziende")
-    val factoryCheckbox = new CheckBox("Fabbriche")
-    val shopCheckbox = new CheckBox("Negozi")
-    val fieldCheckbox = new CheckBox("Campi da calcio")
-    val gymCheckbox = new CheckBox("Palestre")
+    val barCheckbox = new CheckBox("Bars")
+    val discoCheckbox = new CheckBox("Discos")
+    val openDiscoCheckbox = new CheckBox("Open Discos")
+    val schoolCheckbox = new CheckBox("Schools")
+    val universityCheckBox = new CheckBox("Universities")
+    val companyCheckbox = new CheckBox("Companies")
+    val factoryCheckbox = new CheckBox("Factories")
+    val shopCheckbox = new CheckBox("Shops")
+    val fieldCheckbox = new CheckBox("Soccer fields")
+    val gymCheckbox = new CheckBox("Gyms")
 
     val placeAndCheckMap : Map[CheckBox,Class[_ <:Place]]= Map(beachCheckbox->classOf[Beach],squareCheckbox -> classOf[Square],
       parkCheckbox -> classOf[Park], resturantCheckbox -> classOf[Restaurant], pubCheckbox -> classOf[Pub], barCheckbox -> classOf[Bar],
@@ -195,8 +192,7 @@ class GuiImpl() extends View {
        */
       val leftPanel: BoxPanel = new BoxPanel(Orientation.Vertical){
 
-        var regionComboboxItems: Seq[String] = Seq(Locality.Italy().name)//ci stanno le regioni
-        //val italy : Area = new Locality.Italy()
+        var regionComboboxItems: Seq[String] = Seq(Locality.Italy().name)
 
         val regionSet: Set[Region] = CitiesObject.getRegions
         regionComboboxItems ++= regionSet.map(r=>r.name)
@@ -209,7 +205,6 @@ class GuiImpl() extends View {
           listenTo(el._2.selection)
           reactions += {
             case SelectionChanged(el._2) =>
-              print(el._2.selection.item)
               if (el._2.selection.item == "Seleziona") {
                 selectedProvince = Option.empty
               } else {
@@ -222,8 +217,7 @@ class GuiImpl() extends View {
         val regionComboBox: ComboBox[String]= new ComboBox[String](regionComboboxItems)
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>Simulazione di/dell':</p></html>")
-          //val probInfectionField = new TextField(3)
+          contents += new Label("<html><p>Simulation of:</p></html>")
           contents += regionComboBox
 
           provincesSetOfCombobox.foreach(el=> {
@@ -239,9 +233,7 @@ class GuiImpl() extends View {
           reactions += {
             case EditDone(`runsField`) => checkPositive(runsField)
             case SelectionChanged(`regionComboBox`) =>
-              println(regionComboBox.selection.item)
               if (regionComboBox.selection.item == "Italia") {
-                //provinceComboBox.visible = false
                 provincesSetOfCombobox.foreach(el=> {
                   el._2.visible = false
                 })
@@ -264,13 +256,13 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("Data Inizio:")
+          contents += new Label("Start date:")
           contents += dayStartField
           contents += new Label("-")
           contents += monthStartField
           contents += new Label("-")
           contents += yearStartField
-          contents += new Label(" Data Fine:")
+          contents += new Label(" End date:")
           contents += dayEndField
           contents += new Label("-")
           contents += monthEndField
@@ -288,8 +280,7 @@ class GuiImpl() extends View {
           }
         }
         contents += new FlowPanel {
-          contents += new Label("<html><p>Probabilità contagio al netto di mascherine e distanziamento sociale:</p></html>")//contagionProbability
-          //val probInfectionField = new TextField(3)
+          contents += new Label("<html><p>Probability of contagion net of masks and social distancing:</p></html>")//contagionProbability
           contents += probInfectionField
           contents += new Label("%")
 
@@ -300,9 +291,9 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>Tempo minimo di guarigione dal virus:</p></html>")//minInfectionDetectionTime
+          contents += new Label("<html><p>Minimum time of recovery from the virus:</p></html>")//minInfectionDetectionTime
           contents += minHealingTimingField
-          contents += new Label("Giorni")
+          contents += new Label("days")
           listenTo(minHealingTimingField)
           reactions += {
             case EditDone(`minHealingTimingField`) => checkPositive(minHealingTimingField)
@@ -310,9 +301,9 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>Tempo massimo di guarigione dal virus:</p></html>")//maxInfectionDetectionTime
+          contents += new Label("<html><p>Maximum time of recovery from the virus:</p></html>")//maxInfectionDetectionTime
           contents += maxHealingTimingField
-          contents += new Label("Giorni")
+          contents += new Label("days")
           listenTo(maxHealingTimingField)
           reactions += {
             case EditDone(`maxHealingTimingField`) => checkPositive(maxHealingTimingField)
@@ -320,9 +311,9 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>Tempo minimo di riconoscimento dal virus:</p></html>")//minInfectionDetectionTime
+          contents += new Label("<html><p>Minimum time to detect the virus:</p></html>")//minInfectionDetectionTime
           contents += minInfectionDetectionTimeField
-          contents += new Label("Giorni")
+          contents += new Label("days")
           listenTo(minInfectionDetectionTimeField)
           reactions += {
             case EditDone(`minInfectionDetectionTimeField`) => checkPositive(minInfectionDetectionTimeField)
@@ -330,17 +321,16 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>Tempo massimo di riconoscimento dal virus:</p></html>")//maxInfectionDetectionTime
+          contents += new Label("<html><p>Maximum time to detect the virus:</p></html>")//maxInfectionDetectionTime
           contents += maxInfectionDetectionTimeField
-          contents += new Label("Giorni")
+          contents += new Label("days")
           listenTo(maxInfectionDetectionTimeField)
           reactions += {
             case EditDone(`maxInfectionDetectionTimeField`) => checkPositive(maxInfectionDetectionTimeField)
           }
         }
         contents += new FlowPanel {
-          contents += new Label("<html><p>Percentuale di asintomatici che riescono ad accorgiersi di essere infetti:</p></html>")//asymptomaticDetectionCondProbability
-          //val cunningAsymptomaticField = new TextField(3)
+          contents += new Label("<html><p>Percentage of asymptomatic of people who realize they are infected:</p></html>")//asymptomaticDetectionCondProbability
           contents += cunningAsymptomaticField
           contents += new Label("%")
           listenTo(cunningAsymptomaticField)
@@ -350,8 +340,7 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>Distanza ad di sopra della quale è garantito che il virus non può transitare da persona a persona:</p></html>")//safeZone
-          //val distField = new TextField(3)
+          contents += new Label("<html><p>Distance above which it is guaranteed that the virus cannot be transmitted between people:</p></html>")//safeZone
           contents += distField
           contents += new Label("cm")
           listenTo(distField)
@@ -361,8 +350,7 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>Percentuale di persone che violano l'isolamento (lockdown o accertata positività):</p></html>")//notRespectingIsolationMaxProbability
-          //val breakingPeopkeField = new TextField(3)
+          contents += new Label("<html><p>Percentage of people that violate isolation (lockdown or positivity ascertained):</p></html>")//notRespectingIsolationMaxProbability
           contents += breakingPeopkeField
           contents += new Label("%")
           listenTo(breakingPeopkeField)
@@ -372,8 +360,7 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>Percentuale di persone che indossano la mascherina nei posti dove richiesto:</p></html>")//minMaskProbability    max è sempre 1
-          //val peopleWearingMaskField = new TextField(3)
+          contents += new Label("<html><p>Percentage of people who wears mask where required:</p></html>")//minMaskProbability
           contents += peopleWearingMaskField
           contents += new Label("%")
           listenTo(peopleWearingMaskField)
@@ -383,8 +370,7 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>Percentuale di persone che rispettano le distanze di sicurezza:</p></html>")
-          //val peopleSecureDistanceField = new TextField(3)
+          contents += new Label("<html><p>Percentage of people who respect safety distances:</p></html>")
           contents += peopleSecureDistanceField
           contents += new Label("%")
           listenTo(peopleSecureDistanceField)
@@ -393,8 +379,7 @@ class GuiImpl() extends View {
           }
         }
         contents += new FlowPanel {
-          contents += new Label("<html><p>Percentuale di persone per far partire il lockdown:</p></html>")//lockDownStart
-          //val peopleSecureDistanceField = new TextField(3)
+          contents += new Label("<html><p>Percentage of infected people needed to start lockdown:</p></html>")//lockDownStart
           contents += lockdownStartField
           contents += new Label("%")
           listenTo(lockdownStartField)
@@ -404,8 +389,7 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>Percentuale di persone per fermare lockdown ruspetto max infezioni precedente:</p></html>")//percentage respect with last max infections
-          //val peopleSecureDistanceField = new TextField(3)
+          contents += new Label("<html><p>Percentage of infected people needed to end lockdown (compared to last peak of contagious):</p></html>")//percentage respect with last max infections
           contents += lockdownEndField
           contents += new Label("%")
           listenTo(lockdownEndField)
@@ -415,8 +399,7 @@ class GuiImpl() extends View {
         }
 
         contents += new BoxPanel(Orientation.Horizontal) {
-          border = CompoundBorder(TitledBorder(EtchedBorder, "Posti chiusi nel LockDown"), EmptyBorder(5, 5, 5, 10))
-          //contents += new Label("Quali locali e strutture chiudere")
+          border = CompoundBorder(TitledBorder(EtchedBorder, "Closed places during lockdown"), EmptyBorder(5, 5, 5, 10))
           contents += new Component {
 
             contents += new BoxPanel(Orientation.Vertical) {
@@ -429,7 +412,6 @@ class GuiImpl() extends View {
               contents ++= Seq(companyCheckbox,factoryCheckbox , shopCheckbox, fieldCheckbox,gymCheckbox)
             }
           }
-          //contents ++= Seq(beachCheckbox,squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox, barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox,companyCheckbox,factoryCheckbox , shopCheckbox, fieldCheckbox,gymCheckbox)
         }
 
         contents +=  new BorderPanel {
@@ -440,17 +422,10 @@ class GuiImpl() extends View {
 
               confirmButton.visible = false
               //check che i valori obbligatori siano inseriti
-              //valori: beachCheckbox,squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox, barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox,companyCheckbox,factoryCheckbox , shopCheckbox, fieldCheckbox,gymCheckbox
-              //li usi per fare partire la simulazione
-              println("confirm!!!!")
-              //tabs.pages += new Page("Painting", btnPanel.buttons )
-              //tabs.pages += new Page("Painting", btnPanel.buttons )
               val dateFrom: Calendar = ScalaCalendar(yearStartField.text.toInt,monthStartField.text.toInt,dayStartField.text.toInt)
               val dateTo: Calendar = ScalaCalendar(yearEndField.text.toInt,monthEndField.text.toInt,dayEndField.text.toInt)
 
               if(dateFrom < dateTo){//controllo che i dates siano corretti
-                //println(placeAndCheckMap)
-                //println(placeAndCheckMap.filter(el=> el._1.selected).map(el=>el._2).toSet)
                 controller.setSimulationParameters(
                   distField.text.toDouble/10,
                   minHealingTimingField.text.toInt,
@@ -474,7 +449,6 @@ class GuiImpl() extends View {
                 }else if (selectedRegion.isDefined){
                   selectedArea = selectedRegion.get
                 }
-                println(selectedArea)
                 controller.startSimulation(selectedArea, dateFrom,dateTo,runsField.text.toInt)
               }else{
                 Dialog.showMessage(contents.head, "The inserted dates are incorrect!", title="Warning")
@@ -484,7 +458,7 @@ class GuiImpl() extends View {
         }
       }
 
-      val center: SplitPane = new SplitPane(Orientation.Vertical, leftPanel, tabs) {//qui ci metteremo i grafici nelle tabs
+      val center: SplitPane = new SplitPane(Orientation.Vertical, leftPanel, tabs) {
         oneTouchExpandable = true
         continuousLayout = true
       }
@@ -513,7 +487,7 @@ class GuiImpl() extends View {
     saveMenu.visible = false
     this.insertTab(new Page("Waiting" ,
       new BoxPanel(Orientation.Vertical) {
-        contents += new Label("In attesa fine simulazione..")
+        contents += new Label("Waiting for simulation..")
       }))
   //creare i chart
     chartSet = Set(LineChart("Evolution of infections over time", controller.simulationInterval.from, "Days", "Infections", "Infections trend"),
@@ -526,8 +500,8 @@ class GuiImpl() extends View {
     saveMenu.visible = true
 
     chartSet.foreach {
-      case c if c.yAxisLabel == "Infections" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList),true))))
-      case c if c.yAxisLabel == "Recovered" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.recovered).toList),true))))
+      case c if c.yAxisLabel == "Infections" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList),avg = true))))
+      case c if c.yAxisLabel == "Recovered" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.recovered).toList),avg = true))))
     }
 
     virusStagesChart = LineChart("Evolution of infections over time for each stage", controller.simulationInterval.from, "Days", "Infections", "Infections trend")
@@ -535,7 +509,12 @@ class GuiImpl() extends View {
     barChart = BarChart("Number of infections per place", "Places", "Infections")
     this.insertTab(new Page(barChart.title, convertJavaToScalaComponent(barChart.drawChart(simulationsManager.average(simulationsManager.map(_.infectionPlaces).toList)))))
 
-    simulationsManager.weeklyCovidStages.zipWithIndex.foreach(w=> this.insertTab(new Page("Week "+ (w._2+1),convertJavaToScalaComponent(PieChart("Week "+ (w._2+1)).drawChart((w._1)._2)))))
+    simulationsManager.weeklyCovidStages.zipWithIndex.foreach(w=>{
+      val pie = PieChart("Week "+ (w._2+1))
+
+      this.insertTab(new Page("Week "+ (w._2+1),convertJavaToScalaComponent(pie.drawChart(w._1._2))))
+      weeklyStages :+ pie
+    })
 
     //heat
     this.insertTab(new Page("HeatMap Infections",convertJavaToScalaComponent(new HeatMap().drawMap(simulationsManager.citiesInfection.last._2))))
