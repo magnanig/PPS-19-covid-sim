@@ -37,13 +37,7 @@ class ControllerImpl(model: Model, view: View) extends Controller {
       startActors(model.simulationsManager)
     } else {
       view.notifyEnd(model.simulationsManager)
-      view.setVisibleConfirmButton()//riattiva il button
-    }
-  }
-
-  private def convertJavaToScalaComponent(panel: JPanel): Component = {
-    new Component {
-      override lazy val peer: JPanel = panel
+      view.setVisibleConfirmButton() //riattiva il button
     }
   }
 

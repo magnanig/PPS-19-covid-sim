@@ -33,7 +33,6 @@ class ModelImpl extends Model {
       case Italy() => WorldCreation.create()
       case region: Region => RegionCreation.create(region)
       case province: Province => ProvinceCreation.create(province)
-      // case city: City => ProvinceCreation.create(city.province)
     }
     places = PlacesContainer.getPlaces.par
     _people = PeopleContainer.getPeople.take(1000).par
@@ -60,7 +59,6 @@ class ModelImpl extends Model {
 
   override def tick(time: Calendar): Unit = {
     places.foreach(place => place.propagateVirus(time, place)(covidInfectionParameters))///TODO tolta per testare!
-    //TODO [PASO]
     // trainLines.trains.foreach(transport => transport.propagateVirus(time, transport))
     // busLines.busses.foreach(transport => transport.propagateVirus(time, transport))
     if(time.hour == 0) {

@@ -143,8 +143,6 @@ class GuiImpl() extends View {
     val shopCheckbox = new CheckBox("Negozi")
     val fieldCheckbox = new CheckBox("Campi(Calcio)")
     val gymCheckbox = new CheckBox("Palestre")
-    //val placeToCloseBox :Seq[CheckBox] = Seq(beachCheckbox,squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox, barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox,companyCheckbox,factoryCheckbox , shopCheckbox, gymCheckbox /*, fieldCheckbox*/)
-    //val placeToCloseList :Seq[Class[_ <:Place]] = Seq(classOf[Beach],classOf[Square],classOf[Park],classOf[Restaurant],classOf[Pub],classOf[Bar], classOf[Disco] ,classOf[OpenDisco],classOf[School], classOf[University],classOf[Company],classOf[Factory] , classOf[Shop],classOf[Gym] /*, classOf[Field]*/)
 
     val placeAndCheckMap : Map[CheckBox,Class[_ <:Place]]= Map(beachCheckbox->classOf[Beach],squareCheckbox -> classOf[Square],
       parkCheckbox -> classOf[Park], resturantCheckbox -> classOf[Restaurant], pubCheckbox -> classOf[Pub], barCheckbox -> classOf[Bar],
@@ -159,22 +157,12 @@ class GuiImpl() extends View {
      * set the result as this frame's menu bar.
      */
     menuBar = new MenuBar {
-      contents += new Menu("Authors") {
-        //probably if we want to use these components we should declare them out of this method
-        contents += new Label("Sutera Lorenzo")
-        contents += new Label("Magnani Gianmarco")
-        contents += new Label("Meluzzi Marco")
-        contents += new Label("Pasolini Nicolas")
-      }
       contents += new Menu("File") {
         contents += new MenuItem(Action("Save Simulation") {
           chartSet.foreach(c=>c.saveChartAsPNG())
           virusStagesChart.saveChartAsPNG()
           weeklyStages.foreach(c=>c.saveChartAsPNG())
           barChart.saveChartAsPNG()
-        })
-        contents += new MenuItem(Action("Load Simulation") {
-          println("Action '" + title + "' invoked")
         })
       }
     }

@@ -78,7 +78,6 @@ class MovementsTest {
     (0 until 5).foreach(i => discoRoom.enter(groupsOfTwo(i), time))
     (0 until 5).foreach(i => discoRoom.enter(groupsOfThree(i), time))
     discoRoom.currentGroups.flatten.foreach(_.position = Coordinates.randomOnBorder(discoRoom.dimension))
-    //println(discoRoom.currentGroups.flatten.map(person => person.position).toList)
     println(discoRoom.dimension)
 
     val pathsSampling = randomPath(discoRoom.dimension, discoRoom.obstacles, Speed.FAST, 1)
