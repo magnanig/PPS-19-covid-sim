@@ -99,8 +99,6 @@ case class LineChart(title: String,
     chart.setTitle(new TextTitle(title, Font("Sans Serif", Font.Bold, 18)))
 
     val chartPanel = new ChartPanel(chart)
-    chartPanel.setBackground(Color.white)
-
     chartPanel
   }
 

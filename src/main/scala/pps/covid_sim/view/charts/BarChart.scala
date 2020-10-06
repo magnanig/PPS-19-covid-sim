@@ -1,5 +1,7 @@
 package pps.covid_sim.view.charts
 
+import java.awt.Color
+
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.chart.{ChartFactory, ChartPanel, JFreeChart}
 import org.jfree.data.category.DefaultCategoryDataset
@@ -37,6 +39,11 @@ case class BarChart(title: String,
       dataset,
       PlotOrientation.VERTICAL,
       true, true, false)
+
+    val plot = chart.getCategoryPlot
+    plot.setBackgroundPaint(Color.white)
+    plot.setDomainGridlinePaint(Color.black)
+    plot.setRangeGridlinePaint(Color.black)
 
     val chartPanel = new ChartPanel(chart)
     chartPanel
