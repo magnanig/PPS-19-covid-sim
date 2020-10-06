@@ -75,8 +75,6 @@ class GuiImpl() extends View {
   //confirm Button
   val confirmButton = new Button("Confirm")
 
-  var saveMenu: MenuBar = _
-
   override val top: Frame = new MainFrame {
     title = "PPS-19-Covid-Sim"
 
@@ -135,7 +133,7 @@ class GuiImpl() extends View {
     val pubCheckbox = new CheckBox("Pubs")
     val barCheckbox = new CheckBox("Bars")
     val discoCheckbox = new CheckBox("Discos")
-    val openDiscoCheckbox = new CheckBox("Open Discos")
+    val openDiscoCheckbox = new CheckBox("Open discos")
     val schoolCheckbox = new CheckBox("Schools")
     val universityCheckBox = new CheckBox("Universities")
     val companyCheckbox = new CheckBox("Companies")
@@ -467,10 +465,9 @@ class GuiImpl() extends View {
 
   override def notifyStart: Unit = {
     this.clearTabs()
-    saveMenu.visible = false
     this.insertTab(new Page("Waiting" ,
       new BoxPanel(Orientation.Vertical) {
-        contents += new Label("Waiting for simulation..")
+        contents += new Label("Waiting for simulation...")
       }))
   //creare i chart
     chartSet = Set(LineChart("Evolution of infections over time", controller.simulationInterval.from, "Days", "Infections", "Infections trend"),
@@ -480,7 +477,6 @@ class GuiImpl() extends View {
 
   override def notifyEnd(simulationsManager: SimulationsManager[Simulation] ): Unit = {
     this.clearTabs()
-    saveMenu.visible = true
 
     chartSet.foreach {
       case c if c.yAxisLabel == "Infections" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.infected).toList),avg = true))))
