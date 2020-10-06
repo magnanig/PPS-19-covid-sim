@@ -1,13 +1,12 @@
-package pps.covid_sim.view
+package pps.covid_sim.view.charts
 
-import javax.swing.JComponent
-import javax.swing.JPanel
-import java.awt.{BorderLayout, Color, Graphics, Graphics2D, RenderingHints}
 import java.awt.geom.Ellipse2D
 import java.awt.image.BufferedImage
+import java.awt._
 import java.io.File
 
 import javax.imageio.ImageIO
+import javax.swing.{JComponent, JPanel}
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.parameters.CreationParameters
 

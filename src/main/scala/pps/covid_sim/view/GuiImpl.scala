@@ -15,6 +15,7 @@ import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.simulation.SimulationsManager.classOrdering
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
 import pps.covid_sim.util.time.Time.ScalaCalendar
+import pps.covid_sim.view.charts.{BarChart, HeatMap, LineChart, PieChart}
 import pps.covid_sim.view.viewUtil.Checkers._
 
 import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}
@@ -467,8 +468,8 @@ class GuiImpl() extends View {
         contents += new Label("Waiting for simulation...")
       }))
   //creare i chart
-    chartSet = Set(LineChart("Evolution of infections over time", controller.simulationInterval.from, "Days", "Infections", "Infections trend"),
-      LineChart("Evolution of recovered over time", controller.simulationInterval.from, "Days", "Recovered", "Recovered trend"))
+    chartSet = Set(charts.LineChart("Evolution of infections over time", controller.simulationInterval.from, "Days", "Infections", "Infections trend"),
+      charts.LineChart("Evolution of recovered over time", controller.simulationInterval.from, "Days", "Recovered", "Recovered trend"))
 
   }
 
@@ -480,7 +481,7 @@ class GuiImpl() extends View {
       case c if c.yAxisLabel == "Recovered" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulationsManager.average(simulationsManager.map(_.recovered).toList),avg = true))))
     }
 
-    virusStagesChart = LineChart("Evolution of infections over time for each stage", controller.simulationInterval.from, "Days", "Infections", "Infections trend")
+    virusStagesChart = charts.LineChart("Evolution of infections over time for each stage", controller.simulationInterval.from, "Days", "Infections", "Infections trend")
     this.insertTab(new Page(virusStagesChart.title, convertJavaToScalaComponent(virusStagesChart.drawMultiSeriesChart(simulationsManager.dayCovidStages))))
     barChart = BarChart("Number of infections per place", "Places", "Infections")
     this.insertTab(new Page(barChart.title, convertJavaToScalaComponent(barChart.drawChart(simulationsManager.average(simulationsManager.map(_.infectionPlaces).toList)))))
