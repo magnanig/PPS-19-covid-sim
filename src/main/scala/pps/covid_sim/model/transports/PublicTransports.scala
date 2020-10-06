@@ -55,8 +55,8 @@ object PublicTransports {
      * @param location      the desired destination
      * @return              true if the line covers that area, false otherwise
      */
-    def isReachable(location: Place): Boolean = {
-      _coveredCities.contains(location.city)
+    def isReachable(location: City): Boolean = {
+      _coveredCities.contains(location)
     }
 
   }

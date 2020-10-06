@@ -81,7 +81,7 @@ class LineTest {
 
   @Test
   def testBusLineUsage(): Unit = {
-    assertTrue(busLine.isReachable(place))
+    assertTrue(busLine.isReachable(place.city))
     assertEquals(Some(Bus(2)), busLine.tryUse(lorenzo, time))
     // Lorenzo is already in: this entry is ignored
     assertEquals(None, busLine.tryUse(lorenzo, time))
@@ -126,7 +126,7 @@ class LineTest {
 
   @Test
   def testTrainLineUsage(): Unit = {
-    assertTrue(trainLine.isReachable(place))
+    assertTrue(trainLine.isReachable(place.city))
     enterPeopleFromList(0, commuters.size, commuters, trainLine)
     // The line is full
     assertEquals((None, None), trainLine.tryUse(lorenzo, time))
