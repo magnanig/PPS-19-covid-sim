@@ -2,7 +2,7 @@ package pps.covid_sim.controller
 
 import java.util.Calendar
 
-import pps.covid_sim.controller.actors.ActorsCoordination
+import pps.covid_sim.controller.actors.coordinators.ActorsCoordination
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.Area
 import pps.covid_sim.model.places.Place

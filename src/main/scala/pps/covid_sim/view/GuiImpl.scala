@@ -20,7 +20,7 @@ import pps.covid_sim.view.viewUtil.Checkers._
 import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}
 import scala.swing.TabbedPane.Page
 import scala.swing.event.{ButtonClicked, EditDone, SelectionChanged}
-import scala.swing.{BorderPanel, BoxPanel, Button, CheckBox, ComboBox, Component, Dialog, FlowPanel, Frame, Label, ListView, MainFrame, MenuBar, Orientation, SplitPane, TabbedPane, TextField}
+import scala.swing.{BorderPanel, BoxPanel, Button, CheckBox, ComboBox, Component, Dialog, FlowPanel, Frame, Label, ListView, MainFrame, Orientation, SplitPane, TabbedPane, TextField}
 
 class GuiImpl() extends View {
 
@@ -174,12 +174,10 @@ class GuiImpl() extends View {
       val leftPanel: BoxPanel = new BoxPanel(Orientation.Vertical){
 
         var regionComboboxItems: Seq[String] = Seq(Locality.Italy().name)
-
         val regionSet: Set[Region] = CitiesObject.getRegions
         regionComboboxItems ++= regionSet.map(r=>r.name)
 
         val provinceSet: Set[Province] = regionSet.flatMap(r => CitiesObject.getProvince(r))
-
         val provincesSetOfCombobox: Map[Region,ComboBox[String]] = regionSet.map(r=>(r, new ComboBox[String]("Seleziona"+:CitiesObject.getProvince(r).map(p=>p.name).toSeq))).toMap    //regionSet.flatMap(r=> (r => CitiesObject.getProvince(r)))
 
         provincesSetOfCombobox.foreach(el=>{
@@ -205,7 +203,6 @@ class GuiImpl() extends View {
             contents += el._2
             el._2.visible = false
           })
-
 
           //runs
           contents += new Label("   Runs:")
@@ -463,7 +460,7 @@ class GuiImpl() extends View {
     }
   }
 
-  override def notifyStart: Unit = {
+  override def notifyStart(): Unit = {
     this.clearTabs()
     this.insertTab(new Page("Waiting" ,
       new BoxPanel(Orientation.Vertical) {
@@ -488,14 +485,14 @@ class GuiImpl() extends View {
     barChart = BarChart("Number of infections per place", "Places", "Infections")
     this.insertTab(new Page(barChart.title, convertJavaToScalaComponent(barChart.drawChart(simulationsManager.average(simulationsManager.map(_.infectionPlaces).toList)))))
 
+    //Pie
     simulationsManager.weeklyCovidStages.zipWithIndex.foreach(w=>{
       val pie = PieChart("Week "+ (w._2+1))
-
       this.insertTab(new Page("Week "+ (w._2+1),convertJavaToScalaComponent(pie.drawChart(w._1._2))))
       weeklyStages :+ pie
     })
 
-    //heat
+    //Heat
     this.insertTab(new Page("HeatMap Infections",convertJavaToScalaComponent(new HeatMap().drawMap(simulationsManager.citiesInfection.last._2))))
   }
 

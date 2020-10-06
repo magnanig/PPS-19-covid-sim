@@ -6,7 +6,7 @@ import akka.testkit.{ImplicitSender, TestActors, TestKit}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import pps.covid_sim.controller.actors.ActorsCoordination.ProvinceCoordinator
+import pps.covid_sim.controller.actors.coordinators.ProvinceCoordinator
 import pps.covid_sim.model.container.PlacesContainer.getPlaces
 import pps.covid_sim.model.people.actors.Communication.{GetPlacesByProvince, RequestedPlaces}
 import pps.covid_sim.model.places.FreeTime.Restaurant
