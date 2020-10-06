@@ -10,7 +10,7 @@ import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.samples.Cities
 import pps.covid_sim.model.transports.PrivateTransports.Car
-import pps.covid_sim.model.transports.PublicTransports.{Bus, Carriage, Train}
+import pps.covid_sim.model.transports.PublicTransports.{Bus, Train}
 import pps.covid_sim.util.RandomGeneration.randomBirthDate
 import pps.covid_sim.util.time.Time.ScalaCalendar
 

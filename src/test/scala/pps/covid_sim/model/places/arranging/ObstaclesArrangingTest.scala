@@ -74,7 +74,6 @@ class ObstaclesArrangingTest {
     println(gymObstacles)
     println("Number of obstacles: " + gymObstacles.size)
     println()
-    assertFalse(gymObstacles.toList.combinations(2).exists(pair => pair.head.vertexes.exists(c => c.inside(pair.last))))
   }
 
   @Test
