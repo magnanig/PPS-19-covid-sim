@@ -15,6 +15,7 @@ import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.simulation.SimulationsManager.classOrdering
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
 import pps.covid_sim.util.time.Time.ScalaCalendar
+import pps.covid_sim.view.charts.{BarChart, HeatMap, LineChart, PieChart}
 import pps.covid_sim.view.viewUtil.Checkers._
 
 import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}

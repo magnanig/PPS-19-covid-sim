@@ -4,7 +4,7 @@ import java.util.Calendar
 
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.Locality.{City, Region}
-import pps.covid_sim.model.places.{Locations, Place}
+import pps.covid_sim.model.places.Locations
 import pps.covid_sim.util.time.HoursInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
