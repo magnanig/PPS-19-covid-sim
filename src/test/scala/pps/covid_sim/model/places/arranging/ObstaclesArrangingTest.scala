@@ -3,18 +3,18 @@ package pps.covid_sim.model.places.arranging
 import org.junit.Assert._
 import org.junit.Test
 import pps.covid_sim.model.places.FreeTime.{OpenDisco, Pub}
-import pps.covid_sim.model.places.Locality
-import pps.covid_sim.model.places.Locality.{City, Province}
+import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.OpenPlaces.{Beach, Park, Square}
 import pps.covid_sim.model.places.Shops.{ClothesShop, SuperMarket}
 import pps.covid_sim.model.places.rooms.{DiscoRoom, GymRoom}
+import pps.covid_sim.model.samples.Cities
 import pps.covid_sim.util.scheduling.TimeTable
 import pps.covid_sim.util.time.MonthsInterval
 import pps.covid_sim.util.time.Time.Month
 
 class ObstaclesArrangingTest {
 
-  val cityTest: City = City(1, "Forlì", 118000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA))
+  val cityTest: City = Cities.FORLI
   val timeTable: TimeTable = TimeTable(MonthsInterval(Month.JANUARY, Month.DECEMBER))
 
   val discoRoom: DiscoRoom = DiscoRoom(50)

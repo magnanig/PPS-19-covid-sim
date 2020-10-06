@@ -5,7 +5,6 @@ import java.util.Calendar
 import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locations.Location
-import pps.covid_sim.model.places.Place
 
 import scala.util.Random
 
@@ -32,7 +31,7 @@ case class VirusPropagation(covidInfectionParameters: CovidInfectionParameters) 
 
   def inSafeZone(distance: Double): Boolean = distance > covidInfectionParameters.safeZone
 
-  // TODO: values to be properly deducted from
+  // values to be properly deducted from
   //  https://fastlifehacks.com/n95-vs-ffp/,
   //  https://vimeo.com/402577241
   //  https://medium.com/@Cancerwarrior/covid-19-why-we-should-all-wear-masks-there-is-new-scientific-rationale-280e08ceee71

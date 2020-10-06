@@ -7,11 +7,12 @@ import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.movements.MovementFunctions.{linearPathWithWallFollowing, randomPath}
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple}
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.places.Locality.{City, Province}
+import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.OpenPlaces.{Beach, Park}
+import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.places.Shops.SuperMarket
 import pps.covid_sim.model.places.rooms.{DiscoRoom, GymRoom}
-import pps.covid_sim.model.places.{Locality, Place}
+import pps.covid_sim.model.samples.Cities
 import pps.covid_sim.util.geometry.{Coordinates, Speed}
 import pps.covid_sim.util.scheduling.TimeTable
 import pps.covid_sim.util.time.MonthsInterval
@@ -20,7 +21,7 @@ import pps.covid_sim.util.time.Time.{Month, ScalaCalendar}
 
 class MovementsTest {
 
-  val cityTest: City = City(1, "Forlì", 118000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA))
+  val cityTest: City = Cities.FORLI
   val timeTable: TimeTable = TimeTable(MonthsInterval(Month.JANUARY, Month.DECEMBER))
   val time: Calendar = ScalaCalendar(2020, 9, 1, 15)
 

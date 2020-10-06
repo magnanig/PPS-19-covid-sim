@@ -2,11 +2,10 @@ package pps.covid_sim.view
 
 import java.util.Calendar
 
-import pps.covid_sim.controller.Controller
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
 
-import scala.swing.{Frame, SimpleSwingApplication, TabbedPane}
 import scala.swing.TabbedPane.Page
+import scala.swing.{SimpleSwingApplication, TabbedPane}
 
 trait View extends SimpleSwingApplication{
   val tabs: TabbedPane
@@ -42,7 +41,7 @@ trait View extends SimpleSwingApplication{
   /**
    * Notify the gui that the simulation started.
    */
-  def notifyStart: Unit
+  def notifyStart(): Unit
 
   /**
    * Notify the gui that the simulation ended.

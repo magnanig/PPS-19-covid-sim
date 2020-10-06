@@ -94,7 +94,7 @@ case class Agenda(owner: Person) {
       .union(joinedAppointments.filter(_.datesInterval.until > startingFrom).keySet)
       .map(_.datesInterval)
       .toSeq.sorted
-    // TODO: following can be optimized, if needed
+    // following can be optimized, if needed
     val interval = Iterator.iterate(startingFrom)(_ + 1)
       .dropWhile(time => plans.exists(_.isDefinedBetween(time)) || busyIntervals.exists(_.contains(time)))
       .takeWhile(time => plans.forall(!_.isDefinedBetween(time)) && busyIntervals.forall(!_.contains(time)))

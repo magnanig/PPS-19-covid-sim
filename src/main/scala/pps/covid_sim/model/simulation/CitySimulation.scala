@@ -5,7 +5,6 @@ import java.util.Calendar
 import pps.covid_sim.model.container.PeopleContainer
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Locations.Location
-import pps.covid_sim.model.places.Place
 import pps.covid_sim.util.Statistic
 
 import scala.collection.SortedMap
@@ -31,7 +30,6 @@ case class CitySimulation(override val area: City) extends Simulation {
   }
 
   override def close(): Unit = {
-    // TODO
     _infectionPlaces = Statistic(PeopleContainer.getPeople.par).getInfectionsPerPlace
   }
 

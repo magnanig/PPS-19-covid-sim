@@ -7,9 +7,9 @@ import org.junit.Test
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple, Single}
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.places.Locality.{City, Province}
+import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.{Locality, Place}
-import pps.covid_sim.model.samples.CovidParameters
+import pps.covid_sim.model.samples.{Cities, CovidParameters}
 import pps.covid_sim.model.transports.PublicTransports._
 import pps.covid_sim.util.time.HoursInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
@@ -17,7 +17,7 @@ import pps.covid_sim.util.time.Time.ScalaCalendar
 
 class LineTest {
 
-  val cityTest: City = City(1, "Forlì", 118000, Province(1, "Forlì-Cesena", "FC", Locality.Region.EMILIA_ROMAGNA))
+  val cityTest: City = Cities.FORLI
   val place: Place = new Place {
     override val city: City = cityTest
   }

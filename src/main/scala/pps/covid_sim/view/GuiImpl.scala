@@ -20,7 +20,7 @@ import pps.covid_sim.view.viewUtil.Checkers._
 import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}
 import scala.swing.TabbedPane.Page
 import scala.swing.event.{ButtonClicked, EditDone, SelectionChanged}
-import scala.swing.{Action, BorderPanel, BoxPanel, Button, CheckBox, ComboBox, Component, Dialog, FlowPanel, Frame, Label, ListView, MainFrame, Menu, MenuBar, MenuItem, Orientation, SplitPane, TabbedPane, TextField}
+import scala.swing.{BorderPanel, BoxPanel, Button, CheckBox, ComboBox, Component, Dialog, FlowPanel, Frame, Label, ListView, MainFrame, MenuBar, Orientation, SplitPane, TabbedPane, TextField}
 
 class GuiImpl() extends View {
 
@@ -151,23 +151,6 @@ class GuiImpl() extends View {
 
     var selectedRegion : Option[Region] = Option.empty
     var selectedProvince : Option[Province] = Option.empty
-
-    /*
-     * Create a menu bar with a couple of menus and menu items and
-     * set the result as this frame's menu bar.
-     */
-    saveMenu = new MenuBar {
-      contents += new Menu("File") {
-        contents += new MenuItem(Action("Save Simulation") {
-          chartSet.foreach(c=>c.saveChartAsPNG())
-          virusStagesChart.saveChartAsPNG()
-          weeklyStages.foreach(c=>c.saveChartAsPNG())
-          barChart.saveChartAsPNG()
-        })
-      }
-    }
-    saveMenu.visible = false
-    menuBar = saveMenu
 
     contents = new BorderPanel {
       import BorderPanel.Position._
@@ -521,11 +504,11 @@ class GuiImpl() extends View {
   }
 
   override def startLockdown(time: Calendar, infections: Int): Unit = {
-    chartSet.foreach(c=>c.drawLockDownStart(time, infections))
+    chartSet.find(_.yAxisLabel == "Infections").get.drawLockDownStart(time, infections)
   }
 
   override def endLockdown(time: Calendar, infections: Int): Unit = {
-    chartSet.foreach(c=>c.drawLockDownEnd(time, infections))
+    chartSet.find(_.yAxisLabel == "Infections").get.drawLockDownEnd(time, infections)
   }
 
   private def convertJavaToScalaComponent(panel: JPanel): Component = {

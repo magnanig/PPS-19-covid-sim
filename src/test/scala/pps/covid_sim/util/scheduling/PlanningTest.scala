@@ -3,17 +3,16 @@ package pps.covid_sim.util.scheduling
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import pps.covid_sim.model.places.Locations.Location
+import pps.covid_sim.model.samples.Places
 import pps.covid_sim.util.scheduling.Planning.CustomPlan
 import pps.covid_sim.util.time.Time.Day
 import pps.covid_sim.util.time.{DaysInterval, HoursInterval}
 
 class PlanningTest {
 
-  // TODO: to be tested with a concrete implementation, when ready
+  val location1: Location = Places.BAR
 
-  val location1: Location = null
-
-  val location2: Location = null
+  val location2: Location = Places.PARK
 
   // implicitly testing add(s) and commit
   val plan: CustomPlan[Location] = CustomPlan[Location]()

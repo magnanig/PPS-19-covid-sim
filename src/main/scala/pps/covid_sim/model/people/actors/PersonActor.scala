@@ -156,6 +156,7 @@ abstract class PersonActor extends Actor {
   }
 
   private def comeBack(): Unit = {
+    // TODO autobus
     isOut = false
     person.habitation.enter(person, null)
     person.setMask(None)
@@ -163,6 +164,7 @@ abstract class PersonActor extends Actor {
   }
 
   private def goOut(): Unit = {
+    // TODO autobus
     isOut = true
     person.habitation.exit(person)
   }
@@ -194,7 +196,7 @@ abstract class PersonActor extends Actor {
 
   private def randomOpenPlace: Place = PlacesContainer.getPlaces(person.residence, classOf[OpenPlace]).headOption match {
     case Some(place) => place
-    case _ => Places.PARK // TODO: this should never happen
+    case _ => Places.PARK
   }
 
   private def organizeGoingOut(time: Calendar): Option[(Place, DatesInterval)] = {

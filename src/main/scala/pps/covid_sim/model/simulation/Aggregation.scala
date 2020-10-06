@@ -5,7 +5,6 @@ import java.util.Calendar
 import pps.covid_sim.model.container.CitiesContainer
 import pps.covid_sim.model.places.Locality._
 import pps.covid_sim.model.places.Locations.Location
-import pps.covid_sim.model.places.Place
 
 import scala.collection.SortedMap
 
@@ -25,7 +24,7 @@ object Aggregation {
 
     override def deaths: SortedMap[Calendar, Int] = aggregateValues(_.deaths)
 
-    override def takeScreenshot(time: Calendar): Unit = simulations.foreach(_.takeScreenshot(time))
+    override def takeScreenshot(time: Calendar): Unit = { simulations.foreach(_.takeScreenshot(time)) }
 
     override def close(): Unit = simulations.foreach(_.close())
 

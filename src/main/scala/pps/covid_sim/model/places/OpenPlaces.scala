@@ -4,9 +4,8 @@ import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.movements.MovementFunctions
 import pps.covid_sim.model.people.PeopleGroup.Group
-import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.City
-import pps.covid_sim.parameters.CreationParameters.{beachFillFactor, maxParkObstaclesFactor, maxSquareObstaclesFactor, minParkObstaclesFactor, minSquareObstaclesFactor}
+import pps.covid_sim.parameters.CreationParameters._
 import pps.covid_sim.util.RandomGeneration
 import pps.covid_sim.util.geometry.Rectangle.{beachObstacle, calculateFilling, generalOutdoorObstacle}
 import pps.covid_sim.util.geometry.{Coordinates, Dimension, Rectangle, Speed}
@@ -19,16 +18,11 @@ import scala.collection.mutable.ArrayBuffer
 object OpenPlaces {
 
   trait OpenPlace extends Place with MovementSpace {
-    //override lazy val entranceCoords: Coordinates = Coordinates.randomOnBorder(dimension)
-
-    // must be lazy since dimension will be defined after this trait initialization
-    /*
-    protected override lazy val movement: (Coordinates, Set[Person]) => Coordinates =
-      MovementFunctions.randomPath(dimension, Set.empty)
-    */
-
-    override def mask: Option[Mask] = if(dimension.surface / numCurrentPeople < 0) //Parameters.safeSurfacePerPerson) TODO
-      Some(Masks.Surgical) else None
+    override def mask: Option[Mask] = {
+      val safeSurfacePerPerson = 3 * 3
+      if (dimension.surface / numCurrentPeople < safeSurfacePerPerson)
+        Some(Masks.Surgical) else None
+    }
   }
 
   case class Beach(override val city: City) extends OpenPlace {

@@ -1,14 +1,11 @@
 package pps.covid_sim.view
 
 import java.awt.Color
-import java.io.File
-import java.nio.file.{Files, Paths}
 import java.text.DecimalFormat
-import java.util.Date
 
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator
 import org.jfree.chart.plot.PiePlot
-import org.jfree.chart.{ChartFactory, ChartPanel, ChartUtils, JFreeChart}
+import org.jfree.chart.{ChartFactory, ChartPanel, JFreeChart}
 import org.jfree.data.general.DefaultPieDataset
 
 /**
@@ -46,17 +43,6 @@ case class PieChart(title: String) {
 
     val chartPanel = new ChartPanel(chart)
     chartPanel
-  }
-
-  /**
-   * Save the pie chart in png format.
-   */
-  def saveChartAsPNG(): Unit = {
-    val path = Paths.get("." + File.separator + "sim_res")
-    if (!Files.exists(path)) Files.createDirectory(path)
-    ChartUtils.saveChartAsPNG(new File("." + File.separator + "sim_res" +
-      File.separator + s"piechart_${new Date().toString.replaceAll(":","_")}.png"),
-      chart, 450, 400)
   }
 
 }

@@ -15,8 +15,8 @@ object Locality {
                   override val name: String,
                   numResidents: Int,
                   province: Province,
-                  override val latitude: Double = 0, // TODO rmeove ALL defalut
-                  override val longitude: Double = 0) extends Area with Localizable {
+                  override val latitude: Double,
+                  override val longitude: Double) extends Area with Localizable {
     val isProvince: Boolean = idCity == province.idProvince
   }
 
@@ -24,8 +24,8 @@ object Locality {
                       override val name: String,
                       abbreviation: String,
                       region: Region,
-                      override val latitude: Double = 0, // TODO remove
-                      override val longitude: Double = 0) extends Area with Localizable
+                      override val latitude: Double,
+                      override val longitude: Double) extends Area with Localizable
 
   case class Region(id: Int,
                     override val name: String,

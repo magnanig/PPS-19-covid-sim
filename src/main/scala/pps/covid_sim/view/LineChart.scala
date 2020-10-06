@@ -1,16 +1,14 @@
 package pps.covid_sim.view
 
 import java.awt.{BasicStroke, Color}
-import java.io.File
-import java.nio.file.{Files, Paths}
-import java.util.{Calendar, Date}
+import java.util.Calendar
 
 import org.jfree.chart.axis.NumberAxis
 import org.jfree.chart.block.BlockBorder
 import org.jfree.chart.plot.{PlotOrientation, XYPlot}
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
 import org.jfree.chart.title.TextTitle
-import org.jfree.chart.{ChartFactory, ChartPanel, ChartUtils, JFreeChart}
+import org.jfree.chart.{ChartFactory, ChartPanel, JFreeChart}
 import org.jfree.data.xy.{XYSeries, XYSeriesCollection}
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
@@ -172,17 +170,6 @@ case class LineChart(title: String,
    */
   def drawLockDownEnd(time: Calendar, infections: Int): Unit = {
     endLockdownSeries.add(time \ from, infections)
-  }
-
-  /**
-   * Save the line chart in png format.
-   */
-  def saveChartAsPNG(): Unit = {
-    val path = Paths.get("." + File.separator + "sim_res")
-    if (!Files.exists(path)) Files.createDirectory(path)
-    ChartUtils.saveChartAsPNG(new File("." + File.separator + "sim_res" +
-      File.separator + s"linechart_${new Date().toString.replaceAll(":","_")}.png"),
-      chart, 450, 400)
   }
 
 }

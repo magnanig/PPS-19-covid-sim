@@ -2,11 +2,9 @@ package pps.covid_sim.controller
 
 import java.util.Calendar
 
-import javax.swing.JPanel
 import pps.covid_sim.controller.actors.ActorsCoordination
-import pps.covid_sim.model.creation.CitiesObject
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}
+import pps.covid_sim.model.places.Locality.Area
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
 import pps.covid_sim.model.{CovidInfectionParameters, Model}
@@ -14,15 +12,13 @@ import pps.covid_sim.util.time.DatesInterval
 import pps.covid_sim.view.View
 
 import scala.collection.parallel.ParSeq
-import scala.swing.Component
 
 class ControllerImpl(model: Model, view: View) extends Controller {
-
 
   override def startSimulation(area: Area, from: Calendar, until: Calendar, runs: Int): Unit = {
     model.initWorld(area)
     model.initSimulation(area, from, until, runs)
-    view.notifyStart
+    view.notifyStart()
     startActors(model.simulationsManager)
   }
 
@@ -43,13 +39,8 @@ class ControllerImpl(model: Model, view: View) extends Controller {
   }
 
   override def startLockdown(time: Calendar, infections: Int): Unit = view.startLockdown(time,infections) //lineChart.drawLockDownStart(time, infections)
+
   override def endLockdown(time: Calendar, infections: Int): Unit = view.endLockdown(time,infections) //lineChart.drawLockDownEnd(time, infections)
-
-  override def regions: Set[Region] = CitiesObject.getRegions
-
-  override def provinces: Set[Province] = regions.flatMap(CitiesObject.getProvince)
-
-  override def cities: Set[City] = CitiesObject.getCities
 
   override def people: ParSeq[Person] = model.people
 

@@ -7,7 +7,6 @@ import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.People.Student
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.Locations.Location
-import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.places.arranging.Placement.{ItemArrangement, ItemGroup, Placeholder, Row}
 import pps.covid_sim.util.RandomGeneration
 
@@ -36,7 +35,7 @@ object SchoolDesks {
   object DesksArrangement {
     def randomFor(numPerson: Int): DesksArrangement = {
       val columns = RandomGeneration.randomIntInRange(1, 6)
-      val numPlacesInEachGroup = (1 to columns).map(_ => RandomGeneration.randomIntInRange(1, 10)) //TODO: da migliorare
+      val numPlacesInEachGroup = (1 to columns).map(_ => RandomGeneration.randomIntInRange(1, 10))
       val rows = Math.ceil(numPerson.toDouble / numPlacesInEachGroup.sum).toInt
       DesksArrangement(rows, numPlacesInEachGroup:_*)
     }

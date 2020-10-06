@@ -5,8 +5,8 @@ import java.util.Calendar
 import akka.actor.{ActorRef, ActorSystem, Props, ReceiveTimeout}
 import pps.covid_sim.controller.Controller
 import pps.covid_sim.controller.actors.CoordinatorCommunication.{SetProvince, SetRegion}
-import pps.covid_sim.model.container.PeopleContainer
 import pps.covid_sim.model.container.PlacesContainer.getPlaces
+import pps.covid_sim.model.container.{CitiesContainer, PeopleContainer}
 import pps.covid_sim.model.people.People.{Student, Worker}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.people.actors.Communication._
@@ -61,7 +61,7 @@ object ActorsCoordination {
           //case City(idCity, name, numResidents, province, latitude, longitude) => _//non gestita
           case province: Province => this.createProvinceActors(province) //Set()//voglio creare una region contenente la sola provincia da analizzare
           case region: Region => this.createActors(Set(region))//solo la singola regione
-          case Locality.Italy() => this.createActors(c.regions)//tutte le regioni
+          case Locality.Italy() => this.createActors(CitiesContainer.getRegions)//tutte le regioni
         }
         simulationInterval = di
         currentTime = di.from
@@ -161,7 +161,7 @@ object ActorsCoordination {
 
     override def receive: Receive = {
       case SetRegion(region) => this._region = region
-        this._myProvinces = controller.provinces.filter(p=>p.region==_region)
+        this._myProvinces = CitiesContainer.getProvince(region)
         this.createActors(this._myProvinces)
       case HourTick(currentTime) => this.spreadTick(_region,currentTime)
       case Acknowledge() if this.waitingAck.contains(sender) => this.waitingAck -= sender
