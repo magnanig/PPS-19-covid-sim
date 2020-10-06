@@ -6,16 +6,15 @@ import akka.actor.{Actor, ActorRef}
 import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.clinical.Masks.Mask
-import pps.covid_sim.model.container.PlacesContainer
-import pps.covid_sim.model.container.PlacesContainer.placesInCityOrElseInProvince
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.people.actors.Communication._
+import pps.covid_sim.model.people.actors.Request.Request
+import pps.covid_sim.model.places.Locality.Area
 import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.OpenPlaces.OpenPlace
 import pps.covid_sim.model.places.Shops.SuperMarket
 import pps.covid_sim.model.places.{Habitation, LimitedHourAccess, Place}
-import pps.covid_sim.model.samples.Places
 import pps.covid_sim.parameters.GoingOutParameters
 import pps.covid_sim.parameters.GoingOutParameters.maxNumShopPerWeek
 import pps.covid_sim.util.CommonPlacesByTime.randomPlaceWithPreferences
@@ -25,7 +24,6 @@ import pps.covid_sim.util.scheduling.{Agenda, Appointment}
 import pps.covid_sim.util.time.Time.ScalaCalendar
 import pps.covid_sim.util.time.{DatesInterval, DaysInterval, MonthsInterval}
 
-import scala.annotation.tailrec
 import scala.util.Random
 
 //noinspection ActorMutableStateInspection
@@ -51,6 +49,7 @@ abstract class PersonActor extends Actor {
   private lazy val notRespectingIsolation: Double = RandomGeneration.randomDoubleInRange(0,
     covidInfectionParameters.notRespectingIsolationMaxProbability)
 
+  private var time: Calendar = _
   private var inPandemic: Boolean = false
   private var lockdown: Boolean = false
   private var waitingResponses: Set[ActorRef] = Set()
@@ -59,24 +58,38 @@ abstract class PersonActor extends Actor {
   private var friends: Map[Person, ActorRef] = Map()
   private var wantsToGoOutToday: Boolean = false
   private var hasToDoShopping: Boolean = false
-  private var currentCommitment: Option[(DatesInterval, Location, Option[Group])] = None
+  private var currentCommitment: Option[(DatesInterval, Option[Location], Option[Group])] = None
   private lazy val placesPreferences = GoingOutParameters.placesPreferences(person.age)
   private val numShopPerWeek: Int = RandomGeneration.randomIntInRange(1, maxNumShopPerWeek)
-  private implicit val actorName: String = self.toString()
+  private val transportProbability = RandomGeneration.randomDoubleInRange(0, 0.8)
+
+  private var pendingRequest: DatesInterval = _
+  private var requestType: Request = _
 
   override def receive: Receive = {
     case SetPerson(person) => this.coordinator = sender; this.person = person
     case SetCovidInfectionParameters(covidInfectionParameters) => this.covidInfectionParameters = covidInfectionParameters
     case ActorsFriendsMap(friends) => this.friends = friends
-    case HourTick(time) => person.hourTick(time); nextAction(time)
+    case HourTick(time) => this.time = time; person.hourTick(time); nextAction()
     case AddPlan(plan) => agenda.addPlan(plan)
     case RemovePlan(oldPlan) => agenda.removePlan(oldPlan)
-    case Lockdown(enabled) => lockdown = enabled; if(!inPandemic) inPandemic = true
-    case p @ GoOutProposal(_, _, _) if !mayAcceptProposal(p) => sender ! GoOutResponse(response = false, p)
-    case p @ GoOutProposal(dateInterval, place, _) if agenda.isFreeAt(p.datesInterval) =>
+    case Lockdown(enabled) => lockdown = enabled; if (!inPandemic) inPandemic = true
+    case p @ RequestedPlaces(_) => p match {
+        case RequestedPlaces(places) if requestType == Request.LOOKING_FOR_PLACES =>
+          formulateAndSendProposal(pendingRequest, places)
+        case RequestedPlaces(places) if requestType == Request.LOOKING_FOR_MARKET => planShopping(places)
+        case RequestedPlaces(places) if places.nonEmpty => currentCommitment = Some(currentCommitment.get._1,
+          Random.shuffle(places).head.enter(currentCommitment.get._3.get, currentCommitment.get._1.from),
+          currentCommitment.get._3)
+        case _ =>
+      }
+      waitingResponses -= coordinator
+      sendAckIfReady()
+    case p@GoOutProposal(_, _, _) if !mayAcceptProposal(p) => sender ! GoOutResponse(response = false, p)
+    case p@GoOutProposal(dateInterval, place, _) if agenda.isFreeAt(p.datesInterval) =>
       sender ! GoOutResponse(response = true, p)
       agenda.joinAppointment(Appointment(dateInterval, place))
-    case p @ GoOutProposal(dateInterval, place, leader) =>
+    case p@GoOutProposal(dateInterval, place, leader) =>
       val newInterval = agenda.firstNextFreeTime(dateInterval.from)(dateInterval.size)
       place match {
         case limited: LimitedHourAccess if limited.timeTable.isDefinedBetween(newInterval) =>
@@ -86,7 +99,7 @@ abstract class PersonActor extends Actor {
         case _ => sender ! GoOutResponse(response = false, p, GoOutProposal(newInterval, place, leader))
       }
     case msg: GoOutResponse /*if waitingResponses.contains(sender)*/ =>
-      if((msg.request.leader eq person) && waitingResponses.contains(sender)){
+      if ((msg.request.leader eq person) && waitingResponses.contains(sender)) {
         waitingResponses -= sender
         sendAckIfReady()
       }
@@ -113,44 +126,52 @@ abstract class PersonActor extends Actor {
     agenda.fixAppointment(appointment, Multiple(person, Set(person, withPerson)))(_ + withPerson)
   }
 
-  private def nextAction(time: Calendar): Unit = {
+  private def nextAction(): Unit = {
     waitingResponses = Set()
     if (time.hour == 0) updateDaysParameters(time)
     agenda.removeAppointmentsEndedBefore(time)
-
     currentCommitment match {
-      case Some((datesInterval, location, group)) if datesInterval.until is time =>
+      case Some((datesInterval, Some(location), group)) if datesInterval.until is time =>
         if(group.isDefined) location.exit(group.get) // only group leader will do that
         comeBack()
-        nextCommitment(time)
-      case None => nextCommitment(time)
+        nextCommitment()
+      case None => nextCommitment()
       case _ =>
     }
     sendAckIfReady()
   }
 
-  private def nextCommitment(time: Calendar): Unit = {
+  private def requestPlaces(area: Area, placeClass: Class[_ <: Place], datesInterval: Option[DatesInterval] = None): Unit = {
+    waitingResponses += coordinator
+    coordinator ! GetPlacesInArea(area, placeClass, datesInterval)
+  }
+
+  private def nextCommitment(): Unit =
     currentCommitment = agenda.nextCommitment(time) match {
-      case Some((datesInterval, location, Some(group))) if group.leader eq this.person => goOut()
+      case commitment @ Some((datesInterval, location, Some(group))) if group.leader eq this.person => goOut()
         person.setMask(chooseMask(location))
-        Some(datesInterval, tryEnterInPlace(location, time, group), Some(group))
-      case commitment@Some(_) => goOut()
+        tryEnterInPlace(location, time, group) match {
+          case Some(_) =>  commitment
+          case _ => Some((datesInterval, None, Some(group)))
+        }
+      case commitment @ Some(_) => goOut()
         person.setMask(chooseMask(commitment.get._2))
         commitment
-      case _ if time.hour > 8 && shopTime() => goShopping(time); None
+      case _ if time.hour > 8 && shopTime() => requestType = Request.LOOKING_FOR_MARKET
+        val interval = agenda.firstNextFreeTime(time + 1)(2)
+        requestPlaces(person.residence, classOf[SuperMarket], Some(interval))
+        pendingRequest = interval
+        None
       case _ if time.hour > 8 && mayGoOut() && !friendsFound => organizeGoingOut(time); None
       case _ => None
     }
-  }
 
   private def shopTime(): Boolean = (person eq person.habitation.leader) && hasToDoShopping
 
-  private def goShopping(time: Calendar): Unit = {
-    val interval = agenda.firstNextFreeTime(time + 1)(2)
-    Random.shuffle(
-      PlacesContainer.placesInCityOrElseInProvince(person.residence, classOf[SuperMarket], interval)).headOption match {
+  private def planShopping(shops: List[Place]): Unit = {
+    Random.shuffle(shops).headOption match {
       case Some(superMarket: SuperMarket) => hasToDoShopping = false
-        agenda.fixAppointment(Appointment(interval.clipToTimeTable(superMarket.timeTable), superMarket), person)
+        agenda.fixAppointment(Appointment(pendingRequest.clipToTimeTable(superMarket.timeTable), superMarket), person)
       case _ => None
     }
   }
@@ -171,56 +192,45 @@ abstract class PersonActor extends Actor {
 
   private def chooseMask(location: Location): Option[Mask] = if(inPandemic && !location.isInstanceOf[Habitation])
     location.mask match {
-      case mask @ Some(_) /*if Random.nextDouble() < maskProbability*/ => mask
+      case mask @ Some(_) if Random.nextDouble() < maskProbability => mask
       case _ if Random.nextDouble() < maskProbability => Some(Masks.Surgical)
       case _ => None
     } else None
 
-  @tailrec
-  private def tryEnterInPlace(location: Location, time: Calendar, group: Group, maxAlternatives: Int = 3): Location = {
+  private def tryEnterInPlace(location: Location, time: Calendar, group: Group): Option[Location] = {
     location match {
       case place: Place => place.enter(group, time) match {
-        case Some(location) => location
-        case None if maxAlternatives > 0 => placesInCityOrElseInProvince(person.residence, place.getClass, time) match {
-          case Nil => randomOpenPlace.enter(group, time).get // will always have success
-          case places: List[Place] => tryEnterInPlace(Random.shuffle(places).head, time, group, maxAlternatives - 1)
-        }
-        case _ => randomOpenPlace.enter(group, time).get // will always have success
+        case location @ Some(_) => location
+        case _ => requestType = Request.LOOKING_FOR_ALTERNATIVE; randomOpenPlaces(); None
       }
-      case _ => location.enter(group, time) match { // if location is in a plan, it will always have success
-        case Some(value) =>  value
-        case _ => println(s"WARNING: you can't enter in ${location.getClass.getSimpleName} at ${time.getTime}"); location
-      }
+      case _ => location.enter(group, time)
     }
   }
 
-  private def randomOpenPlace: Place = PlacesContainer.getPlaces(person.residence, classOf[OpenPlace]).headOption match {
-    case Some(place) => place
-    case _ => Places.PARK
-  }
+  private def randomOpenPlaces(): Unit = requestPlaces(person.residence, classOf[OpenPlace])
 
-  private def organizeGoingOut(time: Calendar): Option[(Place, DatesInterval)] = {
-    var interval = agenda.firstNextFreeTime(time + 1)
+  private def organizeGoingOut(time: Calendar): Unit = {
+    val interval = agenda.firstNextFreeTime(time + 1)
     randomPlaceWithPreferences(placesPreferences, interval) match {
-      case Some(placeClass) => placesInCityOrElseInProvince(person.residence, placeClass, interval) match {
-        case Nil => None
-        case places: List[Place] => val goingOut = (Random.shuffle(places).head match {
-          case limitedPlace: LimitedHourAccess => interval = interval.clipToTimeTable(limitedPlace.timeTable)
-            limitedPlace
-          case place: Place => place
-        }, interval.limits(RandomGeneration.randomIntInRange(1, 6)))
-          sendProposal(goingOut._2, goingOut._1, randomFriends)
-          Some(goingOut)
-      }
+      case Some(placeClass) => requestPlaces(person.residence, placeClass, Some(interval))
+        requestType = Request.LOOKING_FOR_PLACES
+        pendingRequest = interval
       case _ => None
     }
   }
 
-  private def sendProposal(datesInterval: DatesInterval, place: Place, receivers: Iterable[ActorRef]): Unit = {
-    receivers.foreach(actor => {
-      waitingResponses += actor
-      actor ! GoOutProposal(datesInterval, place, person)
-    })
+  private def formulateAndSendProposal(datesInterval: DatesInterval, places: List[Place]): Unit = places match {
+    case Nil => None
+    case places: List[Place] => var interval = datesInterval
+      val goingOut = (Random.shuffle(places).head match {
+        case limitedPlace: LimitedHourAccess => interval = datesInterval.clipToTimeTable(limitedPlace.timeTable)
+          limitedPlace
+        case place: Place => place
+      }, interval.limits(RandomGeneration.randomIntInRange(1, 6)))
+      randomFriends.foreach(actor => {
+        waitingResponses += actor
+        actor ! GoOutProposal(datesInterval, goingOut._1, person)
+      })
   }
 
   private def updateDaysParameters(time: Calendar): Unit = {
@@ -249,5 +259,11 @@ abstract class PersonActor extends Actor {
     .take(RandomGeneration.randomIntFromGaussian(averageGoingOutFriends, 3, 1))
     .map(friends)
 
+  private implicit def optionalTuple(optional:
+                                     Option[(DatesInterval,
+                                       Location,
+                                       Option[Group])]): Option[(DatesInterval, Option[Location], Option[Group])] = {
+    optional.map(op => (op._1, Some(op._2), op._3))
+  }
 
 }

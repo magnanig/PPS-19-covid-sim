@@ -43,11 +43,8 @@ object Planning {
       build(this.plan + (day -> this.plan(day).add(location, hoursIntervals: _*)))
     }
 
-    override def add(location: T, daysInterval: DaysInterval, hoursIntervals: HoursInterval*): A = {
-      var current: A = this.asInstanceOf[A]
-      daysInterval.foreach(day => current = current.add(location, day, hoursIntervals: _*))
-      current
-    }
+    override def add(location: T, daysInterval: DaysInterval, hoursIntervals: HoursInterval*): A = daysInterval
+      .foldLeft(this.asInstanceOf[A])((acc, day) => acc.add(location, day, hoursIntervals: _*))
 
     override def commit(): A = this.asInstanceOf[A]
 
@@ -101,11 +98,8 @@ object Planning {
      * @param hoursIntervals  the hours interval to which add location
      * @return                a copy of the current day plan updated as desired
      */
-    def add(location: T, hoursIntervals: HoursInterval*): DayPlan[T, P] = {
-      var current = this
-      hoursIntervals.foreach(hour => current = current.add(location, hour))
-      current
-    }
+    def add(location: T, hoursIntervals: HoursInterval*): DayPlan[T, P] = hoursIntervals
+      .foldLeft(this)((acc, hour) => acc.add(location, hour))
 
     /**
      * Ends the current day plan editing.

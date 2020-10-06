@@ -43,11 +43,8 @@ case class TimeTable(period: MonthsInterval = MonthsInterval.ALL_YEAR,
    * @param hoursIntervals the hour interval(s) to be added to day
    * @return a new TimeTable instance updated as desired
    */
-  def add(day: Day, hoursIntervals: HoursInterval*): TimeTable = {
-    var current = this
-    hoursIntervals.foreach(hoursInterval => current = current.add(day, hoursInterval))
-    current
-  }
+  def add(day: Day, hoursIntervals: HoursInterval*): TimeTable = hoursIntervals
+    .foldLeft(this)((acc, hoursInterval) => acc.add(day, hoursInterval))
 
   /**
    * Works like other overload, but with the possibility to assign the specified hour
@@ -57,11 +54,8 @@ case class TimeTable(period: MonthsInterval = MonthsInterval.ALL_YEAR,
    * @param hoursIntervals the hour interval(s) to be assigned
    * @return a new TimeTable instance updated as desired
    */
-  def add(daysInterval: DaysInterval, hoursIntervals: HoursInterval*): TimeTable = {
-    var current = this
-    daysInterval.foreach(day => current = current.add(day, hoursIntervals: _*))
-    current
-  }
+  def add(daysInterval: DaysInterval, hoursIntervals: HoursInterval*): TimeTable = daysInterval
+    .foldLeft(this)((acc, day) => acc.add(day, hoursIntervals: _*))
 
   import pps.covid_sim.util.time.TimeIntervalsImplicits._
   /**
