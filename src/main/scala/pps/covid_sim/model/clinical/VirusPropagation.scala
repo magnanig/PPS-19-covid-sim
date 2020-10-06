@@ -10,12 +10,25 @@ import scala.util.Random
 
 case class VirusPropagation(covidInfectionParameters: CovidInfectionParameters) {
 
+  /**
+   * Try to infect one of the two people, only if one is infected and the other not.
+   * If no implicit distance is found, then will be used the min social distance field
+   * of Person.
+   * @param p1              the first person
+   * @param p2              the second person
+   * @param place           the place where the two people are
+   * @param time            the current time
+   * @param socialDistance  an implicit representing the distance between two people, if not
+   *                        found will be used the minimum between the two people social distance
+   *                        field
+   */
   def tryInfect(p1: Person, p2: Person, place: Location, time: Calendar)
                (implicit socialDistance: Double = Math.min(p1.socialDistance, p2.socialDistance)): Unit = {
     if (p1.canInfect != p2.canInfect && !inSafeZone(socialDistance)) {
       val infectedPerson = if (p1.canInfect) p1 else p2
       val healthyPerson = if (infectedPerson eq p1) p2 else p1
-      if (!healthyPerson.infectedPeopleMet.contains(infectedPerson)) {
+      if (!healthyPerson.infectedPeopleMet.contains(infectedPerson) &&
+        healthyPerson.canBeInfected(covidInfectionParameters.multipleInfectionProbability)) {
         val contagionProbability = covidInfectionParameters.contagionProbability *
           infectionReducingFactor(socialDistance) *
           (1 - infectedPerson.wornMask.map(_.outgoingFiltering).getOrElse(0.0)) *

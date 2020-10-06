@@ -5,7 +5,7 @@ import java.util.Calendar
 import akka.actor.ActorRef
 import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.places.Locality.{City, Province}
+import pps.covid_sim.model.places.Locality.Area
 import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.util.scheduling.Plan
@@ -96,8 +96,8 @@ object Communication {
    */
   case class Stop()
 
-  case class GetPlacesByCity(city: City,placeClass: Class[_ <: Place], datesInterval: Option[DatesInterval])
-  case class GetPlacesByProvince(Province: Province,placeClass: Class[_ <: Place], datesInterval: Option[DatesInterval])
+  case class GetPlacesInArea(area: Area, placeClass: Class[_ <: Place], datesInterval: Option[DatesInterval] = None)
+
   case class RequestedPlaces(places: List[Place])
 
   /**

@@ -6,10 +6,10 @@ import akka.actor.{ActorRef, Props, ReceiveTimeout}
 import pps.covid_sim.controller.actors.CoordinatorCommunication.SetProvince
 import pps.covid_sim.controller.actors.coordinators.ActorsCoordination.{controller, system}
 import pps.covid_sim.model.container.PeopleContainer
-import pps.covid_sim.model.container.PlacesContainer.getPlaces
+import pps.covid_sim.model.container.PlacesContainer.{getPlaces, placesInCityOrElseInProvince}
 import pps.covid_sim.model.people.People.{Student, Worker}
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.people.actors.Communication.{Acknowledge, ActorsFriendsMap, AddPlan, GetPlacesByCity, GetPlacesByProvince, HourTick, RequestedPlaces, SetCovidInfectionParameters, SetPerson, Stop}
+import pps.covid_sim.model.people.actors.Communication.{Acknowledge, ActorsFriendsMap, AddPlan, GetPlacesInArea, HourTick, RequestedPlaces, SetCovidInfectionParameters, SetPerson, Stop}
 import pps.covid_sim.model.people.actors.{StudentActor, UnemployedActor, WorkerActor}
 import pps.covid_sim.model.places.Locality.{City, Province}
 import pps.covid_sim.model.places.Place
@@ -38,8 +38,8 @@ case class ProvinceCoordinator() extends Coordinator {
     case HourTick(currentTime) => this.spreadTick(currentTime)
     case ReceiveTimeout => println("Sending INCORRECT cumulative ACK"); sendAck(); println("WARNING: Timeout! Sono un sotto coordinatore: Province:" + _province + "size: " + waitingAck.size)
     case Stop() => this.endSimulation()
-    case GetPlacesByProvince(province, placeClass, datesInterval) => this.genericGetPlaceByProvince(province, placeClass, datesInterval, sender)
-    case GetPlacesByCity(city, placeClass, datesInterval) => this.genericGetPlaceByCity(city, placeClass, datesInterval, sender)
+    case GetPlacesInArea(city: City, placeClass, datesInterval) => this.genericGetPlaceByCity(city, placeClass, datesInterval, sender)
+    case GetPlacesInArea(province: Province, placeClass, datesInterval) => this.genericGetPlaceByProvince(province, placeClass, datesInterval, sender)
     case msg => println(s"Not expected [Province]: $msg" + "is sender in peoples: " + waitingAck.contains(sender) + " " + sender.toString());
   }
 
@@ -97,7 +97,7 @@ case class ProvinceCoordinator() extends Coordinator {
     if (datesInterval.isEmpty) {
       res = getPlaces(city, placeClass)
     } else if (datesInterval.isDefined) {
-      res = getPlaces(city, placeClass, datesInterval.get)
+      res = placesInCityOrElseInProvince(city, placeClass, datesInterval.get)
     }
     sender ! RequestedPlaces(res)
   }

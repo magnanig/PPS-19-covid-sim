@@ -52,7 +52,7 @@ case class CovidInfectionParameters() {
   /**
    * Probability of multiple infections
    */
-  private var _multipleInfectionProbability: Double = 0.1
+  private var _multipleInfectionProbability: Double = 0
   private[model] def multipleInfectionProbability_=(probability :Double):Unit ={
     _multipleInfectionProbability = probability
   }

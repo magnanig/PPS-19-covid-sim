@@ -8,7 +8,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import pps.covid_sim.controller.actors.coordinators.ProvinceCoordinator
 import pps.covid_sim.model.container.PlacesContainer.getPlaces
-import pps.covid_sim.model.people.actors.Communication.{GetPlacesByProvince, RequestedPlaces}
+import pps.covid_sim.model.people.actors.Communication.{GetPlacesInArea, RequestedPlaces}
 import pps.covid_sim.model.places.FreeTime.Restaurant
 import pps.covid_sim.model.samples.Provinces
 
@@ -37,7 +37,7 @@ class CoordinationTest()
 
     "send back messages of the place requested" in {
       val echo = system.actorOf(Props[ProvinceCoordinator])
-      echo ! GetPlacesByProvince(Provinces.FORLI_CESENA, classOf[Restaurant], Option.empty)
+      echo ! GetPlacesInArea(Provinces.FORLI_CESENA, classOf[Restaurant], Option.empty)
       val res = getPlaces(Provinces.FORLI_CESENA, classOf[Restaurant])
       expectMsg(RequestedPlaces(res))
     }

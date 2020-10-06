@@ -5,11 +5,13 @@ import java.util.Calendar
 import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.CovidInfection
 import pps.covid_sim.model.clinical.Masks.Mask
+import pps.covid_sim.model.places.Habitation
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Locations.Location
-import pps.covid_sim.model.places.{Habitation, Place}
 import pps.covid_sim.util.geometry.Coordinates
 import pps.covid_sim.util.time.Time.ScalaCalendar
+
+import scala.util.Random
 
 trait Person {
 
@@ -106,6 +108,15 @@ trait Person {
       covidInfection = Some(CovidInfection(time, place, stage, covidInfectionParameters, this))
     }
   }
+
+  /**
+   * Check whether current person can be infected, considering multiple infection
+   * probability.
+   * @param multipleInfectionProbability  the probability of multiple infections
+   * @return
+   */
+  def canBeInfected(multipleInfectionProbability: Double): Boolean = covidInfection.isEmpty ||
+      (isRecovered && Random.nextDouble() < multipleInfectionProbability)
 
   /**
    * Get the set of infected people that current person has met.
