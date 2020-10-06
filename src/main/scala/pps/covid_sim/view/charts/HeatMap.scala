@@ -43,11 +43,11 @@ class HeatMap() {
       private val mapWidth: Int = italyOutlineMap.getWidth
       private val mapHeight: Int = italyOutlineMap.getHeight
 
-      private val mapLongitudeLeft: Double = 6.60050504 //6.62572963
-      private val mapLongitudeRight: Double = 18.93483848 //18.52069585
+      private val mapLongitudeLeft: Double = 6.627281
+      private val mapLongitudeRight: Double = 18.520556
       private val mapLongitudeDelta: Double = mapLongitudeRight - mapLongitudeLeft
 
-      private val mapLatitudeBottom: Double = 35.48805894 //36.64648834
+      private val mapLatitudeBottom: Double = 35.515556
       private val mapLatitudeBottomDegree: Double = mapLatitudeBottom * Math.PI / 180
 
       override def paintComponent(g: Graphics): Unit = {

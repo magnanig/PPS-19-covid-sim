@@ -45,8 +45,7 @@ case class BarChart(title: String,
     plot.setDomainGridlinePaint(Color.black)
     plot.setRangeGridlinePaint(Color.black)
 
-    val chartPanel = new ChartPanel(chart)
-    chartPanel
+    new ChartPanel(chart)
   }
 
 }

@@ -43,8 +43,7 @@ case class PieChart(title: String) {
 
     piePlot.setLegendLabelGenerator(new StandardPieSectionLabelGenerator("Stage {0}"))
 
-    val chartPanel = new ChartPanel(chart)
-    chartPanel
+    new ChartPanel(chart)
   }
 
 }
