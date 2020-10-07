@@ -4,7 +4,7 @@ import java.util.Calendar
 
 import akka.actor.{Props, ReceiveTimeout}
 import pps.covid_sim.controller.actors.CoordinatorCommunication.{SetProvince, SetRegion}
-import pps.covid_sim.controller.actors.coordinators.ActorsCoordination.{actorsCoordinator, controller, system}
+import pps.covid_sim.controller.actors.coordinators.ActorsCoordination.{actorsCoordinator, system}
 import pps.covid_sim.model.container.CitiesContainer
 import pps.covid_sim.model.people.actors.Communication.{Acknowledge, HourTick, Stop}
 import pps.covid_sim.model.places.Locality.{Province, Region}
