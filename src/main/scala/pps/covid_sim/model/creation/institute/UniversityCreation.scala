@@ -3,7 +3,7 @@ package pps.covid_sim.model.creation.institute
 import pps.covid_sim.model.people.People.{Student, Teacher}
 import pps.covid_sim.model.places.Education.{Classroom, University}
 import pps.covid_sim.model.places.Locality.City
-import pps.covid_sim.model.places.{Place, SchoolClass}
+import pps.covid_sim.model.places.{Course, Place}
 import pps.covid_sim.model.samples.Places
 import pps.covid_sim.parameters.CreationParameters
 import pps.covid_sim.util.scheduling.Planning.{StudentPlan, WorkPlan}
@@ -12,9 +12,6 @@ import pps.covid_sim.util.time.TimeIntervalsImplicits._
 
 private[institute] case class UniversityCreation() {
 
-  /*
-   * Lista di studenti composta almeno di 25 x 2 studenti (2 aule)
-   */
   def create(city: City,
              students: List[Student],
              teachers: List[Teacher]): List[Place] = {
@@ -22,46 +19,44 @@ private[institute] case class UniversityCreation() {
     var universities: List[University] = List()
     var numStudent: Int = 0
     val totalStudent: Int = students.size
-    val studentPerUni = CreationParameters.studentsPerClass * CreationParameters.classesPerSchool
+    val studentPerUni = CreationParameters.studentsUniPerClass * CreationParameters.classesPerUni
 
-    // schools number
     (1 to totalStudent)
-      .grouped(studentPerUni)
-      .foreach(uniGroup => { // scorro tutti gli STUDENTI DI OGNI SCUOLA
+      .grouped(studentPerUni) // each group identifies a new university
+      .foreach(uniGroup => { // scan all students of each university
         val university: University = University(city, Places.UNIVERSITY_TIME_TABLE)
         var classes: List[Classroom] = List()
         var lessonId: Int = 0
         uniGroup
           .grouped(CreationParameters.studentsUniPerClass)
-          .foreach(classGroup => { // scorro tutti gli STUDENTI DI OGNI CLASSE
-            // Ogni classe corrisponde ad un corso. Ogni corso è tenuto sempre nella medesima classe.
-            // Assegnare il corso alla scuola;  Assegnare il corso ad ogni alunno
+          .foreach(classGroup => { // scan all students of each classroom
+            // Each class corresponds to a course. Each course is always done in the same class.
             val classroom: Classroom = Classroom(classGroup.size)
-            val lesson: SchoolClass = SchoolClass(lessonId.toString) // 1A, 2A, 1B, 2B, ecc... TODO: dovrebbe essere Course(...)
+            val lesson: Course = Course(lessonId.toString) // psychology, engineering, ecc..
             val studentPlan: StudentPlan = StudentPlan()
               .add(classroom, Day.MONDAY -> Day.FRIDAY, 8 -> 17)
               .commit()
 
-            university.addStudentPlan(lesson, studentPlan) // Associo il "corso" alla scuola
+            university.addStudentPlan(lesson, studentPlan) // assign the course to the university
             students.slice(numStudent, numStudent + classGroup.size).foreach(student => {
-              student.setLesson(university, lesson) // Associo lo StudentPlan per ogni studente
+              student.setLesson(university, lesson) // associate the Course for each student
             })
 
             lessonId += 1
             classes = classroom :: classes
             numStudent += classGroup.size
           })
-        university.addRooms(classes) // Aggiungo le classi create alla scuola
+        university.addRooms(classes) // add the classes created to the university
         universities = university :: universities
       })
-    // Assegnare i vari professori alle diverse aule di tutte le scuole della città
+    // assign teachers to the different classrooms of all the university in the city
     assignTeachersToSchools(teachers, universities)
     universities
   }
 
   private def assignTeachersToSchools(teachers: List[Teacher], universities: List[University]): Unit = {
-    // Faccio così perché all'inizio so che ho creato un numero di professori
-    // pari ad 1/3 del numero degli studenti
+    // I can do this because at the beginning I know that I have created a
+    // number of professors equal to 1/3 of the number of students
     val teachersPerUni: Int = (CreationParameters.studentsUniPerClass * CreationParameters.classesPerUni) / 3
     var numTeacher: Int = 0
 
@@ -72,6 +67,8 @@ private[institute] case class UniversityCreation() {
   }
 
   private def assignTeachersToSchool(teachers: List[Teacher], university: University): Unit = {
+    // From Monday to Saturday are 6 days. There are 5 hours of lessons every day.
+    // 5 * 6 * classRooms.size = hours of lessons to be covered by the professors
     val classRooms: List[Classroom] = university.getRooms.toList
     val slotPerProf: Int = Math.round(((5 * 6 * classRooms.size) / teachers.size).toFloat)
     val slots = WorkingTimeSlots(classRooms, daysInterval = Day.MONDAY -> Day.FRIDAY).iterator

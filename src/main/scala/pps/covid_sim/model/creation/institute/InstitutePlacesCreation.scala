@@ -21,8 +21,7 @@ private[creation] case class InstitutePlacesCreation() {
     var idS: Int = 0
     var idT: Int = 0
 
-    if (city.isProvince) {
-      // Crea università
+    if (city.numResidents >= Math.max(400, CreationParameters.minResidencesToUni * CreationParameters.citizensPercentage)) {
       educationPlaces = educationPlaces ::: UniversityCreation().create(city,
         students.slice(idS, idS + numStudents.head),
         teachers.slice(idT, idT + numTeachers.head))
@@ -30,7 +29,7 @@ private[creation] case class InstitutePlacesCreation() {
       idT += numTeachers.head
     }
 
-    if (city.numResidents >= CreationParameters.minResidencesToSchool) {
+    if (city.numResidents >= Math.max(200, CreationParameters.minResidencesToSchool * CreationParameters.citizensPercentage)) {
       educationPlaces = educationPlaces ::: SchoolCreation().create(city,
         students.slice(idS, idS + numStudents.last),
         teachers.slice(idT, idT + numTeachers.last))

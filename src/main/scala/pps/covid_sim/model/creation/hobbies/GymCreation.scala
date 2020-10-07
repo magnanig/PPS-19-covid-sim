@@ -34,7 +34,7 @@ private[hobbies] case class GymCreation() {
       })
       val gym: Gym = Gym(city, Places.GYM_TIME_TABLE, rooms)
       for (room <- rooms) {
-        // numero di lavoratori che verranno assegnati alla presente stanza di lavoro
+        // number of workers (people) who will be assigned to this room
         val bound: Int = Statistic.getMin(numWorker + randomIntInRange(staffRange._1, staffRange._2, random), totalWorker)
         if (numWorker < totalWorker) {
           workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker

@@ -34,7 +34,7 @@ private[freetime] case class RestaurantCreation() {
           randomIntInRange(2, 12, random)) :: rooms // capacity of each restaurant tables
       })
       val restaurant: Restaurant = Restaurant(city, Places.RESTAURANT_TIME_TABLE, rooms)
-      // numero di lavoratori (persone) che verranno assegnate al locale
+      // number of workers (people) who will be assigned to the room
       val bound: Int = Statistic.getMin(numWorker +
         randomIntInRange(staffRange._1 * rooms.size, staffRange._2 * rooms.size, random), totalWorker)
       workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker
