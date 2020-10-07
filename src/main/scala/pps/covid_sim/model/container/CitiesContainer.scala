@@ -7,6 +7,13 @@ object CitiesContainer {
   private var _cities: Set[City] = Set()
 
   /**
+   * Delete all cities created so far.
+   */
+  def reset(): Unit = {
+    _cities = Set()
+  }
+
+  /**
    * Adds a city in the container.
    */
   def add(city: City): Unit = {

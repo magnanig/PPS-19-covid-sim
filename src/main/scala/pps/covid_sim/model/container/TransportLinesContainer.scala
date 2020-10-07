@@ -1,7 +1,6 @@
 package pps.covid_sim.model.container
 
 import java.util.Calendar
-
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.transports.PublicTransports.{BusLine, Line, TrainLine}
 import pps.covid_sim.util.time.Time.ScalaCalendar
@@ -10,6 +9,14 @@ object TransportLinesContainer {
 
   private var _busLines: List[BusLine] = List()
   private var _trainLine: List[TrainLine] = List()
+
+  /**
+   * Delete all transport lines created so far.
+   */
+  def reset(): Unit = {
+    _busLines = List()
+    _trainLine = List()
+  }
 
   /**
    * Adds a new bus line in the container.

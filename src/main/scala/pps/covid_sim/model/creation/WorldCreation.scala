@@ -1,5 +1,6 @@
 package pps.covid_sim.model.creation
 
+import pps.covid_sim.model.container.{CitiesContainer, PeopleContainer, PlacesContainer, TransportLinesContainer}
 import pps.covid_sim.model.creation.region.RegionCreation
 import pps.covid_sim.model.places.Locality.Region
 
@@ -12,6 +13,17 @@ import scala.collection.mutable
 object WorldCreation {
 
   private var regions: mutable.Map[Int, Region] = mutable.Map[Int, Region]() // id_region -> Region
+
+  /**
+   * Resets all data structures relating to the
+   * entire application domain
+   */
+  def reset(): Unit = {
+    CitiesContainer.reset()
+    PeopleContainer.reset()
+    PlacesContainer.reset()
+    TransportLinesContainer.reset()
+  }
 
   /**
    * For each Italian region: cities, people and commonplaces of

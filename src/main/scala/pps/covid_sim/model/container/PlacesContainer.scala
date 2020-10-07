@@ -15,7 +15,14 @@ import scala.collection.parallel.mutable.ParMap
  */
 object PlacesContainer {
 
-  private val places: PlacesCreation = new PlacesCreation()
+  private var _places: PlacesCreation = new PlacesCreation()
+
+  /**
+   * Delete all places created so far.
+   */
+  def reset(): Unit = {
+    _places = new PlacesCreation()
+  }
 
   /**
    * Adds a new associated place in a specific city
@@ -24,7 +31,7 @@ object PlacesContainer {
    * @param place place that was created in the city.
    */
   def add(city: City, place: Place): Unit = {
-    places.add(city, place)
+    _places.add(city, place)
   }
 
   /**
@@ -34,7 +41,7 @@ object PlacesContainer {
    * @return  list of all the places that have been created in the
    *          entire application domain.
    */
-  lazy val getPlaces: List[Place] = places.cityMap.flatMap(_._2.planMap.flatMap(_._2)).toList
+  lazy val getPlaces: List[Place] = _places.cityMap.flatMap(_._2.planMap.flatMap(_._2)).toList
 
   /**
    * Finds all places of a specific type that have been created in
@@ -46,7 +53,7 @@ object PlacesContainer {
    *                    have been created in the entire application
    *                    domain.
    */
-  def getPlaces(placeClass: Class[_ <: Place]): List[Place] = places.cityMap.toList //.toList always needed here!!
+  def getPlaces(placeClass: Class[_ <: Place]): List[Place] = _places.cityMap.toList //.toList always needed here!!
     .flatMap(_._2.planMap) //second map
     .filter(_._1 == placeClass)
     .flatMap(_._2)
@@ -61,7 +68,7 @@ object PlacesContainer {
    * @return            list of all places of a specific type that
    *                    are present in a specific city.
    */
-  def getPlaces(city: City, placeClass: Class[_ <: Place]): List[Place] = places.cityMap.toList
+  def getPlaces(city: City, placeClass: Class[_ <: Place]): List[Place] = _places.cityMap.toList
     .filter(_._1 == city)
     .flatMap(_._2.planMap) //second map
     .filter(_._1 == placeClass)
@@ -77,7 +84,7 @@ object PlacesContainer {
    * @return            list of all places of a specific type that
    *                    are present in a specific province.
    */
-  def getPlaces(province: Province, placeClass: Class[_ <: Place]): List[Place] = places.cityMap.toList
+  def getPlaces(province: Province, placeClass: Class[_ <: Place]): List[Place] = _places.cityMap.toList
     .filter(_._1.province == province)
     .flatMap(_._2.planMap) //second map
     .filter(_._1 == placeClass)
@@ -98,7 +105,7 @@ object PlacesContainer {
    *                      are accessible to the public at a specific time.
    */
   def getPlaces[T <: Place](province: Province, placeClass: Class[T], datesInterval: DatesInterval): List[T] = {
-    places.cityMap.toList
+    _places.cityMap.toList
       .filter(_._1.province == province)
       .flatMap(_._2.planMap) //second map
       .filter(_._1 == placeClass)
@@ -122,7 +129,7 @@ object PlacesContainer {
    *                      accessible to the public at a specific time.
    */
   def getPlaces[T <: Place](city: City, placeClass: Class[T], datesInterval: DatesInterval): List[T] =
-    places.cityMap(city)
+    _places.cityMap(city)
       .planMap.get(placeClass)
       .map(places => places.map(_.asInstanceOf[T])
         .filter(_.isOpen(datesInterval)).toList)
