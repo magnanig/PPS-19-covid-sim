@@ -10,4 +10,6 @@ trait Place extends Location {
 
   val city: City
 
+  val openedInLockdown: Boolean
+
 }

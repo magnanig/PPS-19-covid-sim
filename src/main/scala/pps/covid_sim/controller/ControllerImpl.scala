@@ -51,13 +51,16 @@ class ControllerImpl(model: Model, view: View) extends Controller {
                                        asymptomaticProbability: Double, asymptomaticDetectionCondProbability: Double,
                                        contagionProbability: Double,
                                        minMaskProbability: Double, maxMaskProbability: Int,
+                                       averageSocialDistance: Double,
                                        notRespectingIsolationMaxProbability: Double,
-                                       lockDownStart: Double, lockDownEnd: Double, closedPlaceSet: Set[Class[_ <:Place]]): Unit = {
+                                       lockDownStart: Double, lockDownEnd: Double,
+                                       closedPlaceSet: Set[Class[_ <: Place]]): Unit = {
     model.setSimulationParameters(safeZone, minRecoverTime, maxRecoverTime,
       minInfectionDetectionTime, maxInfectionDetectionTime,
       multipleInfectionProbability, asymptomaticProbability,
       asymptomaticDetectionCondProbability, contagionProbability,
       minMaskProbability, maxMaskProbability,
+      averageSocialDistance,
       notRespectingIsolationMaxProbability, lockDownStart, lockDownEnd, closedPlaceSet)
   }
 

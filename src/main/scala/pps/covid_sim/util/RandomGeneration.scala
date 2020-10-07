@@ -39,8 +39,9 @@ object RandomGeneration {
    * @param random    an optional Random object to be used to generate a random number
    * @return          a random double from the specified gaussian
    */
-  def randomDoubleFromGaussian(avg: Double, stdDev: Double, random: Random = new Random()): Double = random
-    .nextGaussian() * stdDev + avg
+  def randomDoubleFromGaussian(avg: Double, stdDev: Double, min: Double = 0, random: Random = new Random()): Double = {
+    Math.max(min, random.nextGaussian() * stdDev + avg)
+  }
 
   /**
    * Generate a random integer from a gaussian distribution.
@@ -52,7 +53,7 @@ object RandomGeneration {
    * @return          a random integer from the specified gaussian
    */
   def randomIntFromGaussian(avg: Int, stdDev: Int, min: Int = 0, random: Random = new Random()): Int = Math.round(
-    Math.max(min, randomDoubleFromGaussian(avg, stdDev, random))
+    Math.max(min, randomDoubleFromGaussian(avg, stdDev, min, random))
   ).toInt
 
   /**

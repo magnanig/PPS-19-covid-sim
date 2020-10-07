@@ -74,7 +74,18 @@ class ModelImpl extends Model {
 
   override def simulationsManager: SimulationsManager[Simulation] = _simulationsManager
 
-  override def setSimulationParameters(safeZone: Double, minRecoverTime: Int, maxRecoverTime: Int, minInfectionDetectionTime: Int, maxInfectionDetectionTime: Int, multipleInfectionProbability: Double, asymptomaticProbability: Double, asymptomaticDetectionCondProbability: Double, contagionProbability: Double, minMaskProbability: Double, maxMaskProbability: Int, notRespectingIsolationMaxProbability: Double, lockDownStart: Double, lockDownEnd: Double, closedPlaceSet: Set[Class[_ <:Place]]): Unit = {
+  override def setSimulationParameters(safeZone: Double,
+                                       minRecoverTime: Int, maxRecoverTime: Int,
+                                       minInfectionDetectionTime: Int, maxInfectionDetectionTime: Int,
+                                       multipleInfectionProbability: Double,
+                                       asymptomaticProbability: Double,
+                                       asymptomaticDetectionCondProbability: Double,
+                                       contagionProbability: Double,
+                                       minMaskProbability: Double, maxMaskProbability: Int,
+                                       averageSocialDistance: Double,
+                                       notRespectingIsolationMaxProbability: Double,
+                                       lockDownStart: Double, lockDownEnd: Double,
+                                       closedPlaceSet: Set[Class[_ <: Place]]): Unit = {
     covidInfectionParameters.safeZone = safeZone
     covidInfectionParameters.minRecoverTime = minRecoverTime
     covidInfectionParameters.maxRecoverTime = maxRecoverTime
@@ -89,7 +100,8 @@ class ModelImpl extends Model {
     covidInfectionParameters.notRespectingIsolationMaxProbability = notRespectingIsolationMaxProbability
     covidInfectionParameters.lockDownStart = lockDownStart
     covidInfectionParameters.lockDownEnd = lockDownEnd
-    covidInfectionParameters.placeToClose = closedPlaceSet
+    covidInfectionParameters.placesToClose = closedPlaceSet
+
   }
 
   private def initPeopleFriends(people: ParSeq[Person]): Unit = {

@@ -123,16 +123,20 @@ object Planning {
 
   import pps.covid_sim.util.time.TimeIntervalsImplicits._
 
-  case class StudentPlan(override val period: MonthsInterval = Month.SEPTEMBER -> Month.MAY)
-    extends PlanMap[Classroom, StudentPlan](() => StudentPlan(period))
+  case class StudentPlan(override val enabledInLockdown: Boolean,
+                         override val period: MonthsInterval = Month.SEPTEMBER -> Month.MAY)
+    extends PlanMap[Classroom, StudentPlan](() => StudentPlan(enabledInLockdown, period))
 
-  case class WorkPlan[T <: Location](override val period: MonthsInterval = MonthsInterval.ALL_YEAR)
-    extends PlanMap[T, WorkPlan[T]](() => WorkPlan(period))
+  case class WorkPlan[T <: Location](override val enabledInLockdown: Boolean,
+                                     override val period: MonthsInterval = MonthsInterval.ALL_YEAR)
+    extends PlanMap[T, WorkPlan[T]](() => WorkPlan(enabledInLockdown, period))
 
-  case class HobbyPlan[T <: Location](override val period: MonthsInterval = MonthsInterval.ALL_YEAR)
-    extends PlanMap[T, HobbyPlan[T]](() => HobbyPlan(period))
+  case class HobbyPlan[T <: Location](override val enabledInLockdown: Boolean,
+                                      override val period: MonthsInterval = MonthsInterval.ALL_YEAR)
+    extends PlanMap[T, HobbyPlan[T]](() => HobbyPlan(enabledInLockdown, period))
 
-  case class CustomPlan[T <: Location](override val period: MonthsInterval = MonthsInterval.ALL_YEAR)
-    extends PlanMap[T, CustomPlan[T]](() => CustomPlan(period))
+  case class CustomPlan[T <: Location](override val enabledInLockdown: Boolean,
+                                       override val period: MonthsInterval = MonthsInterval.ALL_YEAR)
+    extends PlanMap[T, CustomPlan[T]](() => CustomPlan(enabledInLockdown, period))
 
 }

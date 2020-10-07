@@ -62,8 +62,8 @@ case class ActorsCoordinator() extends Coordinator {
     }
     checkLockdown(currentTime)
     controller.tick(currentTime)
-    println()
-    println("----->Tick<-----")
+    //println()
+    //println("----->Tick<-----")
     currentTime = currentTime + 1
     _subordinatedActors.foreach(_ ! HourTick(currentTime))
   }

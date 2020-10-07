@@ -10,7 +10,7 @@ import pps.covid_sim.model.places.Hobbies.Gym
 import pps.covid_sim.model.places.Jobs.{Company, Factory}
 import pps.covid_sim.model.places.Locality.{Area, Province, Region}
 import pps.covid_sim.model.places.OpenPlaces.{Beach, Park, Square}
-import pps.covid_sim.model.places.Shops.Shop
+import pps.covid_sim.model.places.Shops.ClothesShop
 import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.simulation.SimulationsManager.classOrdering
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
@@ -143,10 +143,22 @@ class GuiImpl() extends View {
     val fieldCheckbox = new CheckBox("Soccer fields")
     val gymCheckbox = new CheckBox("Gyms")
 
-    val placeAndCheckMap : Map[CheckBox,Class[_ <:Place]]= Map(beachCheckbox->classOf[Beach],squareCheckbox -> classOf[Square],
-      parkCheckbox -> classOf[Park], resturantCheckbox -> classOf[Restaurant], pubCheckbox -> classOf[Pub], barCheckbox -> classOf[Bar],
-      discoCheckbox -> classOf[Disco], openDiscoCheckbox -> classOf[OpenDisco], schoolCheckbox -> classOf[School], universityCheckBox -> classOf[University],
-      companyCheckbox -> classOf[Company], factoryCheckbox -> classOf[Factory], shopCheckbox -> classOf[Shop], gymCheckbox -> classOf[Gym])
+    val placeAndCheckMap : Map[CheckBox, Class[_ <: Place]] = Map(
+      beachCheckbox -> classOf[Beach],
+      squareCheckbox -> classOf[Square],
+      parkCheckbox -> classOf[Park],
+      resturantCheckbox -> classOf[Restaurant],
+      pubCheckbox -> classOf[Pub],
+      barCheckbox -> classOf[Bar],
+      discoCheckbox -> classOf[Disco],
+      openDiscoCheckbox -> classOf[OpenDisco],
+      schoolCheckbox -> classOf[School],
+      universityCheckBox -> classOf[University],
+      companyCheckbox -> classOf[Company],
+      factoryCheckbox -> classOf[Factory],
+      shopCheckbox -> classOf[ClothesShop],
+      gymCheckbox -> classOf[Gym]
+    )
 
     var selectedRegion : Option[Region] = Option.empty
     var selectedProvince : Option[Province] = Option.empty
@@ -349,9 +361,9 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
-          contents += new Label("<html><p>Percentage of people who respect safety distances:</p></html>")
+          contents += new Label("<html><p>Average social distances kept by people:</p></html>")
           contents += peopleSecureDistanceField
-          contents += new Label("%")
+          contents += new Label("cm")
           listenTo(peopleSecureDistanceField)
           reactions += {
             case EditDone(`peopleSecureDistanceField`) => checkPercent(peopleSecureDistanceField)
@@ -417,6 +429,7 @@ class GuiImpl() extends View {
                   probInfectionField.text.toDouble/100,
                   peopleWearingMaskField.text.toDouble/100 ,
                   1,//100.toInt/100
+                  peopleSecureDistanceField.text.toDouble/100,
                   breakingPeopkeField.text.toDouble/100,
                   lockdownStartField.text.toDouble/100,
                   lockdownEndField.text.toDouble/100,
@@ -445,8 +458,7 @@ class GuiImpl() extends View {
       listenTo(tabs.selection)
       listenTo(list.selection)
       reactions += {
-        case SelectionChanged(`tabs`) =>
-          list.selectIndices(tabs.selection.index)
+        case SelectionChanged(`tabs`) => list.selectIndices(tabs.selection.index)
         case SelectionChanged(`list`) =>
           if (list.selection.items.length == 1)
             tabs.selection.page = list.selection.items.head

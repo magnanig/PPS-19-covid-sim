@@ -5,6 +5,7 @@ import java.util.Calendar
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locations.Location
+import pps.covid_sim.model.places.Place
 import pps.covid_sim.util.time.DatesInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
@@ -144,11 +145,8 @@ case class Agenda(owner: Person) {
    * @param time  the desired time
    * @return      an optional pair with the dates interval and the relative location
    */
-  def planStartingAt(time: Calendar): Option[(DatesInterval, Location)] = plans.toStream
-    .filter(p => {
-      val enabled = p.isEnabled(time)
-      enabled
-    })
+  def planStartingAt(time: Calendar, inLockdown: Boolean): Option[(DatesInterval, Location)] = plans.toStream
+    .filter(p => p.isEnabled(time) && (!inLockdown || p.enabledInLockdown))
     .flatMap(_.dayPlan(time.day).toStream)
     .collectFirst({
       case (hours, location) if hours.from == time.hour => (DatesInterval(time, time + hours.size - 1), location)
@@ -161,7 +159,7 @@ case class Agenda(owner: Person) {
    *              the location and the optional group associated to the appointment
    * @note        the only case when group is empty, is when the commitment is a joined appointment.
    */
-  def nextAppointment(time: Calendar): Option[(DatesInterval, Location, Option[Group])] = {
+  def nextAppointment(time: Calendar): Option[(DatesInterval, Place, Option[Group])] = {
     fixedAppointmentStartingAt(time) match {
       case Some((appointment, group)) => Some(appointment.datesInterval, appointment.place, Some(group))
       case _ => joinedAppointmentStartingAt(time) match {
@@ -173,16 +171,18 @@ case class Agenda(owner: Person) {
 
   /**
    * Get the next commitment starting at the specified time. It can be either a plan or an appointment.
+   * If a lockdown in enabled, the commitment will be returned only if the place at which it refers to
+   * is open also during lockdown.
    * @param time  the desired time
    * @return      an optional tuple with all information about the commitment, like the dates interval,
-   *              the location and the optional group associated to the commitment.
-   * @note        the only case when group is empty, is when the commitment is a joined appointment.
+   *              the location and the optional group associated to the commitment
+   * @note        the only case when group is empty, is when the commitment is a joined appointment
    */
-  def nextCommitment(time: Calendar): Option[(DatesInterval, Location, Option[Group])] = {
-    planStartingAt(time) match {
-      case Some((datesInterval, location)) => /*println(s"Plan at ${location.getClass.getSimpleName}")*/
-        Some((datesInterval, location, Some(owner)))
-      case _ => nextAppointment(time)
+  def nextCommitment(time: Calendar,
+                    inLockdown: Boolean): Option[(DatesInterval, Location, Option[Group])] = {
+    planStartingAt(time, inLockdown) match {
+      case Some((datesInterval, location)) => Some((datesInterval, location, Some(owner)))
+      case _ => nextAppointment(time).filter(!inLockdown || _._2.openedInLockdown)
     }
   }
 
