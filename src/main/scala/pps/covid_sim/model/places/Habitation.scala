@@ -8,8 +8,6 @@ import pps.covid_sim.model.clinical.VirusPropagation
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Locations.Location
-import pps.covid_sim.util.RandomGeneration
-import pps.covid_sim.util.geometry.Dimension
 import pps.covid_sim.util.time.HoursInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
@@ -27,13 +25,11 @@ case class Habitation(override val city: City,
                       leaderElection: Set[Person] => Person = people => Random.shuffle(people)
                        .find(_.age >= 18)
                        .getOrElse(people.maxBy(_.age))) extends ClosedPlace with Iterable[Person] {
-  val dimension: Dimension = (
-    RandomGeneration.randomIntInRange(10, 20),
-    RandomGeneration.randomIntInRange(10, 20)
-  )
 
   private val sleepingHours = HoursInterval(0, 8)
   private var members: Set[Person] = Set()
+
+  override val openedInLockdown: Boolean = true
 
   /**
    * The habitation's leader, in charge of doing commissions. If leader hasn't been elected yet

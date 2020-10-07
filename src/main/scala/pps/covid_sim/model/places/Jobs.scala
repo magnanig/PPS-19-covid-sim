@@ -14,12 +14,14 @@ import pps.covid_sim.util.geometry.{Dimension, Rectangle}
 object Jobs {
 
   case class Company(override val city: City,
+                     override val openedInLockdown: Boolean,
                      private var offices: Seq[Office] = Seq())
     extends MultiRoom[Office](city, offices) with ClosedWorkPlace[Office]{
     override val mask: Option[Mask] = Some(Masks.FFP2WithoutValve)
   }
 
   case class Factory(override val city: City,
+                     override val openedInLockdown: Boolean,
                      private var offices: Seq[Office] = Seq())
     extends MultiRoom[Office](city, offices) with ClosedWorkPlace[Office] {
     override val mask: Option[Mask] = Some(Masks.FFP2WithoutValve)

@@ -23,6 +23,7 @@ object Education {
   trait Lesson
 
   abstract class Institute(override val city: City,
+                           override val openedInLockdown: Boolean,
                            private val classrooms: Seq[Classroom] = Seq())
     extends MultiRoom[Classroom](city, classrooms) with ClosedWorkPlace[Classroom] with LimitedHourAccess {
 
@@ -40,11 +41,17 @@ object Education {
 
   case class School(override val city: City,
                     override val timeTable: TimeTable,
-                    private val classrooms: Seq[Classroom] = Seq()) extends Institute(city, classrooms)
+                    override val openedInLockdown: Boolean,
+                    private val classrooms: Seq[Classroom] = Seq())
+    extends Institute(city, openedInLockdown, classrooms)
+
 
   case class University(override val city: City,
                         override val timeTable: TimeTable,
-                        private val classrooms: Seq[Classroom] = Seq()) extends Institute(city, classrooms)
+                        override val openedInLockdown: Boolean,
+                        private val classrooms: Seq[Classroom] = Seq())
+    extends Institute(city, openedInLockdown, classrooms)
+
 
   case class Classroom(private val minCapacity: Int) extends Room with Arrangeable[Student, DeskGroup] {
 
