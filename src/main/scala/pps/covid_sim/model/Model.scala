@@ -23,8 +23,10 @@ trait Model {
                               asymptomaticProbability: Double, asymptomaticDetectionCondProbability: Double,
                               contagionProbability: Double,
                               minMaskProbability: Double, maxMaskProbability : Int,
+                              averageSocialDistance: Double,
                               notRespectingIsolationMaxProbability: Double,
-                              lockDownStart:Double, lockDownEnd: Double, closedPlaceSet: Set[Class[_ <:Place]]): Unit
+                              lockDownStart:Double, lockDownEnd: Double,
+                              closedPlaceSet: Set[Class[_ <: Place]]): Unit
 
   /**
    * Init world, by creating places, people and cities according to the specified area.

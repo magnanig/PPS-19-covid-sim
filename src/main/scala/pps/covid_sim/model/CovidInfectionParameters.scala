@@ -101,6 +101,15 @@ case class CovidInfectionParameters() {
 
 
   /**
+   * Average social distance kept by people.
+   */
+  private var _averageSocialDistance: Double = 1.0
+  private[model] def averageSocialDistance_=(probability :Double):Unit ={
+    _averageSocialDistance = probability
+  }
+  def averageSocialDistance: Double = _maxMaskProbability
+
+  /**
    * Maximum probability of a person to not respect Isolation, ether lockdown or forced quarantine
    */
   private var _notRespectingIsolationMaxProbability: Double = 0.4
@@ -130,10 +139,10 @@ case class CovidInfectionParameters() {
   /**
    * Set containig the class of the places that will be closed during Lockdown
    */
-  private var _placeToClose: Set[Class[_ <:Place]] = Set()
-  private[model] def placeToClose_=(places :Set[Class[_ <:Place]]):Unit ={
-    _placeToClose = places
+  private var _placesToClose: Set[Class[_ <: Place]] = Set()
+  private[model] def placesToClose_=(places: Set[Class[_ <: Place]]):Unit ={
+    _placesToClose = places
   }
-  def placeToClose: Set[Class[_ <:Place]] = _placeToClose
+  def placesToClose: Set[Class[_ <: Place]] = _placesToClose
 
 }

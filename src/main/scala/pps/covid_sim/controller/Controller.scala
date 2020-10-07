@@ -45,10 +45,11 @@ trait Controller {
                               multipleInfectionProbability: Double,
                               asymptomaticProbability: Double, asymptomaticDetectionCondProbability: Double,
                               contagionProbability: Double,
-                              minMaskProbability: Double, maxMaskProbability : Int,
+                              minMaskProbability: Double, maxMaskProbability: Int,
+                              averageSocialDistance: Double,
                               notRespectingIsolationMaxProbability: Double,
                               lockDownStart:Double, lockDownEnd: Double,
-                              closedPlaceSet: Set[Class[_ <:Place]]): Unit
+                              closedPlaceSet: Set[Class[_ <: Place]]): Unit
 
   /**
    * Get covid infection parameters.

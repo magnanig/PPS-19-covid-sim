@@ -56,7 +56,6 @@ class HeatMap() {
 
         infectionsInADay.foreach(elem => {
           val (x, y) = convertGpsCoordsToMapCoords(elem._1.longitude, elem._1.latitude)
-
           g2.drawImage(italyOutlineMap, 0, 0, null)
           val spotColor: Color = computeSpotColor((elem._2 * 100) / elem._1.numResidents)
           g2.setColor(spotColor)
@@ -79,7 +78,6 @@ class HeatMap() {
        */
       def convertGpsCoordsToMapCoords(longitude: Double, latitude: Double): (Double, Double) = {
         val x = (longitude - mapLongitudeLeft) * (mapWidth / mapLongitudeDelta)
-
         val worldMapWidth = ((mapWidth / mapLongitudeDelta) * 360) / (2 * Math.PI)
         val mapOffsetY = worldMapWidth / 2 * Math.log((1 + Math.sin(mapLatitudeBottomDegree)) /
           (1 - Math.sin(mapLatitudeBottomDegree)))

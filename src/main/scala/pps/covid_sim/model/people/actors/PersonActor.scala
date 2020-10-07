@@ -48,6 +48,9 @@ abstract class PersonActor extends Actor {
   private lazy val maskProbability: Double = RandomGeneration.randomDoubleInRange(covidInfectionParameters.minMaskProbability,
     covidInfectionParameters.maxMaskProbability)
 
+  private lazy val averageDistance: Double = RandomGeneration.randomDoubleFromGaussian(covidInfectionParameters
+    .averageSocialDistance, 0.5, 0.1)
+
   private lazy val notRespectingIsolation: Double = RandomGeneration.randomDoubleInRange(0,
     covidInfectionParameters.notRespectingIsolationMaxProbability)
 
@@ -64,7 +67,6 @@ abstract class PersonActor extends Actor {
   private lazy val placesPreferences = GoingOutParameters.placesPreferences(person.age)
   private val numShopPerWeek: Int = RandomGeneration.randomIntInRange(1, maxNumShopPerWeek)
   private val transportProbability = RandomGeneration.randomDoubleInRange(0, 0.8)
-
   private var pendingRequest: DatesInterval = _
   private var requestType: Request = _
   private var means: Option[PublicTransport] = None
@@ -84,14 +86,14 @@ abstract class PersonActor extends Actor {
         .map(_.tryUse(person, time))
         .find(_.isDefined)
         .flatten
-    case p @ RequestedPlaces(_) => p match {
-        case RequestedPlaces(places) if requestType == Request.LOOKING_FOR_PLACES =>
+    case p @ RequestedPlaces(places) => places match {
+        case _ if requestType == Request.LOOKING_FOR_PLACES =>
           formulateAndSendProposal(pendingRequest, places)
-        case RequestedPlaces(places) if requestType == Request.LOOKING_FOR_MARKET => planShopping(places)
-        case RequestedPlaces(places) if places.nonEmpty => currentCommitment = Some(currentCommitment.get._1,
+        case _ if requestType == Request.LOOKING_FOR_MARKET => planShopping(places)
+        case _ if places.nonEmpty => currentCommitment = Some(currentCommitment.get._1,
           Random.shuffle(places).head.enter(currentCommitment.get._3.get, currentCommitment.get._1.from),
           currentCommitment.get._3)
-        case _ =>
+        case _ => println("ADVICE: No places found!")
       }
       waitingResponses -= coordinator
       sendAckIfReady()
@@ -158,7 +160,7 @@ abstract class PersonActor extends Actor {
   }
 
   private def nextCommitment(): Unit =
-    currentCommitment = agenda.nextCommitment(time) match {
+    currentCommitment = agenda.nextCommitment(time, lockdown) match {
       case commitment @ Some((datesInterval, location, Some(group))) if group.leader eq this.person => goOut()
         person.setMask(chooseMask(location))
         tryEnterInPlace(location, time, group) match {
@@ -196,6 +198,7 @@ abstract class PersonActor extends Actor {
 
   private def goOut(): Unit = {
     chooseTransport()
+    person.socialDistance = RandomGeneration.randomDoubleFromGaussian(averageDistance, 0.5, 0.1)
     isOut = true
     person.habitation.exit(person)
   }
@@ -222,10 +225,11 @@ abstract class PersonActor extends Actor {
   private def organizeGoingOut(time: Calendar): Unit = {
     val interval = agenda.firstNextFreeTime(time + 1)
     randomPlaceWithPreferences(placesPreferences, interval) match {
-      case Some(placeClass) => requestPlaces(person.residence, placeClass, Some(interval))
+      case Some(placeClass) if !lockdown || !covidInfectionParameters.placesToClose.contains(placeClass) =>
+        requestPlaces(person.residence, placeClass, Some(interval))
         requestType = Request.LOOKING_FOR_PLACES
         pendingRequest = interval
-      case _ => None
+      case _ =>
     }
   }
 
@@ -252,7 +256,7 @@ abstract class PersonActor extends Actor {
   private def mayAcceptProposal(goOutProposal: GoOutProposal): Boolean = mayGoOut() &&
     wantsToGoOutWith(goOutProposal.leader, goOutProposal.place)
 
-  private def mayGoOut(): Boolean = wantsToGoOutToday && (!(lockdown || person.isInfected) ||
+  private def mayGoOut(): Boolean = wantsToGoOutToday && (!person.isInfected ||
     Random.nextDouble() < notRespectingIsolation)
 
   private def wantsToGoOutWith(person: Person, at: Place): Boolean = {

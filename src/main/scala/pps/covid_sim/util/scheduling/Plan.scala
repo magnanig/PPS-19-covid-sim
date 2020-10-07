@@ -10,6 +10,11 @@ trait Plan[T <: Location] extends Schedule {
   type P <: Plan[T]
 
   /**
+   * Specifies whether current plan is enabled also during lockdown or not.
+   */
+  val enabledInLockdown: Boolean
+
+  /**
    * Get the plan for the specified day
    *
    * @param day the desired day
