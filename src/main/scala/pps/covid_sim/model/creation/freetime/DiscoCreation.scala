@@ -33,7 +33,7 @@ private[freetime] case class DiscoCreation() {
         rooms = DiscoRoom(randomIntInRange(capacityRange._1, capacityRange._2, random)) :: rooms
       })
       val disco: Disco = Disco(city, Places.DISCO_TIME_TABLE, rooms)
-      // numero di persone lavoratrici che verranno assegnate al locale
+      // number of workers (people) who will be assigned to the disco
       val bound: Int = Statistic.getMin(numWorker +
         randomIntInRange(staffRange._1 * rooms.size, staffRange._2 * rooms.size, random), totalWorker)
       workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker

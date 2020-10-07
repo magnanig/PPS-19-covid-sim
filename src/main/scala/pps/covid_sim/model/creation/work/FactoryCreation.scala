@@ -31,7 +31,7 @@ private[work] case class FactoryCreation() {
       })
       val factory: Factory = Factory(city, offices)
       for (office <- offices) {
-        // numero di lavoratori che verranno assegnate al presente ufficio
+        // number of workers (people) who will be assigned to the office
         val bound: Int = Statistic.getMin(numWorker + office.capacity, totalWorker)
         if (numWorker < totalWorker) {
           workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker
