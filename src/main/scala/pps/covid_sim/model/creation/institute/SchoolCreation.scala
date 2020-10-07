@@ -1,5 +1,6 @@
 package pps.covid_sim.model.creation.institute
 
+import pps.covid_sim.model.creation.WorldCreation.closedPlaceInLockdown
 import pps.covid_sim.model.people.People.{Student, Teacher}
 import pps.covid_sim.model.places.Education.{Classroom, School}
 import pps.covid_sim.model.places.Locality.City
@@ -24,7 +25,7 @@ private[institute] case class SchoolCreation() {
     (1 to totalStudent)
       .grouped(studentPerSchool) // each group identifies a new school
       .foreach(schoolGroup => { // scan all students of each school
-        val school: School = School(city, Places.SCHOOL_TIME_TABLE)
+        val school: School = School(city, Places.SCHOOL_TIME_TABLE, !closedPlaceInLockdown.contains(classOf[School]))
         var classes: List[Classroom] = List()
         var lessonId: Int = 0
         schoolGroup
@@ -33,7 +34,7 @@ private[institute] case class SchoolCreation() {
             // Each class corresponds to one section. The students of each section always teach in the same room
             val classroom: Classroom = Classroom(classGroup.size)
             val lesson: SchoolClass = SchoolClass(lessonId.toString) // 1A, 2A, 1B, 2B, ecc...
-            val studentPlan: StudentPlan = StudentPlan()
+            val studentPlan: StudentPlan = StudentPlan(!closedPlaceInLockdown.contains(classOf[School]))
               .add(classroom, Day.MONDAY -> Day.SATURDAY, 8 -> 13)
               .commit()
 
@@ -74,7 +75,7 @@ private[institute] case class SchoolCreation() {
     val slots = WorkingTimeSlots(classRooms).iterator
 
     for (teacher <- teachers) {
-      val profPlan: WorkPlan[Classroom] = WorkPlan(Month.SEPTEMBER -> Month.MAY)
+      val profPlan: WorkPlan[Classroom] = WorkPlan(!closedPlaceInLockdown.contains(classOf[School]), Month.SEPTEMBER -> Month.MAY)
       (1 to slotPerProf).foreach(_ => {
         if (slots.hasNext) {
           val slot = slots.next

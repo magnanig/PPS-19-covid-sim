@@ -1,6 +1,8 @@
 package pps.covid_sim.model.creation.work
 
+import pps.covid_sim.model.creation.WorldCreation.closedPlaceInLockdown
 import pps.covid_sim.model.people.People.Worker
+import pps.covid_sim.model.places.FreeTime.Bar
 import pps.covid_sim.model.places.Jobs.{Factory, Office}
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
@@ -29,13 +31,13 @@ private[work] case class FactoryCreation() {
       (1 to randomIntInRange(officesRange._1, officesRange._2, random)).foreach(_ => { // number of offices
         offices = Office(randomIntInRange(capacityRange._1, capacityRange._2, random)) :: offices
       })
-      val factory: Factory = Factory(city, offices)
+      val factory: Factory = Factory(city, !closedPlaceInLockdown.contains(classOf[Factory]), offices)
       for (office <- offices) {
         // number of workers (people) who will be assigned to the office
         val bound: Int = Statistic.getMin(numWorker + office.capacity, totalWorker)
         if (numWorker < totalWorker) {
           workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker
-            val plan: WorkPlan[Office] = WorkPlan()
+            val plan: WorkPlan[Office] = WorkPlan(!closedPlaceInLockdown.contains(classOf[Factory]))
               .add(office, Day.MONDAY -> Day.FRIDAY, 8 -> 12, 14 -> 18)
               .commit()
             factory.addWorkPlan(worker, plan)

@@ -7,7 +7,7 @@ import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.parameters.CreationParameters._
 import pps.covid_sim.util.RandomGeneration
-import pps.covid_sim.util.geometry.Rectangle.{beachObstacle, calculateFilling, generalOutdoorObstacle}
+import pps.covid_sim.util.geometry.Rectangle.generalOutdoorObstacle
 import pps.covid_sim.util.geometry.{Coordinates, Dimension, Rectangle, Speed}
 import pps.covid_sim.util.scheduling.TimeTable
 
@@ -25,35 +25,7 @@ object OpenPlaces {
     }
   }
 
-  case class Beach(override val city: City) extends OpenPlace {
-    override val dimension: Dimension = (
-      RandomGeneration.randomIntInRange(50, 200),
-      RandomGeneration.randomIntInRange(50, 80)
-    )
-
-    /**
-     * Defines beach obstacles, representing umbrellas.
-     * @param dimension the dimension of the current space
-     * @return          the set of obstacles of the beach
-     */
-    private def placeObstacles(dimension: Dimension): Set[Rectangle] = {
-      var umbrellas: Set[Rectangle] = Set()
-      val umbrellasColumns = calculateFilling(dimension.width, beachFillFactor)
-      val umbrellasRows = calculateFilling(dimension.length, beachFillFactor)
-
-      (0 until umbrellasRows).foreach(r => (0 until umbrellasColumns)
-        .foreach(c => umbrellas += beachObstacle(r, c, beachFillFactor)))
-
-      umbrellas
-    }
-
-    override val obstacles: Set[Rectangle] = placeObstacles(dimension)
-
-    override protected val pathSampling: Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]] =
-      MovementFunctions.randomPath(dimension, obstacles, Speed.SLOW, 6)
-  }
-
-  case class Square(override val city: City) extends OpenPlace {
+  case class Square(override val city: City, override val openedInLockdown: Boolean) extends OpenPlace {
     override val dimension: Dimension = (
       RandomGeneration.randomIntInRange(50, 150),
       RandomGeneration.randomIntInRange(50, 150)
@@ -88,7 +60,7 @@ object OpenPlaces {
       MovementFunctions.randomPath(dimension, obstacles, Speed.MIDDLE, 4)
   }
 
-  case class Park(override val city: City) extends OpenPlace {
+  case class Park(override val city: City, override val openedInLockdown: Boolean) extends OpenPlace {
     override val dimension: Dimension = (
       RandomGeneration.randomIntInRange(20, 80),
       RandomGeneration.randomIntInRange(20, 80)
@@ -122,7 +94,8 @@ object OpenPlaces {
   }
 
   case class Field(override val city: City,
-                   override val timeTable: TimeTable) extends OpenPlace with LimitedHourAccess {
+                   override val timeTable: TimeTable,
+                   override val openedInLockdown: Boolean) extends OpenPlace with LimitedHourAccess {
     override val dimension: Dimension = (
       RandomGeneration.randomIntInRange(90, 120),
       RandomGeneration.randomIntInRange(45, 90)

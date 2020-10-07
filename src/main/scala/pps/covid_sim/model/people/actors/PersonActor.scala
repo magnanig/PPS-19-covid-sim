@@ -86,7 +86,7 @@ abstract class PersonActor extends Actor {
         .map(_.tryUse(person, time))
         .find(_.isDefined)
         .flatten
-    case p @ RequestedPlaces(places) => places match {
+    case RequestedPlaces(places) => places match {
         case _ if requestType == Request.LOOKING_FOR_PLACES =>
           formulateAndSendProposal(pendingRequest, places)
         case _ if requestType == Request.LOOKING_FOR_MARKET => planShopping(places)

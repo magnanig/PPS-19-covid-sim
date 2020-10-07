@@ -1,5 +1,6 @@
 package pps.covid_sim.model.creation.freetime
 
+import pps.covid_sim.model.creation.WorldCreation.closedPlaceInLockdown
 import pps.covid_sim.model.people.People.Worker
 import pps.covid_sim.model.places.FreeTime.Bar
 import pps.covid_sim.model.places.Locality.City
@@ -33,12 +34,12 @@ private[freetime] case class BarCreation() {
         rooms = TablesRoom(randomIntInRange(capacityRange._1, capacityRange._2, random),
           randomIntFromGaussian(3, 3, 2)) :: rooms // capacity of each restaurant table
       })
-      val bar: Bar = Bar(city, Places.BAR_TIME_TABLE, rooms)
+      val bar: Bar = Bar(city, Places.BAR_TIME_TABLE, !closedPlaceInLockdown.contains(classOf[Bar]), rooms)
       // number of workers (people) who will be assigned to the bar
       val bound: Int = Statistic.getMin(numWorker +
         randomIntInRange(staffRange._1 * rooms.size, staffRange._2 * rooms.size, random), totalWorker)
       workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker
-        val plan: WorkPlan[Bar] = WorkPlan()
+        val plan: WorkPlan[Bar] = WorkPlan(!closedPlaceInLockdown.contains(classOf[Bar]))
           .add(bar, Day.TUESDAY -> Day.SUNDAY, 6 -> 18)
           .commit()
         bar.addWorkPlan(worker, plan)

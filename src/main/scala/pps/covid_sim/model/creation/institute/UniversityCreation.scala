@@ -1,7 +1,9 @@
 package pps.covid_sim.model.creation.institute
 
+import pps.covid_sim.model.creation.WorldCreation.closedPlaceInLockdown
 import pps.covid_sim.model.people.People.{Student, Teacher}
 import pps.covid_sim.model.places.Education.{Classroom, University}
+import pps.covid_sim.model.places.FreeTime.Bar
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.{Course, Place}
 import pps.covid_sim.model.samples.Places
@@ -24,7 +26,7 @@ private[institute] case class UniversityCreation() {
     (1 to totalStudent)
       .grouped(studentPerUni) // each group identifies a new university
       .foreach(uniGroup => { // scan all students of each university
-        val university: University = University(city, Places.UNIVERSITY_TIME_TABLE)
+        val university: University = University(city, Places.UNIVERSITY_TIME_TABLE, !closedPlaceInLockdown.contains(classOf[University]))
         var classes: List[Classroom] = List()
         var lessonId: Int = 0
         uniGroup
@@ -33,7 +35,7 @@ private[institute] case class UniversityCreation() {
             // Each class corresponds to a course. Each course is always done in the same class.
             val classroom: Classroom = Classroom(classGroup.size)
             val lesson: Course = Course(lessonId.toString) // psychology, engineering, ecc..
-            val studentPlan: StudentPlan = StudentPlan()
+            val studentPlan: StudentPlan = StudentPlan(!closedPlaceInLockdown.contains(classOf[University]))
               .add(classroom, Day.MONDAY -> Day.FRIDAY, 8 -> 17)
               .commit()
 
@@ -74,7 +76,7 @@ private[institute] case class UniversityCreation() {
     val slots = WorkingTimeSlots(classRooms, daysInterval = Day.MONDAY -> Day.FRIDAY).iterator
 
     for (teacher <- teachers) {
-      val profPlan: WorkPlan[Classroom] = WorkPlan(Month.SEPTEMBER -> Month.MAY)
+      val profPlan: WorkPlan[Classroom] = WorkPlan(!closedPlaceInLockdown.contains(classOf[University]), Month.SEPTEMBER -> Month.MAY)
       (1 to slotPerProf).foreach(_ => {
         if (slots.hasNext) {
           val slot = slots.next

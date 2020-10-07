@@ -6,7 +6,7 @@ import pps.covid_sim.model.places.Locality.Province
  * It takes care of creating the entire application domain
  * based on a specific province.
  */
-object ProvinceCreation {
+private[creation] object ProvinceCreation {
 
   private var created: Boolean = false
 

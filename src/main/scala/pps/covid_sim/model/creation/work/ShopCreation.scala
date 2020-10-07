@@ -1,6 +1,8 @@
 package pps.covid_sim.model.creation.work
 
+import pps.covid_sim.model.creation.WorldCreation.closedPlaceInLockdown
 import pps.covid_sim.model.people.People.Worker
+import pps.covid_sim.model.places.FreeTime.Bar
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.places.Shops.{ClothesShop, Shop, SuperMarket}
@@ -32,7 +34,7 @@ private[work] case class ShopCreation() {
         // number of workers (people) who will be assigned to the shop
         val bound: Int = Statistic.getMin(numWorker + randomIntInRange(staffRange._1, staffRange._2, random), totalWorker)
         workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker
-          val plan: WorkPlan[Shop] = WorkPlan()
+          val plan: WorkPlan[Shop] = WorkPlan(!closedPlaceInLockdown.contains(classOf[SuperMarket]))
             .add(shop, Day.TUESDAY -> Day.SUNDAY, 9 -> 13, 15 -> 19)
             .commit()
           shop.addWorkPlan(worker, plan)
@@ -45,8 +47,8 @@ private[work] case class ShopCreation() {
     }
 
     createShop(workerPerShop.head)(() => SuperMarket(city, randomIntInRange(capacityRange._1, capacityRange._2, random),
-      Places.SHOP_TIME_TABLE)) :::
+      Places.SHOP_TIME_TABLE, !closedPlaceInLockdown.contains(classOf[SuperMarket]))) :::
       createShop(workerPerShop.last)(() => ClothesShop(city, randomIntInRange(capacityRange._1, capacityRange._2, random),
-        Places.SHOP_TIME_TABLE))
+        Places.SHOP_TIME_TABLE, !closedPlaceInLockdown.contains(classOf[SuperMarket])))
   }
 }

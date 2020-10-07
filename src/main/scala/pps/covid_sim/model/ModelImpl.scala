@@ -30,11 +30,7 @@ class ModelImpl extends Model {
   override def people: ParSeq[Person] = _people
 
   override def initWorld(area: Area): Unit = {
-    area match {
-      case Italy() => WorldCreation.create()
-      case region: Region => RegionCreation.create(region)
-      case province: Province => ProvinceCreation.create(province)
-    }
+    WorldCreation.create(area, covidInfectionParameters.placesToClose)
     places = PlacesContainer.getPlaces.par
     _people = Random.shuffle(PeopleContainer.getPeople/*.take(1000)*/).par
     initPeopleFriends(_people)

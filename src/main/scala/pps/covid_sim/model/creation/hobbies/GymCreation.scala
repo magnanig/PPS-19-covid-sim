@@ -1,6 +1,8 @@
 package pps.covid_sim.model.creation.hobbies
 
+import pps.covid_sim.model.creation.WorldCreation.closedPlaceInLockdown
 import pps.covid_sim.model.people.People.Worker
+import pps.covid_sim.model.places.FreeTime.Bar
 import pps.covid_sim.model.places.Hobbies.Gym
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
@@ -32,13 +34,13 @@ private[hobbies] case class GymCreation() {
       (1 to randomIntInRange(roomsRange._1, roomsRange._2, random)).foreach(_ => { // number of rooms
         rooms = GymRoom(randomIntInRange(capacityRange._1, capacityRange._2, random)) :: rooms
       })
-      val gym: Gym = Gym(city, Places.GYM_TIME_TABLE, rooms)
+      val gym: Gym = Gym(city, Places.GYM_TIME_TABLE, !closedPlaceInLockdown.contains(classOf[Gym]), rooms)
       for (room <- rooms) {
         // number of workers (people) who will be assigned to this room
         val bound: Int = Statistic.getMin(numWorker + randomIntInRange(staffRange._1, staffRange._2, random), totalWorker)
         if (numWorker < totalWorker) {
           workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker
-            val plan: WorkPlan[GymRoom] = WorkPlan()
+            val plan: WorkPlan[GymRoom] = WorkPlan(!closedPlaceInLockdown.contains(classOf[Gym]))
               .add(room, Day.MONDAY -> Day.SATURDAY, 9 -> 20)
               .commit()
             gym.addWorkPlan(worker, plan)

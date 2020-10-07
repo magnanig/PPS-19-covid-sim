@@ -9,7 +9,7 @@ import pps.covid_sim.model.places.FreeTime._
 import pps.covid_sim.model.places.Hobbies.Gym
 import pps.covid_sim.model.places.Jobs.{Company, Factory}
 import pps.covid_sim.model.places.Locality.{Area, Province, Region}
-import pps.covid_sim.model.places.OpenPlaces.{Beach, Park, Square}
+import pps.covid_sim.model.places.OpenPlaces.{Park, Square}
 import pps.covid_sim.model.places.Shops.ClothesShop
 import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.simulation.SimulationsManager.classOrdering
@@ -127,7 +127,6 @@ class GuiImpl() extends View {
     runsField.text = "1"
 
     //CheckBoxes
-    val beachCheckbox = new CheckBox("Beaches")
     val squareCheckbox = new CheckBox("Squares")
     val parkCheckbox = new CheckBox("Parks")
     val resturantCheckbox = new CheckBox("Restaurants")
@@ -144,7 +143,6 @@ class GuiImpl() extends View {
     val gymCheckbox = new CheckBox("Gyms")
 
     val placeAndCheckMap : Map[CheckBox, Class[_ <: Place]] = Map(
-      beachCheckbox -> classOf[Beach],
       squareCheckbox -> classOf[Square],
       parkCheckbox -> classOf[Park],
       resturantCheckbox -> classOf[Restaurant],
@@ -405,7 +403,7 @@ class GuiImpl() extends View {
           contents += new Component {
 
             contents += new BoxPanel(Orientation.Vertical) {
-              contents ++= Seq(beachCheckbox,squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox)
+              contents ++= Seq(squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox)
             }
             contents += new BoxPanel(Orientation.Vertical) {
               contents ++= Seq( barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox)

@@ -34,9 +34,10 @@ object Places {
       .add(Day.MONDAY, HoursInterval(8, 12))
       .add(DaysInterval(Day.TUESDAY, Day.FRIDAY), HoursInterval(8, 12), HoursInterval(14, 18))
       .add(DaysInterval.WEEKEND, HoursInterval(9, 20)),
+    false,
     List(SMALL_ROOM, BIG_ROOM)
   )
 
-  val PARK: Park = Park(Cities.CERVIA)
+  val PARK: Park = Park(Cities.CERVIA, false)
 
 }

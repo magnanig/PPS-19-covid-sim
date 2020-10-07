@@ -1,7 +1,8 @@
 package pps.covid_sim.model.creation.freetime
 
+import pps.covid_sim.model.creation.WorldCreation.closedPlaceInLockdown
 import pps.covid_sim.model.people.People.Worker
-import pps.covid_sim.model.places.FreeTime.OpenDisco
+import pps.covid_sim.model.places.FreeTime.{Bar, OpenDisco}
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.samples.Places
@@ -25,12 +26,12 @@ private[freetime] case class OpenDiscoCreation() {
     var numWorker: Int = 0
 
     while (numWorker < totalWorker) {
-      val openDisco: OpenDisco = OpenDisco(city, Places.DISCO_TIME_TABLE)
+      val openDisco: OpenDisco = OpenDisco(city, Places.DISCO_TIME_TABLE, !closedPlaceInLockdown.contains(classOf[OpenDisco]))
       // number of workers (people) who will be assigned to the open disco
       val bound: Int = Statistic.getMin(numWorker +
         randomIntInRange(staffRange._1, staffRange._2, random), totalWorker)
       workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker
-        val plan: WorkPlan[OpenDisco] = WorkPlan()
+        val plan: WorkPlan[OpenDisco] = WorkPlan(!closedPlaceInLockdown.contains(classOf[OpenDisco]))
           .add(openDisco, Day.FRIDAY -> Day.SATURDAY, 22 -> 6)
           .commit()
         openDisco.addWorkPlan(worker, plan)

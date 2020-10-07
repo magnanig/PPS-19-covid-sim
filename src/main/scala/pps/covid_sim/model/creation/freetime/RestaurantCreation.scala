@@ -1,7 +1,8 @@
 package pps.covid_sim.model.creation.freetime
 
+import pps.covid_sim.model.creation.WorldCreation.closedPlaceInLockdown
 import pps.covid_sim.model.people.People.Worker
-import pps.covid_sim.model.places.FreeTime.Restaurant
+import pps.covid_sim.model.places.FreeTime.{Bar, Restaurant}
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.places.rooms.TablesRoom
@@ -33,12 +34,12 @@ private[freetime] case class RestaurantCreation() {
         rooms = TablesRoom(randomIntInRange(capacityRange._1, capacityRange._2, random),
           randomIntInRange(2, 12, random)) :: rooms // capacity of each restaurant tables
       })
-      val restaurant: Restaurant = Restaurant(city, Places.RESTAURANT_TIME_TABLE, rooms)
+      val restaurant: Restaurant = Restaurant(city, Places.RESTAURANT_TIME_TABLE, !closedPlaceInLockdown.contains(classOf[Restaurant]), rooms)
       // number of workers (people) who will be assigned to the restaurants
       val bound: Int = Statistic.getMin(numWorker +
         randomIntInRange(staffRange._1 * rooms.size, staffRange._2 * rooms.size, random), totalWorker)
       workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker
-        val plan: WorkPlan[Restaurant] = WorkPlan()
+        val plan: WorkPlan[Restaurant] = WorkPlan(!closedPlaceInLockdown.contains(classOf[Restaurant]))
           .add(restaurant, Day.TUESDAY -> Day.SUNDAY, 11 -> 14, 19 -> 22)
           .commit()
         restaurant.addWorkPlan(worker, plan)
