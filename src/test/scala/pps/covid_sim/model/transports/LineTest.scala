@@ -4,13 +4,14 @@ import java.util.Calendar
 
 import org.junit.Assert._
 import org.junit.Test
-import pps.covid_sim.model.clinical.Masks
+import pps.covid_sim.model.people.People.{Student, Worker}
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple, Single}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.samples.{Cities, CovidParameters}
 import pps.covid_sim.model.transports.PublicTransports._
+import pps.covid_sim.util.RandomGeneration.randomBirthDate
 import pps.covid_sim.util.time.HoursInterval
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
@@ -22,47 +23,15 @@ class LineTest {
     override val city: City = cityTest
   }
 
-  //numero di bus per linea, capacità di ogni bus (20 circa), tempo in cui la linea è avviabile
+  // Number of buses per line, capacity of each bus (about 20 seats), time interval in which the line is available
   val busLine: BusLine = BusLine(2, 2, HoursInterval(8, 20))
   busLine.setCoveredCities(Set(cityTest))
 
-  //numero di treni, numero di carrozze
+  // Number of trains, number of carriages
   val trainLine: TrainLine = TrainLine(1, 2, Locality.Region.EMILIA_ROMAGNA, HoursInterval(15, 16))
   trainLine.setCoveredCities(Set(cityTest))
 
-  // Dummy Person implementations, used for testing purposes only
-  case class TestPerson(idCode: Int, infected: Boolean) extends Person  {
-
-    override val residence: City = null
-
-    override val birthDate: Calendar = null
-
-    override lazy val age: Int = 0
-
-    override def infectionPlaceInstance: Option[Place] = ???
-
-    override def infectionPlace: Option[Class[_ <: Place]] = ???
-
-    override def friends: Set[Person] = Set()
-
-    val id: Int = idCode
-
-    override def wornMask: Option[Masks.Mask] = ???
-
-    override def canInfect: Boolean = infected
-
-    override def isInfected: Boolean = false
-
-    override def isRecovered: Boolean = false
-
-    override def isDeath: Boolean = false
-
-    override def infectedPeopleMet: Set[Person] = ???
-
-    override def metInfectedPerson(person: Person): Unit = ???
-  }
-
-  var people: Seq[Person] = (0 to 40).map(i => TestPerson(i, false))
+  var people: Seq[Person] = (0 to 40).map(_ => Worker(randomBirthDate(18, 70), cityTest))
 
   val commuters: Seq[Single] = (1 to 40).map(s => if (s % 2 == 0) Single(people(s))
   else Single(people(s))).toList
@@ -72,10 +41,10 @@ class LineTest {
 
   println(groupCommuters)
 
-  val marco: Single = Single(TestPerson(41, false))
-  val lorenzo: Single = Single(TestPerson(42, true))
-  val gianmarco: Single = Single(TestPerson(43, true))
-  val nicolas: Single = Single(TestPerson(44, false))
+  val marco: Single = Single(Student(randomBirthDate(6, 24), cityTest))
+  val lorenzo: Single = Single(Student(randomBirthDate(6, 24), cityTest))
+  val gianmarco: Single = Single(Student(randomBirthDate(6, 24), cityTest))
+  val nicolas: Single = Single(Student(randomBirthDate(6, 24), cityTest))
 
   val time: Calendar = ScalaCalendar(2020, 9, 1, 15) // only the last argument is relevant: '15' is the specific hour
 
@@ -111,16 +80,16 @@ class LineTest {
     assertEquals(None, busLine.tryUse(Multiple(people(5),
       Set(people(5), people(6))), time))
     // Trying to get out a group that did not get on board together
-    busLine.busList(0).exit(Multiple(people(1), Set(people(1), people(3))))
-    assertEquals(2, busLine.busList(0).numCurrentPeople)
+    busLine.busList.head.exit(Multiple(people(1), Set(people(1), people(3))))
+    assertEquals(2, busLine.busList.head.numCurrentPeople)
     assertEquals(4, busLine.busList.map(b => b.numCurrentPeople).sum)
     // Trying to get out a person that did get on board in group
-    busLine.busList(1).exit(Single(TestPerson(3, false)))
-    assertEquals(2, busLine.busList(0).numCurrentPeople)
+    busLine.busList(1).exit(people(2))
+    assertEquals(2, busLine.busList.head.numCurrentPeople)
     assertEquals(4, busLine.busList.map(b => b.numCurrentPeople).sum)
     // Exit of a group from the first bus
-    busLine.busList(0).exit(Multiple(people(1), Set(people(1), people(2))))
-    assertEquals(0, busLine.busList(0).numCurrentPeople)
+    busLine.busList.head.exit(Multiple(people(1), Set(people(1), people(2))))
+    assertEquals(0, busLine.busList.head.numCurrentPeople)
     assertEquals(2, busLine.busList.map(b => b.numCurrentPeople).sum)
   }
 
@@ -155,7 +124,7 @@ class LineTest {
     train.get.exit(Multiple(people(1), Set(people(1), people(8))))
     assertEquals(38, train.get.numCurrentPeople)
     // Trying to get out a person that did get on board in group
-    train.get.exit(Single(TestPerson(1, false)))
+    train.get.exit(Single(lorenzo.leader))
     assertEquals(38, train.get.numCurrentPeople)
   }
 
@@ -175,7 +144,7 @@ class LineTest {
 
   @Test
   def testInfectionsInTrain(): Unit = {
-    val (train, carriage) = trainLine.tryUse(marco, time)
+    val (train, _) = trainLine.tryUse(marco, time)
     assertEquals(1, train.get.numCurrentPeople)
     enterPeopleFromList(0, commuters.size - 1, commuters, trainLine)
     // The train is full

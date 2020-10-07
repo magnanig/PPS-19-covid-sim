@@ -15,6 +15,7 @@ import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.simulation.SimulationsManager.classOrdering
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
 import pps.covid_sim.util.time.Time.ScalaCalendar
+import pps.covid_sim.view.charts.{BarChart, HeatMap, LineChart, PieChart}
 import pps.covid_sim.view.viewUtil.Checkers._
 
 import scala.swing.Swing.{CompoundBorder, EmptyBorder, EtchedBorder, TitledBorder}
@@ -90,7 +91,7 @@ class GuiImpl() extends View {
     val maxInfectionDetectionTimeField = new TextField(4)
     maxInfectionDetectionTimeField.text = "7"
     val multipleInfectionProbabilityField = new TextField(3)
-    multipleInfectionProbabilityField.text = "10"
+    multipleInfectionProbabilityField.text = "0" // TODO: non si vede nella GUI
 
     val cunningAsymptomaticField = new TextField(3)
     cunningAsymptomaticField.text = "20"

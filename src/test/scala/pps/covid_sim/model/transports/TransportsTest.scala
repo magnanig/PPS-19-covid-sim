@@ -4,53 +4,35 @@ import java.util.Calendar
 
 import org.junit.Assert._
 import org.junit.Test
-import pps.covid_sim.model.clinical.Masks
+import pps.covid_sim.model.people.People.{Student, Worker}
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple, Single}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.City
+import pps.covid_sim.model.samples.Cities
 import pps.covid_sim.model.transports.PrivateTransports.Car
-import pps.covid_sim.model.transports.PublicTransports.{Bus, Carriage, Train}
+import pps.covid_sim.model.transports.PublicTransports.{Bus, Train}
+import pps.covid_sim.util.RandomGeneration.randomBirthDate
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
 class TransportsTest {
+
+  val cityTest: City = Cities.FORLI
 
   val bus: Bus = Bus(3)
   val train: Train = Train(2)
   val car: Car = Car(2)
 
-  // Dummy Person implementations, used for testing purposes only
-  case class TestPerson(idCode: Int, infected: Boolean) extends Person  {
-
-    override val birthDate: Calendar = ScalaCalendar(1997, 1, 1)
-
-    override val residence: City = null
-
-    override def wornMask: Option[Masks.Mask] = ???
-
-    override def canInfect: Boolean = infected
-
-    override def isInfected: Boolean = false
-
-    override def isRecovered: Boolean = false
-
-    override def isDeath: Boolean = false
-
-    override def infectedPeopleMet: Set[Person] = ???
-
-    override def metInfectedPerson(person: Person): Unit = ???
-  }
-
-  var people: Seq[Person] = (0 to 40).map(i => TestPerson(i, false))
+  var people: Seq[Person] = (0 to 40).map(_ => Worker(randomBirthDate(18, 70), cityTest))
 
   val commuters: Seq[Single] = (1 to 40).map(i => Single(people(i))).toList
 
   val groupCommuters: Seq[Group] = (1 to 39 by 2).map(s => Multiple(people(s),
     Set(people(s), people(s + 1)))).toList
 
-  val marco: Single = Single(TestPerson(41, false))
-  val lorenzo: Single = Single(TestPerson(42, true))
-  val gianmarco: Single = Single(TestPerson(43, true))
-  val nicolas: Single = Single(TestPerson(44, false))
+  val marco: Single = Single(Student(randomBirthDate(6, 24), cityTest))
+  val lorenzo: Single = Single(Student(randomBirthDate(6, 24), cityTest))
+  val gianmarco: Single = Single(Student(randomBirthDate(6, 24), cityTest))
+  val nicolas: Single = Single(Student(randomBirthDate(6, 24), cityTest))
 
   val time: Calendar = ScalaCalendar(2020, 9, 1, 15)
 
@@ -191,10 +173,10 @@ class TransportsTest {
   @Test
   def testTrainTurnout(): Unit = {
     enterPeopleFromList(0, commuters.size - 2, commuters, train)
-    assertEquals(Option(Carriage(20)), train.enter(marco, time))
-    assertEquals(Option(Carriage(20)), train.enter(lorenzo, time))
+    assertEquals(Option(train), train.enter(marco, time))
+    assertEquals(Option(train), train.enter(lorenzo, time))
     train.exit(lorenzo)
-    assertEquals(Option(Carriage(20)), train.enter(nicolas, time))
+    assertEquals(Option(train), train.enter(nicolas, time))
     // The train is full
     assertEquals(None, train.enter(lorenzo, time))
   }
@@ -202,11 +184,11 @@ class TransportsTest {
   @Test
   def testTrainGroupTurnout(): Unit = {
     enterPeopleFromList(0, groupCommuters.size - 1, groupCommuters, train)
-    assertEquals(Option(Carriage(20)), train.enter(nicolas, time))
+    assertEquals(Option(train), train.enter(nicolas, time))
     // The train has only one seat available: the group cannot enter
     assertEquals(None, train.enter(Multiple(marco.leader, Set(marco.leader, gianmarco.leader)), time))
     assertEquals(39, train.numCurrentPeople)
-    assertEquals(Option(Carriage(20)), train.enter(marco, time))
+    assertEquals(Option(train), train.enter(marco, time))
     // Now the train is full
     assertEquals(40, train.numCurrentPeople)
     // A person entered in group cannot exit alone
@@ -224,25 +206,25 @@ class TransportsTest {
   def testExitFromTrainWithNoOneInside(): Unit = {
     train.exit(lorenzo)
     enterPeopleFromList(0, commuters.size - 2, commuters, train)
-    assertEquals(Option(Carriage(20)), train.enter(marco, time))
-    assertEquals(Option(Carriage(20)), train.enter(lorenzo, time))
+    assertEquals(Option(train), train.enter(marco, time))
+    assertEquals(Option(train), train.enter(lorenzo, time))
     train.exit(marco)
-    assertEquals(Option(Carriage(20)), train.enter(marco, time))
+    assertEquals(Option(train), train.enter(marco, time))
   }
 
   @Test
   def testDuplicateEntriesInTrain(): Unit = {
-    assertEquals(Option(Carriage(20)), train.enter(lorenzo, time))
+    assertEquals(Option(train), train.enter(lorenzo, time))
     // Lorenzo is already in: this entry is ignored
     assertEquals(Option(train), train.enter(lorenzo, time))
     assertEquals(1, train.numCurrentPeople)
-    assertEquals(Option(Carriage(20)), train.enter(gianmarco, time))
+    assertEquals(Option(train), train.enter(gianmarco, time))
     assertEquals(2, train.numCurrentPeople)
   }
 
   @Test
   def testDuplicateGroupEntriesInTrain(): Unit = {
-    assertEquals(Option(Carriage(20)), train.enter(Multiple(people(1),
+    assertEquals(Option(train), train.enter(Multiple(people(1),
       Set(people(1), people(2))), time))
     // The group has already entered: the operation has no effect
     assertEquals(Option(train), train.enter(Multiple(people(1),

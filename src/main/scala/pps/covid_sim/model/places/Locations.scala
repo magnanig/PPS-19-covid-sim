@@ -53,10 +53,13 @@ object Locations {
      */
     final def enter(group: Group, time: Calendar): Option[Location] = synchronized {
       if (_currentGroups.contains(group)) {
-        //println(s"WARNING: ${group.leader} Already entered in the ${getClass.getSimpleName}!")
+        println(s"WARNING: ${group.leader} Already entered in the ${getClass.getSimpleName}!")
         Some(this)
       } else if(canEnter(group, time)) preEnter(group, time) match {
-        case location @ Some(_) => onEntered(group); Some(this) //location
+        case location @ Some(_) => onEntered(group)
+          _currentGroups += group
+          _numCurrentPeople = _numCurrentPeople + group.size
+          Some(this) //location
         case _ => println(s"WARNING: $group cannot enter to the ${getClass.getSimpleName} at ${time.getTime}"); None
       } else {
         None
@@ -74,16 +77,11 @@ object Locations {
     protected def preEnter(group: Group, time: Calendar): Option[Location] = Some(this)
 
     /**
-     * This method gets called after a group has been allowed to enter in current location.
-     * The default implementation, adds group to the set of group entered in location and
-     * updates the number of people as well. So, if you want to override this method, remember
-     * to call "super" before.
+     * This method gets called after a group has been  entered in current location.
+     * The default implementation is empty and can be overridden.
      * @param group   the group that has been entered
      */
-    protected def onEntered(group: Group): Unit = {
-      _currentGroups += group
-      _numCurrentPeople = _numCurrentPeople + group.size
-    }
+    protected def onEntered(group: Group): Unit = { }
 
     /**
      * Lets group exit from current location.

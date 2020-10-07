@@ -37,9 +37,7 @@ trait MovementSpace extends DelimitedSpace {
    */
   override def propagateVirus(time: Calendar, place: Location)(covidInfectionParameters: CovidInfectionParameters): Unit = {
     super.propagateVirus(time, place)(covidInfectionParameters)
-    // TODO: capire come mai nessuno entra....
-    //println(s"!!!!!!!!!! $currentGroups !!!!!!!!!!!!")
-    //if (currentGroups.flatten.exists(_.canInfect)) {
+    if (currentGroups.flatten.exists(_.canInfect)) {
       // People from the same group will follow the same path
       val sampling = pathSampling(currentGroups)
       // Assigns the last coordinate of the sampling to the people
@@ -52,7 +50,7 @@ trait MovementSpace extends DelimitedSpace {
           map.foreach(group => group._1.people.toList.combinations(2).foreach(pair =>
             if (checkForNotMaintainingSafetyDistance(pair.head.position, pair.last.position))
               VirusPropagation(covidInfectionParameters).tryInfect(pair.head, pair.last, place, time)))))
-    //}
+    }
   }
 
   /**

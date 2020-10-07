@@ -3,16 +3,16 @@ package pps.covid_sim.model.movements
 import java.util.Calendar
 
 import org.junit.Test
-import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.movements.MovementFunctions.{linearPathWithWallFollowing, randomPath}
+import pps.covid_sim.model.people.People.Worker
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.OpenPlaces.{Beach, Park}
-import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.places.Shops.SuperMarket
 import pps.covid_sim.model.places.rooms.{DiscoRoom, GymRoom}
 import pps.covid_sim.model.samples.Cities
+import pps.covid_sim.util.RandomGeneration.randomBirthDate
 import pps.covid_sim.util.geometry.{Coordinates, Speed}
 import pps.covid_sim.util.scheduling.TimeTable
 import pps.covid_sim.util.time.MonthsInterval
@@ -31,39 +31,7 @@ class MovementsTest {
   val beach: Beach = Beach(cityTest)
   val park: Park = Park(cityTest)
 
-  // Dummy Person implementations, used for testing purposes only
-  case class TestPerson(idCode: Int, infected: Boolean) extends Person  {
-
-    override val residence: City = null
-
-    override val birthDate: Calendar = null
-
-    override lazy val age: Int = 0
-
-    override def infectionPlaceInstance: Option[Place] = ???
-
-    override def infectionPlace: Option[Class[_ <: Place]] = ???
-
-    override def friends: Set[Person] = Set()
-
-    val id: Int = idCode
-
-    override def wornMask: Option[Masks.Mask] = ???
-
-    override def canInfect: Boolean = infected
-
-    override def isInfected: Boolean = false
-
-    override def isRecovered: Boolean = false
-
-    override def isDeath: Boolean = false
-
-    override def infectedPeopleMet: Set[Person] = ???
-
-    override def metInfectedPerson(person: Person): Unit = ???
-  }
-
-  var people: Seq[Person] = (0 to 150).map(i => TestPerson(i, false))
+  var people: Seq[Person] = (0 to 150).map(_ => Worker(randomBirthDate(18, 70), cityTest))
 
   var groupsOfTwo: Seq[Group] = (0 to 50 by 2).map(s => Multiple(people(s), Set(people(s), people(s + 1)))).toList
   //println(groupsOfTwo)

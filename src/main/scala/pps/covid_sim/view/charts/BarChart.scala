@@ -1,4 +1,6 @@
-package pps.covid_sim.view
+package pps.covid_sim.view.charts
+
+import java.awt.Color
 
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.chart.{ChartFactory, ChartPanel, JFreeChart}
@@ -9,9 +11,10 @@ import scala.collection.SortedMap
 
 /**
  * Class that manages the creation of a bar chart.
- * @param title         the title of the chart
- * @param xAxisLabel    the label of the x-axis
- * @param yAxisLabel    the label of the y-axis
+ *
+ * @param title      the title of the chart
+ * @param xAxisLabel the label of the x-axis
+ * @param yAxisLabel the label of the y-axis
  */
 case class BarChart(title: String,
                     xAxisLabel: String,
@@ -22,8 +25,9 @@ case class BarChart(title: String,
 
   /**
    * Method that draws a bar chart representing the distribution of the infected in the different places.
-   * @param infectionPlaces     a map containing the number of infected (map value) for each place (map key)
-   * @return                    a ChartPanel containing the bar chart
+   *
+   * @param infectionPlaces a map containing the number of infected (map value) for each place (map key)
+   * @return a ChartPanel containing the bar chart
    */
   def drawChart(infectionPlaces: SortedMap[Class[_ <: Location], Int]): ChartPanel = {
     infectionPlaces.foreach(elem => dataset.addValue(elem._2, elem._1.getSimpleName, elem._1.getSimpleName))
@@ -36,10 +40,12 @@ case class BarChart(title: String,
       PlotOrientation.VERTICAL,
       true, true, false)
 
-    val chartPanel = new ChartPanel(chart)
-    chartPanel
+    val plot = chart.getCategoryPlot
+    plot.setBackgroundPaint(Color.white)
+    plot.setDomainGridlinePaint(Color.black)
+    plot.setRangeGridlinePaint(Color.black)
+
+    new ChartPanel(chart)
   }
 
 }
-
-

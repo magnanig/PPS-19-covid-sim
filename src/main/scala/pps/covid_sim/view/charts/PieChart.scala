@@ -1,4 +1,4 @@
-package pps.covid_sim.view
+package pps.covid_sim.view.charts
 
 import java.awt.Color
 import java.text.DecimalFormat
@@ -10,7 +10,8 @@ import org.jfree.data.general.DefaultPieDataset
 
 /**
  * Class that manages the creation of a pie chart.
- * @param title   the title of the pie chart
+ *
+ * @param title the title of the pie chart
  */
 case class PieChart(title: String) {
 
@@ -19,8 +20,9 @@ case class PieChart(title: String) {
 
   /**
    * Method that draws a pie chart representing the distribution of infected in the different stages.
-   * @param infectionStages     a map containing the number of infected (map value) for each stage (map key)
-   * @return                    a ChartPanel containing the chart
+   *
+   * @param infectionStages a map containing the number of infected (map value) for each stage (map key)
+   * @return a ChartPanel containing the chart
    */
   def drawChart(infectionStages: Map[Int, Int]): ChartPanel = {
     infectionStages.foreach(elem => dataset.setValue(elem._1, elem._2))
@@ -33,7 +35,7 @@ case class PieChart(title: String) {
     val labelGenerator = new StandardPieSectionLabelGenerator(
       "Stage {0}: {1} people ({2})", new DecimalFormat("0"), new DecimalFormat("0%"))
 
-    val plot =  chart.getPlot
+    val plot = chart.getPlot
     plot.setBackgroundPaint(Color.white)
 
     val piePlot = plot.asInstanceOf[PiePlot]
@@ -41,9 +43,7 @@ case class PieChart(title: String) {
 
     piePlot.setLegendLabelGenerator(new StandardPieSectionLabelGenerator("Stage {0}"))
 
-    val chartPanel = new ChartPanel(chart)
-    chartPanel
+    new ChartPanel(chart)
   }
 
 }
-

@@ -47,7 +47,7 @@ case class RegionCoordinator() extends Coordinator {
   }
 
   private def spreadTick(region: Region, currentTime: Calendar): Unit = { //esempio test
-    println(region)
+    //println(region)
     this.waitingAck = _subordinatedActors
     //context.setReceiveTimeout(Duration.create(50, TimeUnit.MILLISECONDS))
     this._subordinatedActors.foreach(s => s ! HourTick(currentTime))

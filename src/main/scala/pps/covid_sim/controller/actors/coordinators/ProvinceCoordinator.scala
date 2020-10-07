@@ -5,11 +5,11 @@ import java.util.Calendar
 import akka.actor.{ActorRef, Props, ReceiveTimeout}
 import pps.covid_sim.controller.actors.CoordinatorCommunication.SetProvince
 import pps.covid_sim.controller.actors.coordinators.ActorsCoordination.{controller, system}
-import pps.covid_sim.model.container.PeopleContainer
-import pps.covid_sim.model.container.PlacesContainer.getPlaces
+import pps.covid_sim.model.container.PlacesContainer.{getPlaces, placesInCityOrElseInProvince}
+import pps.covid_sim.model.container.{PeopleContainer, TransportLinesContainer}
 import pps.covid_sim.model.people.People.{Student, Worker}
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.people.actors.Communication.{Acknowledge, ActorsFriendsMap, AddPlan, GetPlacesByCity, GetPlacesByProvince, HourTick, RequestedPlaces, SetCovidInfectionParameters, SetPerson, Stop}
+import pps.covid_sim.model.people.actors.Communication.{Acknowledge, ActorsFriendsMap, AddPlan, GetBusLines, GetPlacesInArea, GetTrainLines, HourTick, RequestedLines, RequestedPlaces, SetCovidInfectionParameters, SetPerson, Stop}
 import pps.covid_sim.model.people.actors.{StudentActor, UnemployedActor, WorkerActor}
 import pps.covid_sim.model.places.Locality.{City, Province}
 import pps.covid_sim.model.places.Place
@@ -20,6 +20,7 @@ import scala.collection.parallel.ParSeq
 /** *
  * A Coordinator of the level 2. It manage a subSet of PersonActors
  */
+//noinspection ActorMutableStateInspection
 case class ProvinceCoordinator() extends Coordinator {
   implicit protected var _province: Province = _ // will be initialized later when the SetProvince message will be received
   private var _myPeople: ParSeq[Person] = _ // Will be initialized later when the SetProvince message will be received
@@ -29,17 +30,16 @@ case class ProvinceCoordinator() extends Coordinator {
       this._province = province;
       this._upperCoordinator = sender
       this._myPeople = PeopleContainer.getPeople(_province).par
-      //this._myPeople = controller.people.filter(p=>p.residence.province==_province)
       this.createActors(this._myPeople)
     case Acknowledge() if this.waitingAck.contains(sender) => this.waitingAck -= sender
-      if (this.waitingAck.isEmpty) {
-        println("Sending CORRECT cumulative ACK"); sendAck()
-      }
+      if (this.waitingAck.isEmpty) sendAck()
     case HourTick(currentTime) => this.spreadTick(currentTime)
-    case ReceiveTimeout => println("Sending INCORRECT cumulative ACK"); sendAck(); println("WARNING: Timeout! Sono un sotto coordinatore: Province:" + _province + "size: " + waitingAck.size)
+    case ReceiveTimeout => sendAck()
     case Stop() => this.endSimulation()
-    case GetPlacesByProvince(province, placeClass, datesInterval) => this.genericGetPlaceByProvince(province, placeClass, datesInterval, sender)
-    case GetPlacesByCity(city, placeClass, datesInterval) => this.genericGetPlaceByCity(city, placeClass, datesInterval, sender)
+    case GetPlacesInArea(city: City, placeClass, datesInterval) => this.genericGetPlaceByCity(city, placeClass, datesInterval, sender)
+    case GetPlacesInArea(province: Province, placeClass, datesInterval) => this.genericGetPlaceByProvince(province, placeClass, datesInterval, sender)
+    case GetBusLines(from, time) => sender ! RequestedLines(TransportLinesContainer.getBusLines(from, time))
+    case GetTrainLines(from, time) => sender ! RequestedLines(TransportLinesContainer.getTrainLines(from, time))
     case msg => println(s"Not expected [Province]: $msg" + "is sender in peoples: " + waitingAck.contains(sender) + " " + sender.toString());
   }
 
@@ -71,7 +71,6 @@ case class ProvinceCoordinator() extends Coordinator {
   }
 
   private def sendAck(): Unit = {
-
     this.waitingAck = _subordinatedActors
     this._upperCoordinator ! Acknowledge()
   }
@@ -97,7 +96,7 @@ case class ProvinceCoordinator() extends Coordinator {
     if (datesInterval.isEmpty) {
       res = getPlaces(city, placeClass)
     } else if (datesInterval.isDefined) {
-      res = getPlaces(city, placeClass, datesInterval.get)
+      res = placesInCityOrElseInProvince(city, placeClass, datesInterval.get)
     }
     sender ! RequestedPlaces(res)
   }

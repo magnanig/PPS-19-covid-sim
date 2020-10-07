@@ -1,4 +1,4 @@
-package pps.covid_sim.view
+package pps.covid_sim.view.charts
 
 import java.awt.{BasicStroke, Color}
 import java.util.Calendar
@@ -17,10 +17,11 @@ import scala.swing.Font
 
 /**
  * Class that manages the creation of a line chart.
- * @param title         the title of the chart
- * @param xAxisLabel    the label of the x-axis
- * @param yAxisLabel    the label of the y-axis
- * @param legend        the series legend
+ *
+ * @param title      the title of the chart
+ * @param xAxisLabel the label of the x-axis
+ * @param yAxisLabel the label of the y-axis
+ * @param legend     the series legend
  */
 case class LineChart(title: String,
                      from: Calendar,
@@ -40,10 +41,11 @@ case class LineChart(title: String,
 
   /**
    * Method that draws a line chart representing the evolution of a phenomenon over time (e.g. infections trends).
-   * @param infected      a map containing the number of people (map value) affected by the phenomenon
-   *                      for each day (map key)
-   * @param avg           true if the line chart refers to an average of multiple runs
-   * @return              a ChartPanel containing the line chart
+   *
+   * @param infected a map containing the number of people (map value) affected by the phenomenon
+   *                 for each day (map key)
+   * @param avg      true if the line chart refers to an average of multiple runs
+   * @return a ChartPanel containing the line chart
    */
   def drawChart(infected: SortedMap[Calendar, Int], avg: Boolean = false): ChartPanel = {
     seriesCount = seriesCount + 1
@@ -96,18 +98,16 @@ case class LineChart(title: String,
     chart.getLegend().setFrame(BlockBorder.NONE)
     chart.setTitle(new TextTitle(title, Font("Sans Serif", Font.Bold, 18)))
 
-    val chartPanel = new ChartPanel(chart)
-    chartPanel.setBackground(Color.white)
-
-    chartPanel
+    new ChartPanel(chart)
   }
 
   /**
    * Method that draws a line chart with multiple series representing the evolution of a phenomenon over time
    * (e.g. infections trends).
-   * @param infectedPerStage      a map containing the number of people affected by the phenomenon
-   *                              for each day (map value) for each stage (map key)
-   * @return                      a ChartPanel containing the line chart
+   *
+   * @param infectedPerStage a map containing the number of people affected by the phenomenon
+   *                         for each day (map value) for each stage (map key)
+   * @return a ChartPanel containing the line chart
    */
   def drawMultiSeriesChart(infectedPerStage: Map[Int, SortedMap[Calendar, Int]]): ChartPanel = {
     var stageSeries: Seq[XYSeries] = Seq()
@@ -148,16 +148,14 @@ case class LineChart(title: String,
     chart.getLegend().setFrame(BlockBorder.NONE)
     chart.setTitle(new TextTitle(title, Font("Sans Serif", Font.Bold, 18)))
 
-    val chartPanel = new ChartPanel(chart)
-    chartPanel.setBackground(Color.white)
-
-    chartPanel
+    new ChartPanel(chart)
   }
 
   /**
    * Method that adds to the specific series the start of a lockdown.
-   * @param time          when the lockdown starts
-   * @param infections    the number of infections at that time
+   *
+   * @param time       when the lockdown starts
+   * @param infections the number of infections at that time
    */
   def drawLockDownStart(time: Calendar, infections: Int): Unit = {
     startLockdownSeries.add(time \ from, infections)
@@ -165,16 +163,12 @@ case class LineChart(title: String,
 
   /**
    * Method that adds to the specific series the end of a lockdown.
-   * @param time          when the lockdown ends
-   * @param infections    the number of infections at that time
+   *
+   * @param time       when the lockdown ends
+   * @param infections the number of infections at that time
    */
   def drawLockDownEnd(time: Calendar, infections: Int): Unit = {
     endLockdownSeries.add(time \ from, infections)
   }
 
 }
-
-
-
-
-

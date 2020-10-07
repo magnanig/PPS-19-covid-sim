@@ -90,15 +90,17 @@ case class SimulationsManager[+S <: Simulation](simulations: Seq[S],
   def citiesInfection: SortedMap[Calendar, SortedMap[City, Int]] = _citiesInfection
 
   /**
-   * Computes the weekly covid stage, i.e. the number of people who contracted covid-19 at each stage.
-   * @return  a sorted map with the weekly covid stage
+   * Computes the weekly covid stage, i.e. the number of people who contracted covid-19
+   * for each stage.
+   * @return  a weekly sorted map where for each week and stages it associates the max
+   *          daily number of people with covid infection at that stage
    */
   def weeklyCovidStages: SortedMap[Calendar, Map[Int, Int]] = SortedMap[Calendar, Map[Int, Int]]() ++
     covidStages.toList.grouped(7)
-    .map(group => (group.last._1, group
+    .map(weekCovidStages => (weekCovidStages.last._1, weekCovidStages
       .flatMap(_._2)
       .groupBy(_._1)
-      .mapValues(_.map(_._2).sum)
+      .mapValues(_.map(_._2).max)
     )).toMap
 
   /**

@@ -17,6 +17,7 @@ import scala.collection.parallel.immutable.ParSet
 /** *
  * The main Coordinator of level 0. It manage a subSet of RegionCoordinator
  */
+//noinspection ActorMutableStateInspection
 case class ActorsCoordinator() extends Coordinator {
 
   private var localMaxInfections: Int = 0
@@ -32,7 +33,6 @@ case class ActorsCoordinator() extends Coordinator {
       }
       simulationInterval = di
       currentTime = di.from
-      //currentTime = currentTime + 1
       this.nextAvailableLockdown = di.from
       println("Started")
       tick()
@@ -66,7 +66,6 @@ case class ActorsCoordinator() extends Coordinator {
     println("----->Tick<-----")
     currentTime = currentTime + 1
     _subordinatedActors.foreach(_ ! HourTick(currentTime))
-
   }
 
   private[controller] def stopSimulation(): Unit = synchronized {

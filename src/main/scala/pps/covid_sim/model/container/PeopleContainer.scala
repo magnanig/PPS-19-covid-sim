@@ -9,6 +9,13 @@ object PeopleContainer {
   private var _people: List[Person] = List()
 
   /**
+   * Delete all people created so far.
+   */
+  def reset(): Unit = {
+    _people = List()
+  }
+
+  /**
    * Adds a person to the container.
    */
   def add(person: Person): Unit = {

@@ -28,7 +28,6 @@ object GoingOutParameters {
     classOf[Disco] -> (0, if (age > 60) 0.0 else if (age < 40) 1.0 else 0.4),
     classOf[OpenDisco] -> (0, if (age > 60) 0.0 else if (age < 40) 1.0 else 0.5),
     classOf[Pub] -> (0, if (age > 60) 0.0 else if (age < 40) 1.0 else 0.5),
-    //classOf[Beach] -> (0.2, 1),
     classOf[Field] -> (0, if (age < 40) 0.5 else 0.0),
     classOf[ClothesShop] -> (0.1, 0.5),
     classOf[Square] -> (0.3, 1),
