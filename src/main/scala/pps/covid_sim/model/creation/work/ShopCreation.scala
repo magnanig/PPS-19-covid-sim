@@ -29,7 +29,7 @@ private[work] case class ShopCreation() {
 
       while (numWorker < numWorkers) {
         val shop: Shop = shopBuilder()
-        // numero di lavoratori che verranno assegnate al presente shop
+        // number of workers (people) who will be assigned to the shop
         val bound: Int = Statistic.getMin(numWorker + randomIntInRange(staffRange._1, staffRange._2, random), totalWorker)
         workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker
           val plan: WorkPlan[Shop] = WorkPlan()

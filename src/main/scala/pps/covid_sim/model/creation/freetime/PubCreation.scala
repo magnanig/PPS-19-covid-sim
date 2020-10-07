@@ -24,7 +24,7 @@ private[freetime] case class PubCreation() {
 
     while (numWorker < totalWorker) {
       val pub: Pub = Pub(city, Places.PUB_TIME_TABLE)
-      // numero di persone lavoratrici che verranno assegnate al locale
+      // number of workers (people) who will be assigned to the pub
       val bound: Int = Statistic.getMin(numWorker +
         randomIntInRange(staffRange._1, staffRange._2, random), totalWorker)
       workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker

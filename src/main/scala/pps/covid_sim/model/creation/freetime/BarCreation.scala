@@ -34,7 +34,7 @@ private[freetime] case class BarCreation() {
           randomIntFromGaussian(3, 3, 2)) :: rooms // capacity of each restaurant table
       })
       val bar: Bar = Bar(city, Places.BAR_TIME_TABLE, rooms)
-      // numero di persone lavoratrici che verranno assegnate al locale
+      // number of workers (people) who will be assigned to the bar
       val bound: Int = Statistic.getMin(numWorker +
         randomIntInRange(staffRange._1 * rooms.size, staffRange._2 * rooms.size, random), totalWorker)
       workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker

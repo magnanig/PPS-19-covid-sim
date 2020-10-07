@@ -26,7 +26,7 @@ private[freetime] case class OpenDiscoCreation() {
 
     while (numWorker < totalWorker) {
       val openDisco: OpenDisco = OpenDisco(city, Places.DISCO_TIME_TABLE)
-      // numero di persone lavoratrici che verranno assegnate al ristorante
+      // number of workers (people) who will be assigned to the open disco
       val bound: Int = Statistic.getMin(numWorker +
         randomIntInRange(staffRange._1, staffRange._2, random), totalWorker)
       workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker

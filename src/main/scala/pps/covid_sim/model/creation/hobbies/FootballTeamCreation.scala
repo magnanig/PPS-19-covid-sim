@@ -33,7 +33,7 @@ private[hobbies] case class FootballTeamCreation() {
       })
       val footballTeam: FootballTeam = FootballTeam(city, fields)
       for (field <- fields) {
-        // numero di lavoratori che verranno assegnate al presente ufficio
+        // number of workers (people) who will be assigned to this office
         val bound: Int = Statistic.getMin(numWorker + randomIntInRange(staffRange._1, staffRange._2, random), totalWorker)
         if (numWorker < totalWorker) {
           workers.slice(numWorker, bound).foreach(worker => { // add WorkPlan to each worker

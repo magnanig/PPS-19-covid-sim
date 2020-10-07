@@ -8,9 +8,11 @@ object CreationParameters {
   val oneHundredPercent = 100.0
   val population = 60405646
   val daysInYear = 365
+
   val minResidencesToSchool = 3000
-  val studentsPerClass = 30
-  val studentsUniPerClass = 100
+  val minResidencesToUni = 80.000
+  val studentsPerClass = 20
+  val studentsUniPerClass = 60
   val classesPerSchool = 30
   val classesPerUni = 15
 
