@@ -6,7 +6,7 @@ import pps.covid_sim.util.time.Time.Day
 import pps.covid_sim.util.time.Time.Day.Day
 
 /**
- * Represents all the lesson time slots of all classes.
+ * Represents all the lesson time slots of all classrooms.
  *
  * @param rooms         classrooms where lessons are held.
  * @param daysInterval  days of lessons.
