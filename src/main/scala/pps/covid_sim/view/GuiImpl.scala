@@ -91,7 +91,7 @@ class GuiImpl() extends View {
     val maxInfectionDetectionTimeField = new TextField(4)
     maxInfectionDetectionTimeField.text = "7"
     val multipleInfectionProbabilityField = new TextField(3)
-    multipleInfectionProbabilityField.text = "0" // TODO: non si vede nella GUI
+    multipleInfectionProbabilityField.text = "0"
 
     val cunningAsymptomaticField = new TextField(3)
     cunningAsymptomaticField.text = "20"
@@ -278,6 +278,17 @@ class GuiImpl() extends View {
           listenTo(probInfectionField)
           reactions += {
             case EditDone(`probInfectionField`) => checkPercent(probInfectionField)
+          }
+        }
+
+        contents += new FlowPanel {
+          contents += new Label("<html><p>Probability of multiple infections:</p></html>")//contagionProbability
+          contents += multipleInfectionProbabilityField
+          contents += new Label("%")
+
+          listenTo(multipleInfectionProbabilityField)
+          reactions += {
+            case EditDone(`multipleInfectionProbabilityField`) => checkPercent(multipleInfectionProbabilityField)
           }
         }
 
