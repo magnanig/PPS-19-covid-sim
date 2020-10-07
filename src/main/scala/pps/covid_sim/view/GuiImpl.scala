@@ -270,6 +270,17 @@ class GuiImpl() extends View {
         }
 
         contents += new FlowPanel {
+          contents += new Label("<html><p>Probability of multiple infections:</p></html>")//contagionProbability
+          contents += multipleInfectionProbabilityField
+          contents += new Label("%")
+
+          listenTo(multipleInfectionProbabilityField)
+          reactions += {
+            case EditDone(`multipleInfectionProbabilityField`) => checkPercent(multipleInfectionProbabilityField)
+          }
+        }
+
+        contents += new FlowPanel {
           contents += new Label("<html><p>Minimum time of recovery from the virus:</p></html>")//minInfectionDetectionTime
           contents += minHealingTimingField
           contents += new Label("days")
