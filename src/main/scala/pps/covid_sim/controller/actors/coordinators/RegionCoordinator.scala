@@ -4,7 +4,7 @@ import java.util.Calendar
 
 import akka.actor.{Props, ReceiveTimeout}
 import pps.covid_sim.controller.actors.CoordinatorCommunication.{SetProvince, SetRegion}
-import pps.covid_sim.controller.actors.coordinators.ActorsCoordination.{actorsCoordinator, controller, system}
+import pps.covid_sim.controller.actors.coordinators.ActorsCoordination.{actorsCoordinator, system}
 import pps.covid_sim.model.container.CitiesContainer
 import pps.covid_sim.model.people.actors.Communication.{Acknowledge, HourTick, Stop}
 import pps.covid_sim.model.places.Locality.{Province, Region}
@@ -47,7 +47,7 @@ case class RegionCoordinator() extends Coordinator {
   }
 
   private def spreadTick(region: Region, currentTime: Calendar): Unit = { //esempio test
-    println(region)
+    //println(region)
     this.waitingAck = _subordinatedActors
     //context.setReceiveTimeout(Duration.create(50, TimeUnit.MILLISECONDS))
     this._subordinatedActors.foreach(s => s ! HourTick(currentTime))

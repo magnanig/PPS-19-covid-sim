@@ -5,9 +5,10 @@ import java.util.Calendar
 import akka.actor.ActorRef
 import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.places.Locality.Area
+import pps.covid_sim.model.places.Locality.{Area, City}
 import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.Place
+import pps.covid_sim.model.transports.PublicTransports.Line
 import pps.covid_sim.util.scheduling.Plan
 import pps.covid_sim.util.time.DatesInterval
 
@@ -99,6 +100,12 @@ object Communication {
   case class GetPlacesInArea(area: Area, placeClass: Class[_ <: Place], datesInterval: Option[DatesInterval] = None)
 
   case class RequestedPlaces(places: List[Place])
+
+  case class GetBusLines(from: City, time: Calendar)
+
+  case class GetTrainLines(from: City, time: Calendar)
+
+  case class RequestedLines(lines: List[Line])
 
   /**
    * An implicit to use optional parameter in GoOutResponse without explicitly wrap it into an Option.

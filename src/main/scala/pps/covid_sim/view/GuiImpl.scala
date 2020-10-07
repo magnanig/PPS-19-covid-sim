@@ -91,7 +91,7 @@ class GuiImpl() extends View {
     val maxInfectionDetectionTimeField = new TextField(4)
     maxInfectionDetectionTimeField.text = "7"
     val multipleInfectionProbabilityField = new TextField(3)
-    multipleInfectionProbabilityField.text = "1"
+    multipleInfectionProbabilityField.text = "0" // TODO: non si vede nella GUI
 
     val cunningAsymptomaticField = new TextField(3)
     cunningAsymptomaticField.text = "20"

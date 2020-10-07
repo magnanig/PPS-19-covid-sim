@@ -53,7 +53,7 @@ object Locations {
      */
     final def enter(group: Group, time: Calendar): Option[Location] = synchronized {
       if (_currentGroups.contains(group)) {
-        //println(s"WARNING: ${group.leader} Already entered in the ${getClass.getSimpleName}!")
+        println(s"WARNING: ${group.leader} Already entered in the ${getClass.getSimpleName}!")
         Some(this)
       } else if(canEnter(group, time)) preEnter(group, time) match {
         case location @ Some(_) => onEntered(group)

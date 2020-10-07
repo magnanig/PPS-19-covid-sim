@@ -15,6 +15,7 @@ import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.OpenPlaces.OpenPlace
 import pps.covid_sim.model.places.Shops.SuperMarket
 import pps.covid_sim.model.places.{Habitation, LimitedHourAccess, Place}
+import pps.covid_sim.model.transports.PublicTransports.{BusLine, PublicTransport}
 import pps.covid_sim.parameters.GoingOutParameters
 import pps.covid_sim.parameters.GoingOutParameters.maxNumShopPerWeek
 import pps.covid_sim.util.CommonPlacesByTime.randomPlaceWithPreferences
@@ -24,6 +25,7 @@ import pps.covid_sim.util.scheduling.{Agenda, Appointment}
 import pps.covid_sim.util.time.Time.ScalaCalendar
 import pps.covid_sim.util.time.{DatesInterval, DaysInterval, MonthsInterval}
 
+import scala.collection.mutable.ListBuffer
 import scala.util.Random
 
 //noinspection ActorMutableStateInspection
@@ -52,7 +54,7 @@ abstract class PersonActor extends Actor {
   private var time: Calendar = _
   private var inPandemic: Boolean = false
   private var lockdown: Boolean = false
-  private var waitingResponses: Set[ActorRef] = Set()
+  private var waitingResponses: ListBuffer[ActorRef] = ListBuffer()
   private var isOut = false
   private var friendsFound = false
   private var friends: Map[Person, ActorRef] = Map()
@@ -65,15 +67,23 @@ abstract class PersonActor extends Actor {
 
   private var pendingRequest: DatesInterval = _
   private var requestType: Request = _
+  private var means: Option[PublicTransport] = None
 
   override def receive: Receive = {
     case SetPerson(person) => this.coordinator = sender; this.person = person
     case SetCovidInfectionParameters(covidInfectionParameters) => this.covidInfectionParameters = covidInfectionParameters
     case ActorsFriendsMap(friends) => this.friends = friends
     case HourTick(time) => this.time = time; person.hourTick(time); nextAction()
+      if(means.isDefined) means = None
     case AddPlan(plan) => agenda.addPlan(plan)
     case RemovePlan(oldPlan) => agenda.removePlan(oldPlan)
     case Lockdown(enabled) => lockdown = enabled; if (!inPandemic) inPandemic = true
+    case RequestedLines(lines: List[BusLine]) => waitingResponses = waitingResponses - coordinator
+      sendAckIfReady()
+      if(lines.nonEmpty) means = lines.iterator
+        .map(_.tryUse(person, time))
+        .find(_.isDefined)
+        .flatten
     case p @ RequestedPlaces(_) => p match {
         case RequestedPlaces(places) if requestType == Request.LOOKING_FOR_PLACES =>
           formulateAndSendProposal(pendingRequest, places)
@@ -114,6 +124,7 @@ abstract class PersonActor extends Actor {
           sender ! GoOutResponse(response = true, newRequest.get)
         case GoOutResponse(_, _, newRequest, _) => sender ! GoOutResponse(response = false, newRequest.get)
       }
+    case Stop() => context.stop(self)
   }
 
   private def sendAckIfReady(): Unit = {
@@ -127,7 +138,7 @@ abstract class PersonActor extends Actor {
   }
 
   private def nextAction(): Unit = {
-    waitingResponses = Set()
+    waitingResponses = ListBuffer()
     if (time.hour == 0) updateDaysParameters(time)
     agenda.removeAppointmentsEndedBefore(time)
     currentCommitment match {
@@ -177,7 +188,6 @@ abstract class PersonActor extends Actor {
   }
 
   private def comeBack(): Unit = {
-    // TODO autobus
     isOut = false
     person.habitation.enter(person, null)
     person.setMask(None)
@@ -185,7 +195,7 @@ abstract class PersonActor extends Actor {
   }
 
   private def goOut(): Unit = {
-    // TODO autobus
+    chooseTransport()
     isOut = true
     person.habitation.exit(person)
   }
@@ -253,6 +263,14 @@ abstract class PersonActor extends Actor {
     }
     probability = probability + (1 - probability) * placesPreferences.getOrElse(at.getClass, 0.0)
     new Random().nextFloat() < probability
+  }
+
+  private def chooseTransport(): Unit = {
+    if(Random.nextDouble() < transportProbability) {
+      waitingResponses += coordinator
+      coordinator ! GetBusLines(person.residence, time)
+      //GetTrainLines(person.residence, time)
+    }
   }
 
   private def randomFriends: Set[ActorRef] = Random.shuffle(person.friends)

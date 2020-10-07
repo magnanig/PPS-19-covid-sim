@@ -71,4 +71,31 @@ object TransportLinesContainer {
     getTrainLines.filter(line => line.isReachable(from) && line.isReachable(to) && line.isOpen(date.hour))
   }
 
+
+  /**
+   * Get all transport bus lines that are available
+   * from the specified city at a given hour.
+   *
+   * @param in    departure city
+   * @param date  availability date of the line
+   * @return      all bus lines covering a specified
+   *              route on the date indicated
+   */
+  def getBusLines(in: City, date: Calendar): List[Line] = {
+    getBusLines.filter(line => line.isReachable(in) && line.isOpen(date.hour))
+  }
+
+  /**
+   * Get all transport train lines that are available
+   * from the specified city at a given hour.
+   *
+   * @param in    departure city
+   * @param date  availability date of the line
+   * @return      all train lines covering a specified
+   *              route on the date indicated
+   */
+  def getTrainLines(in: City, date: Calendar): List[Line] = {
+    getTrainLines.filter(line => line.isReachable(in) && line.isOpen(date.hour))
+  }
+
 }

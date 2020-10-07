@@ -37,7 +37,7 @@ private[institute] case class UniversityCreation() {
             // Ogni classe corrisponde ad un corso. Ogni corso è tenuto sempre nella medesima classe.
             // Assegnare il corso alla scuola;  Assegnare il corso ad ogni alunno
             val classroom: Classroom = Classroom(classGroup.size)
-            val lesson: SchoolClass = SchoolClass(lessonId.toString) // 1A, 2A, 1B, 2B, ecc...
+            val lesson: SchoolClass = SchoolClass(lessonId.toString) // 1A, 2A, 1B, 2B, ecc... TODO: dovrebbe essere Course(...)
             val studentPlan: StudentPlan = StudentPlan()
               .add(classroom, Day.MONDAY -> Day.FRIDAY, 8 -> 17)
               .commit()
