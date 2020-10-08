@@ -67,6 +67,7 @@ private[creation] abstract class PlacesCreation {
 
     allPlace = allPlace ::: HabitationsCreation().create(entry._1, entry._2)
 
+    println("totale dei places creati: " + allPlace.size)
     allPlace.foreach(place => PlacesContainer.add(place.city, place))
     allPlace
   }

@@ -48,6 +48,7 @@ private[freetime] case class BarCreation() {
       numWorker = bound
       bars = bar :: bars
     }
+    println("numero di bar creati: " + bars.size)
     bars
   }
 

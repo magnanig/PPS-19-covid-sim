@@ -44,6 +44,7 @@ private[creation] case class FreeTimePlacesCreation() {
       worker.slice(index, index + workerPerFreeTimePlace.last),
       staffRange = (10, 40), random)
 
+    println("freeTimePlaces creati in totale: " + freeTimePlaces.size)
     freeTimePlaces
   }
 
