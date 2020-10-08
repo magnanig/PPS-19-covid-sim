@@ -12,8 +12,8 @@ import scala.collection.mutable.ArrayBuffer
  */
 object MovementFunctions {
 
-  val samplesPerHour = 60
-  val obstacleCorners = 4
+  private val samplesPerHour = 60
+  private val obstacleCorners = 4
 
   /**
    * Movement function that simulates a random path, whose only purpose is to avoid obstacles within the place.
