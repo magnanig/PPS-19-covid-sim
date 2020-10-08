@@ -46,12 +46,12 @@ trait View extends SimpleSwingApplication{
   /**
    * Notify the gui that the simulation ended.
    */
-  def notifyEnd(simulationsManager: SimulationsManager[Simulation]): Unit
+  def notifySimulationEnded(simulationsManager: SimulationsManager[Simulation]): Unit
 
   /**
    * Notify the gui that a run has ended.
    */
-  def notifyEndRun(simulationsManager: Simulation): Unit
+  def notifyRunEnded(simulationsManager: Simulation): Unit
 
 
   /**

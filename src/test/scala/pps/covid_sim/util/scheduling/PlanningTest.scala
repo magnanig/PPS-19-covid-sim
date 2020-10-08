@@ -15,7 +15,7 @@ class PlanningTest {
   val location2: Location = Places.PARK
 
   // implicitly testing add(s) and commit
-  val plan: CustomPlan[Location] = CustomPlan[Location]()
+  val plan: CustomPlan[Location] = CustomPlan[Location](enabledInLockdown = false)
     .add(location1, Day.MONDAY, HoursInterval(8, 12))
     .add(location2, Day.WEDNESDAY, HoursInterval(14, 19))
     .dayPlan(Day.FRIDAY)

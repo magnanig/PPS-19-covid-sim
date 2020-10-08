@@ -23,10 +23,10 @@ class FreeTimeTest {
   // a sinistra da 3 posti, al centro da 1 e a destra ancora da 4
   val room2: TablesRoom = TablesRoom(3, 3, TablesArrangement(numRows = 1, numPlacesInTablesGroup = 3, 1, 1))
 
-  val alCaminettoR: Restaurant = Restaurant(Cities.CERVIA, timeTableRestaurant, List(room1, room2))
-  val ilMoroR: Restaurant = Restaurant(Cities.CERVIA, timeTableRestaurant, List(room1))
-  val laGreppiaR: Restaurant = Restaurant(Cities.CESENA, timeTableRestaurant, List(room2))
-  val peccatoDiGolaR: Restaurant = Restaurant(Cities.CESENATICO, timeTableRestaurant, List(room1))
+  val alCaminettoR: Restaurant = Restaurant(Cities.CERVIA, timeTableRestaurant, openedInLockdown = false, List(room1, room2))
+  val ilMoroR: Restaurant = Restaurant(Cities.CERVIA, timeTableRestaurant, openedInLockdown = false, List(room1))
+  val laGreppiaR: Restaurant = Restaurant(Cities.CESENA, timeTableRestaurant, openedInLockdown = false, List(room2))
+  val peccatoDiGolaR: Restaurant = Restaurant(Cities.CESENATICO, timeTableRestaurant, openedInLockdown = false, List(room1))
 
   val tizio: Person = Worker(ScalaCalendar(1956, 10, 29), Cities.CESENATICO)
   val caio: Person = Worker(ScalaCalendar(1962, 9, 21), Cities.CESENATICO)

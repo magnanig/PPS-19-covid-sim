@@ -2,12 +2,9 @@ package pps.covid_sim.model
 
 import java.util.Calendar
 
-import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.Area
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
-
-import scala.collection.parallel.ParSeq
 
 trait Model {
 
@@ -44,21 +41,20 @@ trait Model {
   def initSimulation(area: Area, from: Calendar, until: Calendar, runs: Int)
 
   /**
-   * The list of people.
-   * @return  the list of people
-   */
-  def people: ParSeq[Person]
-
-  /**
    * Notify that a new hour has been started.
    * @param time  the current simulation time
    */
   def tick(time: Calendar): Unit
 
   /**
-   * Reset the domain.
+   * Notify the end of a run, collecting last data and clearing data structures.
    */
-  def reset(): Unit
+  def notifyRunEnded(): Unit
+
+  /**
+   * Notify the end of the entire simulation, destroying all world.
+   */
+  def notifySimulationEnded(): Unit
 
   /**
    * Get the SimulationManager instance.

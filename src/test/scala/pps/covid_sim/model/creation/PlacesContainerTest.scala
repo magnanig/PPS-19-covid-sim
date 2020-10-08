@@ -11,11 +11,11 @@ import pps.covid_sim.util.time.Time.Day
 class PlacesContainerTest {
 
   val timeTableRestaurant: TimeTable = TimeTable().add(Day.MONDAY)
-  val pepeNeroBar: Bar = Bar(Cities.RAVENNA, timeTableRestaurant)
+  val pepeNeroBar: Bar = Bar(Cities.RAVENNA, timeTableRestaurant, openedInLockdown = false)
   pepeNeroBar.addRooms(List(Places.SMALL_ROOM))
-  val ilMoroRestaurant: Restaurant = Restaurant(Cities.RAVENNA, timeTableRestaurant)
+  val ilMoroRestaurant: Restaurant = Restaurant(Cities.RAVENNA, timeTableRestaurant, openedInLockdown = false)
   ilMoroRestaurant.addRooms(List(Places.SMALL_ROOM))
-  val peccatoDiGolaRestaurant: Restaurant = Restaurant(Cities.CERVIA, timeTableRestaurant)
+  val peccatoDiGolaRestaurant: Restaurant = Restaurant(Cities.CERVIA, timeTableRestaurant, openedInLockdown = false)
   peccatoDiGolaRestaurant.addRooms(List(Places.SMALL_ROOM))
 
   @Test

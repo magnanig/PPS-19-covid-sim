@@ -175,7 +175,7 @@ abstract class PersonActor extends Actor {
         requestPlaces(person.residence, classOf[SuperMarket], Some(interval))
         pendingRequest = interval
         None
-      case _ if time.hour > 8 && mayGoOut() && !friendsFound => organizeGoingOut(time); None
+      case _ if time.hour > 8 && mayGoOut() && !friendsFound => tryOrganizeGoingOut(time); None
       case _ => None
     }
 
@@ -222,11 +222,13 @@ abstract class PersonActor extends Actor {
 
   private def randomOpenPlaces(): Unit = requestPlaces(person.residence, classOf[OpenPlace])
 
-  private def organizeGoingOut(time: Calendar): Unit = {
+  private def tryOrganizeGoingOut(time: Calendar): Unit = {
     val interval = agenda.firstNextFreeTime(time + 1)
-    randomPlaceWithPreferences(placesPreferences, interval) match {
-      case Some(placeClass) if !lockdown || !covidInfectionParameters.placesToClose.contains(placeClass) =>
-        requestPlaces(person.residence, placeClass, Some(interval))
+    val preferences = /*if(!lockdown) placesPreferences else*/ placesPreferences
+      .filter(e => !covidInfectionParameters.placesToClose.contains(e._1))
+    //println(s"Valid places: ${preferences.keySet.map(_.getSimpleName).mkString(", ")}")
+    if (preferences.nonEmpty) randomPlaceWithPreferences(preferences, interval) match {
+      case Some(placeClass) => requestPlaces(person.residence, placeClass, Some(interval))
         requestType = Request.LOOKING_FOR_PLACES
         pendingRequest = interval
       case _ =>
@@ -278,7 +280,7 @@ abstract class PersonActor extends Actor {
   }
 
   private def randomFriends: Set[ActorRef] = Random.shuffle(person.friends)
-    .take(RandomGeneration.randomIntFromGaussian(averageGoingOutFriends, 3, 1))
+    .take(RandomGeneration.randomIntFromGaussian(averageGoingOutFriends, 5, 1))
     .map(friends)
 
   private implicit def optionalTuple(optional:

@@ -21,7 +21,7 @@ class ClassroomTest {
   val classroom46: Classroom = Classroom(25)
   val lab32: Classroom = Classroom(35)
 
-  val studentPlan: StudentPlan = StudentPlan()
+  val studentPlan: StudentPlan = StudentPlan(enabledInLockdown = false)
     .add(classroom46, Day.MONDAY -> Day.TUESDAY,  8 -> 13)
     .add(lab32, Day.WEDNESDAY,8 -> 12)
     .add(classroom46, Day.THURSDAY -> Day.FRIDAY, 8 -> 13)
@@ -31,7 +31,7 @@ class ClassroomTest {
       .add(classroom46, 12 -> 13)
       .commit()
 
-  val prof1Plan: WorkPlan[Classroom] = WorkPlan()
+  val prof1Plan: WorkPlan[Classroom] = WorkPlan(enabledInLockdown = false)
     .add(classroom46, Day.MONDAY -> Day.TUESDAY,  8 -> 10)
     .add(lab32, Day.WEDNESDAY,10 -> 11)
     .add(classroom46, Day.THURSDAY -> Day.FRIDAY, 9 -> 10)
@@ -47,7 +47,8 @@ class ClassroomTest {
     Cities.CERVIA,
     TimeTable()   // when school is open
       .add(Day.MONDAY -> Day.FRIDAY, 8 -> 16)
-      .add(Day.SATURDAY, 8 -> 14)
+      .add(Day.SATURDAY, 8 -> 14),
+    openedInLockdown = false
   )
 
   itis.addWorkPlan(prof1, prof1Plan)

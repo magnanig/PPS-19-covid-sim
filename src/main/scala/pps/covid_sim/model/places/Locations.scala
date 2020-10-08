@@ -44,12 +44,11 @@ object Locations {
      */
     def isOpen(datesInterval: DatesInterval): Boolean = true
 
-
     /**
      * Lets the specified group enter to current location at the specified time, if it is possible.
      * @param group   the group that wants to enter
      * @param time    the desired time
-     * @return        the optional location (e.g. the room) where group has been entered
+     * @return        the optional location where group has been entered
      */
     final def enter(group: Group, time: Calendar): Option[Location] = synchronized {
       if (_currentGroups.contains(group)) {
@@ -57,6 +56,7 @@ object Locations {
         Some(this)
       } else if(canEnter(group, time)) preEnter(group, time) match {
         case location @ Some(_) => onEntered(group)
+          //println(s"Entered in ${getClass.getSimpleName}")
           _currentGroups += group
           _numCurrentPeople = _numCurrentPeople + group.size
           Some(this) //location
@@ -175,7 +175,7 @@ object Locations {
      * The optional needed mask in current location.
      * @return  the optional needed mask
      */
-    def mask: Option[Mask] = None
+    def mask: Option[Mask]
 
     /**
      * Clear current location, removing all groups.

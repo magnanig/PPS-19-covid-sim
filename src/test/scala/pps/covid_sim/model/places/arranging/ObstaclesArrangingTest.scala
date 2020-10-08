@@ -4,7 +4,7 @@ import org.junit.Assert._
 import org.junit.Test
 import pps.covid_sim.model.places.FreeTime.{OpenDisco, Pub}
 import pps.covid_sim.model.places.Locality.City
-import pps.covid_sim.model.places.OpenPlaces.{Beach, Park, Square}
+import pps.covid_sim.model.places.OpenPlaces.{Park, Square}
 import pps.covid_sim.model.places.Shops.{ClothesShop, SuperMarket}
 import pps.covid_sim.model.places.rooms.{DiscoRoom, GymRoom}
 import pps.covid_sim.model.samples.Cities
@@ -18,14 +18,13 @@ class ObstaclesArrangingTest {
   val timeTable: TimeTable = TimeTable(MonthsInterval(Month.JANUARY, Month.DECEMBER))
 
   val discoRoom: DiscoRoom = DiscoRoom(50)
-  val pub: Pub = Pub(cityTest, timeTable)
-  val supermarket: SuperMarket = SuperMarket(cityTest, 50, timeTable)
-  val clothesShop: ClothesShop = ClothesShop(cityTest, 10, timeTable)
+  val pub: Pub = Pub(cityTest, openedInLockdown = false, timeTable)
+  val supermarket: SuperMarket = SuperMarket(cityTest, 50, timeTable, openedInLockdown = false)
+  val clothesShop: ClothesShop = ClothesShop(cityTest, 10, timeTable, openedInLockdown = false)
   val gymRoom: GymRoom = GymRoom(15)
-  val openDisco: OpenDisco = OpenDisco(cityTest, timeTable)
-  val beach: Beach = Beach(cityTest)
-  val square: Square = Square(cityTest)
-  val park: Park = Park(cityTest)
+  val openDisco: OpenDisco = OpenDisco(cityTest, timeTable, openedInLockdown = false)
+  val square: Square = Square(cityTest, openedInLockdown = false)
+  val park: Park = Park(cityTest, openedInLockdown = false)
 
   @Test
   def discoRoomObstaclesArranging(): Unit = {
@@ -83,16 +82,6 @@ class ObstaclesArrangingTest {
     println(openDisco.dimension)
     println(openDiscoObstacles)
     println("Number of obstacles: " + openDiscoObstacles.size)
-    println()
-  }
-
-  @Test
-  def beachObstaclesArranging(): Unit = {
-    val beachObstacles = beach.obstacles
-    assertFalse(beachObstacles.toList.combinations(2).exists(pair => pair.head.vertexes.exists(c => c.inside(pair.last))))
-    println(beach.dimension)
-    println(beachObstacles)
-    println("Number of obstacles: " + beachObstacles.size)
     println()
   }
 

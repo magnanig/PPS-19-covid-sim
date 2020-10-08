@@ -3,12 +3,9 @@ package pps.covid_sim.controller
 import java.util.Calendar
 
 import pps.covid_sim.model.CovidInfectionParameters
-import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.Area
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.util.time.DatesInterval
-
-import scala.collection.parallel.ParSeq
 
 trait Controller {
 
@@ -56,12 +53,6 @@ trait Controller {
    * @return  the covid infection parameters
    */
   def covidInfectionParameters: CovidInfectionParameters
-
-  /**
-   * The list of people.
-   * @return  the list of people
-   */
-  def people: ParSeq[Person]
 
   /**
    * Get the interval of which simulation refers to.

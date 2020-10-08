@@ -14,7 +14,7 @@ class AgendaTest {
   val location2: Location = null
 
   val agenda: Agenda = Agenda(null)
-  agenda.addPlan(CustomPlan()
+  agenda.addPlan(CustomPlan(enabledInLockdown = false)
     .add(location1, Day.MONDAY -> Day.TUESDAY,  8 -> 13)
     .add(location2, Day.WEDNESDAY,8 -> 12)
     .add(location1, Day.THURSDAY -> Day.FRIDAY, 8 -> 13)

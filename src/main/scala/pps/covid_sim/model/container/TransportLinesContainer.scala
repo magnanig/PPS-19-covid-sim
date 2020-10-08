@@ -1,35 +1,38 @@
 package pps.covid_sim.model.container
 
 import java.util.Calendar
+
 import pps.covid_sim.model.places.Locality.City
-import pps.covid_sim.model.transports.PublicTransports.{BusLine, Line, TrainLine}
+import pps.covid_sim.model.transports.PublicTransports._
 import pps.covid_sim.util.time.Time.ScalaCalendar
+
+import scala.collection.parallel.ParSeq
 
 object TransportLinesContainer {
 
-  private var _busLines: List[BusLine] = List()
-  private var _trainLine: List[TrainLine] = List()
+  private var _busLines: ParSeq[BusLine] = ParSeq()
+  private var _trainLine: ParSeq[TrainLine] = ParSeq()
 
   /**
    * Delete all transport lines created so far.
    */
   def reset(): Unit = {
-    _busLines = List()
-    _trainLine = List()
+    _busLines = ParSeq()
+    _trainLine = ParSeq()
   }
 
   /**
    * Adds a new bus line in the container.
    */
   def add(busLine: BusLine): Unit = {
-    _busLines = busLine :: _busLines
+    _busLines = busLine +: _busLines
   }
 
   /**
    * Adds a new train line in the container.
    */
   def add(trainLine: TrainLine): Unit = {
-    _trainLine = trainLine :: _trainLine
+    _trainLine = trainLine +: _trainLine
   }
 
   /**
@@ -39,7 +42,7 @@ object TransportLinesContainer {
    * @return  all bus lines present in the
    *          entire application domain
    */
-  def getBusLines: List[BusLine] = _busLines
+  def getBusLines: ParSeq[BusLine] = _busLines
 
   /**
    * Get all train lines present in the entire
@@ -48,7 +51,7 @@ object TransportLinesContainer {
    * @return  all train lines present in the
    *          entire application domain
    */
-  def getTrainLines: List[TrainLine] = _trainLine
+  def getTrainLines: ParSeq[TrainLine] = _trainLine
 
   /**
    * Get all transport bus lines that are available
@@ -60,8 +63,8 @@ object TransportLinesContainer {
    * @return      all bus lines covering a specified
    *              route on the date indicated
    */
-  def getBusLines(from: City, to: City, date: Calendar): List[Line] = {
-    getBusLines.filter(line => line.isReachable(from) && line.isReachable(to) && line.isOpen(date.hour))
+  def getBusLines(from: City, to: City, date: Calendar): List[Line[Bus]] = {
+    getBusLines.filter(line => line.isReachable(from) && line.isReachable(to) && line.isOpen(date.hour)).toList
   }
 
   /**
@@ -74,8 +77,8 @@ object TransportLinesContainer {
    * @return      all train lines covering a specified
    *              route on the date indicated
    */
-  def getTrainLines(from: City, to: City, date: Calendar): List[Line] = {
-    getTrainLines.filter(line => line.isReachable(from) && line.isReachable(to) && line.isOpen(date.hour))
+  def getTrainLines(from: City, to: City, date: Calendar): List[Line[Train]] = {
+    getTrainLines.filter(line => line.isReachable(from) && line.isReachable(to) && line.isOpen(date.hour)).toList
   }
 
 
@@ -88,8 +91,8 @@ object TransportLinesContainer {
    * @return      all bus lines covering a specified
    *              route on the date indicated
    */
-  def getBusLines(in: City, date: Calendar): List[Line] = {
-    getBusLines.filter(line => line.isReachable(in) && line.isOpen(date.hour))
+  def getBusLines(in: City, date: Calendar): List[Line[Bus]] = {
+    getBusLines.filter(line => line.isReachable(in) && line.isOpen(date.hour)).toList
   }
 
   /**
@@ -101,8 +104,8 @@ object TransportLinesContainer {
    * @return      all train lines covering a specified
    *              route on the date indicated
    */
-  def getTrainLines(in: City, date: Calendar): List[Line] = {
-    getTrainLines.filter(line => line.isReachable(in) && line.isOpen(date.hour))
+  def getTrainLines(in: City, date: Calendar): List[Line[Train]] = {
+    getTrainLines.filter(line => line.isReachable(in) && line.isOpen(date.hour)).toList
   }
 
 }

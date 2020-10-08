@@ -22,7 +22,7 @@ object Hobbies {
                  override val openedInLockdown: Boolean,
                  private var rooms: Seq[GymRoom] = Seq())
     extends MultiRoom[GymRoom](city, rooms) with Hobby[GymRoom] with LimitedHourAccess {
-
+    override def mask: Option[Mask] = None
   }
 
 }

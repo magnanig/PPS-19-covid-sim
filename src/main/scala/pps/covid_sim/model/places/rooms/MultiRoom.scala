@@ -4,12 +4,12 @@ import java.util.Calendar
 
 import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.people.PeopleGroup.Group
+import pps.covid_sim.model.places.ClosedPlace
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Locations.{LimitedPeopleLocation, Location}
 import pps.covid_sim.model.places.arranging.Arrangeable
 import pps.covid_sim.model.places.arranging.Placement.Placeholder
 import pps.covid_sim.model.places.arranging.Tables.TablesGroup
-import pps.covid_sim.model.places.{ClosedPlace, Place}
 
 abstract class MultiRoom[R <: Room](override val city: City,
                                     private var rooms: Seq[R] = Seq())
@@ -41,8 +41,8 @@ abstract class MultiRoom[R <: Room](override val city: City,
     case _ if canEnter(group, time) => freeRoom(group, time) match {
       case Some((room: TablesRoom, Seq(tableGroup: TablesGroup))) => room.enter(group, time, tableGroup)
       case Some((room: Room, _)) => room.enter(group, time); Some(room)
-      case _ => println(s"WARNING: No free room found for $group. Current rooms capacity: ${rooms
-        .map(_.toString).mkString(";\n")}")
+      case _ => /*println(s"WARNING: No free room found for $group. Current rooms capacity: ${rooms
+        .map(_.toString).mkString(";\n")}")*/
         None
     }
     case _ => None

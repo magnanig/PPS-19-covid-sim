@@ -8,7 +8,7 @@ import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{Area, City}
 import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.Place
-import pps.covid_sim.model.transports.PublicTransports.Line
+import pps.covid_sim.model.transports.PublicTransports.{Line, PublicTransport}
 import pps.covid_sim.util.scheduling.Plan
 import pps.covid_sim.util.time.DatesInterval
 
@@ -105,7 +105,7 @@ object Communication {
 
   case class GetTrainLines(from: City, time: Calendar)
 
-  case class RequestedLines(lines: List[Line])
+  case class RequestedLines(lines: List[Line[PublicTransport]])
 
   /**
    * An implicit to use optional parameter in GoOutResponse without explicitly wrap it into an Option.

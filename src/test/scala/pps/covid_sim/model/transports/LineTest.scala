@@ -4,6 +4,7 @@ import java.util.Calendar
 
 import org.junit.Assert._
 import org.junit.Test
+import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.people.People.{Student, Worker}
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple, Single}
 import pps.covid_sim.model.people.Person
@@ -21,6 +22,8 @@ class LineTest {
   val cityTest: City = Cities.FORLI
   val place: Place = new Place {
     override val city: City = cityTest
+    override val openedInLockdown: Boolean = false
+    override def mask: Option[Masks.Mask] = None
   }
 
   // Number of buses per line, capacity of each bus (about 20 seats), time interval in which the line is available
@@ -154,7 +157,7 @@ class LineTest {
     train.get.propagateVirus(time, place)(CovidParameters)
   }
 
-  def enterPeopleFromList(from: Int, until: Int, listPeople: Seq[Group], line: Line): Unit = {
+  def enterPeopleFromList(from: Int, until: Int, listPeople: Seq[Group], line: Line[PublicTransport]): Unit = {
     listPeople.slice(from, until).foreach(p =>
       line.tryUse(p, time))
   }

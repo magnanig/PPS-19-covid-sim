@@ -29,7 +29,7 @@ case class ProvinceCoordinator() extends Coordinator {
     case SetProvince(province) =>
       this._province = province;
       this._upperCoordinator = sender
-      this._myPeople = PeopleContainer.getPeople(_province).par
+      this._myPeople = PeopleContainer.people(_province).par
       this.createActors(this._myPeople)
     case Acknowledge() if this.waitingAck.contains(sender) => this.waitingAck -= sender
       if (this.waitingAck.isEmpty) sendAck()

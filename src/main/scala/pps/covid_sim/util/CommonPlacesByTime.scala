@@ -40,7 +40,7 @@ object CommonPlacesByTime {
 
   def randomPlaceWithPreferences(placesPreferences: Map[Class[_ <: Place], Double],
                                  interval: DatesInterval): Option[Class[_ <: Place]] = availablePlaces(interval)
-    .map(place => place -> placesPreferences(place)).toMap[Class[_ <: Place], Double] match {
+    .map(place => place -> placesPreferences.getOrElse(place, 0.0)).toMap[Class[_ <: Place], Double] match {
     case preferences if preferences.nonEmpty =>
       val total = preferences.values.sum
       val normalizedPreferences = preferences.mapValues(_ / total)

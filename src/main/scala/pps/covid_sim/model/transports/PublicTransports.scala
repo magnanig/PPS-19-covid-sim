@@ -2,6 +2,7 @@ package pps.covid_sim.model.transports
 
 import java.util.Calendar
 
+import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.Locality.{City, Region}
 import pps.covid_sim.model.places.Locations
@@ -16,7 +17,7 @@ object PublicTransports {
   /**
    * Public transports line, covering a set of city, within a certain area.
    */
-  trait Line {
+  trait Line[+T <: PublicTransport] extends Iterable[T] {
 
     private var _coveredCities: Set[City] = Set()
     val scheduledTime: HoursInterval
@@ -69,7 +70,7 @@ object PublicTransports {
    */
   case class BusLine(buses: Int,
                      capacity: Int,
-                     override val scheduledTime: HoursInterval) extends Line {
+                     override val scheduledTime: HoursInterval) extends Line[Bus] {
 
     val busList: Seq[Bus] = (1 to buses) map (_ => Bus(capacity))
 
@@ -101,6 +102,8 @@ object PublicTransports {
       group.exists(person => busList.flatMap(bus => bus.currentGroups.toList)
         .flatMap(group => group.people.toList).toList.contains(person))
     }
+
+    override def iterator: Iterator[Bus] = busList.iterator
   }
 
   /**
@@ -113,7 +116,7 @@ object PublicTransports {
   case class TrainLine(trains: Int,
                        carriages: Int,
                        coveredRegion: Region,
-                       override val scheduledTime: HoursInterval) extends Line {
+                       override val scheduledTime: HoursInterval) extends Line[Train] {
 
     val trainList: Seq[Train] = (1 to trains) map (_ => Train(carriages))
 
@@ -136,6 +139,8 @@ object PublicTransports {
       }
       (None, None)
     }
+
+    override def iterator: Iterator[Train] = trainList.iterator
   }
 
   trait PublicTransport extends Transport {
@@ -143,11 +148,11 @@ object PublicTransports {
   }
 
   case class Bus(override val capacity: Int) extends PublicTransport {
-
+    override def mask: Option[Masks.Mask] = Some(Masks.Surgical)
   }
 
   case class Carriage(override val capacity: Int) extends Transport {
-
+    override def mask: Option[Masks.Mask] = Some(Masks.Surgical)
   }
 
   case class Train(carriages: Int) extends PublicTransport {
@@ -171,6 +176,7 @@ object PublicTransports {
         })
       }
     }
+    override def mask: Option[Masks.Mask] = Some(Masks.Surgical)
   }
 
 }

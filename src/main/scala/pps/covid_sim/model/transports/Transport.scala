@@ -14,19 +14,18 @@ trait Transport extends LimitedPeopleLocation {
 
   /**
    * Method that defines the dynamics of the virus propagation between different groups of people.
-   * @param place     the place where people are
-   * @param time      current time
+   *
+   * @param place the place where people are
+   * @param time  current time
    */
   def extraGroupVirusPropagation(place: Location, time: Calendar)(covidInfectionParameters: CovidInfectionParameters): Unit = {
-    synchronized {
-      currentGroups
-        .flatMap(group => group.toList)
-        .toList
-        .combinations(2)
-        .foreach(pair => if (Single(pair.head).leader != Single(pair.last).leader){
-          VirusPropagation(covidInfectionParameters).tryInfect(pair.head, pair.last, place, time)
-        })
-    }
+    currentGroups
+      .flatMap(group => group.toList)
+      .toList
+      .combinations(2)
+      .foreach(pair => if (Single(pair.head).leader != Single(pair.last).leader) {
+        VirusPropagation(covidInfectionParameters).tryInfect(pair.head, pair.last, place, time)
+      })
   }
 
   /**

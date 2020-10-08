@@ -9,8 +9,8 @@ import pps.covid_sim.model.places.FreeTime._
 import pps.covid_sim.model.places.Hobbies.Gym
 import pps.covid_sim.model.places.Jobs.{Company, Factory}
 import pps.covid_sim.model.places.Locality.{Area, Province, Region}
-import pps.covid_sim.model.places.OpenPlaces.{Park, Square}
-import pps.covid_sim.model.places.Shops.ClothesShop
+import pps.covid_sim.model.places.OpenPlaces.{Field, Park, Square}
+import pps.covid_sim.model.places.Shops.{ClothesShop, SuperMarket}
 import pps.covid_sim.model.places.{Locality, Place}
 import pps.covid_sim.model.simulation.SimulationsManager.classOrdering
 import pps.covid_sim.model.simulation.{Simulation, SimulationsManager}
@@ -129,7 +129,7 @@ class GuiImpl() extends View {
     //CheckBoxes
     val squareCheckbox = new CheckBox("Squares")
     val parkCheckbox = new CheckBox("Parks")
-    val resturantCheckbox = new CheckBox("Restaurants")
+    val restaurantCheckbox = new CheckBox("Restaurants")
     val pubCheckbox = new CheckBox("Pubs")
     val barCheckbox = new CheckBox("Bars")
     val discoCheckbox = new CheckBox("Discos")
@@ -139,13 +139,14 @@ class GuiImpl() extends View {
     val companyCheckbox = new CheckBox("Companies")
     val factoryCheckbox = new CheckBox("Factories")
     val shopCheckbox = new CheckBox("Shops")
+    val supermarketCheckbox = new CheckBox("Supermarket")
     val fieldCheckbox = new CheckBox("Soccer fields")
     val gymCheckbox = new CheckBox("Gyms")
 
     val placeAndCheckMap : Map[CheckBox, Class[_ <: Place]] = Map(
       squareCheckbox -> classOf[Square],
       parkCheckbox -> classOf[Park],
-      resturantCheckbox -> classOf[Restaurant],
+      restaurantCheckbox -> classOf[Restaurant],
       pubCheckbox -> classOf[Pub],
       barCheckbox -> classOf[Bar],
       discoCheckbox -> classOf[Disco],
@@ -155,6 +156,8 @@ class GuiImpl() extends View {
       companyCheckbox -> classOf[Company],
       factoryCheckbox -> classOf[Factory],
       shopCheckbox -> classOf[ClothesShop],
+      supermarketCheckbox -> classOf[SuperMarket],
+      fieldCheckbox -> classOf[Field],
       gymCheckbox -> classOf[Gym]
     )
 
@@ -403,13 +406,13 @@ class GuiImpl() extends View {
           contents += new Component {
 
             contents += new BoxPanel(Orientation.Vertical) {
-              contents ++= Seq(squareCheckbox,parkCheckbox,resturantCheckbox, pubCheckbox)
+              contents ++= Seq(squareCheckbox,parkCheckbox,restaurantCheckbox, barCheckbox, pubCheckbox)
             }
             contents += new BoxPanel(Orientation.Vertical) {
-              contents ++= Seq( barCheckbox, discoCheckbox,openDiscoCheckbox,schoolCheckbox, universityCheckBox)
+              contents ++= Seq(discoCheckbox,openDiscoCheckbox, fieldCheckbox, schoolCheckbox, universityCheckBox)
             }
             contents += new BoxPanel(Orientation.Vertical) {
-              contents ++= Seq(companyCheckbox,factoryCheckbox , shopCheckbox, fieldCheckbox,gymCheckbox)
+              contents ++= Seq(companyCheckbox,factoryCheckbox, shopCheckbox, supermarketCheckbox, gymCheckbox)
             }
           }
         }
@@ -475,7 +478,7 @@ class GuiImpl() extends View {
     }
   }
 
-  override def notifyEndRun(simulation: Simulation ): Unit = {
+  override def notifyRunEnded(simulation: Simulation ): Unit = {
     chartSet.foreach {
       case c if c.yAxisLabel == "Infections" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulation.infected))))
       case c if c.yAxisLabel == "Recovered" => this.insertTab(new Page(c.title, convertJavaToScalaComponent(c.drawChart(simulation.recovered))))
@@ -494,7 +497,7 @@ class GuiImpl() extends View {
 
   }
 
-  override def notifyEnd(simulationsManager: SimulationsManager[Simulation] ): Unit = {
+  override def notifySimulationEnded(simulationsManager: SimulationsManager[Simulation] ): Unit = {
     this.clearTabs()
 
     chartSet.foreach {

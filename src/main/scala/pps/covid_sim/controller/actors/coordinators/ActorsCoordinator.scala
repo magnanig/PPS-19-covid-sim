@@ -5,7 +5,7 @@ import java.util.Calendar
 import akka.actor.{Props, ReceiveTimeout}
 import pps.covid_sim.controller.actors.CoordinatorCommunication.{Init, SetProvince, SetRegion}
 import pps.covid_sim.controller.actors.coordinators.ActorsCoordination._
-import pps.covid_sim.model.container.CitiesContainer
+import pps.covid_sim.model.container.{CitiesContainer, PeopleContainer}
 import pps.covid_sim.model.people.actors.Communication.{Acknowledge, HourTick, Lockdown, Stop}
 import pps.covid_sim.model.places.Locality
 import pps.covid_sim.model.places.Locality.{Province, Region}
@@ -56,7 +56,7 @@ case class ActorsCoordinator() extends Coordinator {
 
   private def tick(): Unit = {
     if (currentTime.hour == 0) {
-      currentInfections = Statistic(controller.people).numCurrentPositive
+      currentInfections = Statistic(PeopleContainer.people).numCurrentPositive
       println(s"Infection on ${currentTime.getTime}: $currentInfections")
       if (currentInfections > localMaxInfections) localMaxInfections = currentInfections
     }
@@ -74,7 +74,8 @@ case class ActorsCoordinator() extends Coordinator {
   }
 
   private def checkLockdown(time: Calendar): Unit = {
-    if (!lockdown && time >= nextAvailableLockdown && currentInfections > controller.covidInfectionParameters.lockDownStart * controller.people.size) {
+    if (!lockdown && time >= nextAvailableLockdown &&
+      currentInfections > controller.covidInfectionParameters.lockDownStart * PeopleContainer.people.size) {
       println("Start lockdown")
       controller.startLockdown(time, currentInfections)
       lockdown = true

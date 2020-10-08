@@ -21,6 +21,7 @@ class TablesArrangingTest {
   val bar: Bar = Bar(Cities.CERVIA,
     TimeTable()
       .add(Day.MONDAY -> Day.SUNDAY, 8 -> 13, 16 -> 21),
+    openedInLockdown = false,
     Seq(tablesRoom)
   )
   val birthDate: Calendar = ScalaCalendar(1997, 1, 1)

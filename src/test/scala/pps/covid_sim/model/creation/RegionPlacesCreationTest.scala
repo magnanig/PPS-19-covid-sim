@@ -1,12 +1,12 @@
 package pps.covid_sim.model.creation
 
-import org.junit.Test
 import org.junit.Assert.assertEquals
+import org.junit.Test
 import pps.covid_sim.model.container.{CitiesContainer, PeopleContainer, PlacesContainer}
 import pps.covid_sim.model.creation.region.RegionCreation
 import pps.covid_sim.model.people.People.{Student, Teacher, Worker}
 import pps.covid_sim.model.places.Education.{School, University}
-import pps.covid_sim.model.places.FreeTime.{Bar, Disco, OpenDisco, Pub, Restaurant}
+import pps.covid_sim.model.places.FreeTime._
 import pps.covid_sim.model.places.Hobbies.{FootballTeam, Gym}
 import pps.covid_sim.model.places.Jobs.{Company, Factory}
 import pps.covid_sim.model.places.Locality.Region
@@ -33,8 +33,10 @@ class RegionPlacesCreationTest {
    */
   @Test
   def testSchoolCreation(): Unit = {
-    val students: List[Student] = PeopleContainer.getPeople.filter(_.residence == Cities.AOSTA).filter(_.getClass == classOf[Student]).map(_.asInstanceOf[Student])
-    val teachers: List[Teacher] = PeopleContainer.getPeople.filter(_.residence == Cities.AOSTA).filter(_.getClass == classOf[Teacher]).map(_.asInstanceOf[Teacher])
+    val students: List[Student] = PeopleContainer.people.filter(_.residence == Cities.AOSTA)
+      .filter(_.getClass == classOf[Student]).map(_.asInstanceOf[Student]).toList
+    val teachers: List[Teacher] = PeopleContainer.people.filter(_.residence == Cities.AOSTA)
+      .filter(_.getClass == classOf[Teacher]).map(_.asInstanceOf[Teacher]).toList
 
     val studentsAssigned: Int = students.count(student => student.institute != null)
     val teachersAssigned: Int = teachers.count(teacher => teacher.workPlace != null)
@@ -61,7 +63,7 @@ class RegionPlacesCreationTest {
 
     PeopleContainer.checkAssignedWork()
     // Starting with the workers, I get the pubs where the workers work
-    val workers: List[Worker] = PeopleContainer.getPeople.filter(_.getClass == classOf[Worker]).map(_.asInstanceOf[Worker])
+    val workers: List[Worker] = PeopleContainer.people.filter(_.getClass == classOf[Worker]).map(_.asInstanceOf[Worker]).toList
     val workerPubs: mutable.Set[Pub] = mutable.Set()
     workers.map(_.workPlace).filter(_.getClass == classOf[Pub])
       .map(_.asInstanceOf[Pub]).foreach(pub => if (!workerPubs.contains(pub)) workerPubs += pub)

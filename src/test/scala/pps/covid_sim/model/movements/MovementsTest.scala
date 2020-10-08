@@ -8,7 +8,7 @@ import pps.covid_sim.model.people.People.Worker
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.City
-import pps.covid_sim.model.places.OpenPlaces.{Beach, Park}
+import pps.covid_sim.model.places.OpenPlaces.Park
 import pps.covid_sim.model.places.Shops.SuperMarket
 import pps.covid_sim.model.places.rooms.{DiscoRoom, GymRoom}
 import pps.covid_sim.model.samples.Cities
@@ -26,10 +26,9 @@ class MovementsTest {
   val time: Calendar = ScalaCalendar(2020, 9, 1, 15)
 
   val discoRoom: DiscoRoom = DiscoRoom(50)
-  val supermarket: SuperMarket = SuperMarket(cityTest, 50, timeTable)
+  val supermarket: SuperMarket = SuperMarket(cityTest, 50, timeTable, openedInLockdown = false)
   val gymRoom: GymRoom = GymRoom(15)
-  val beach: Beach = Beach(cityTest)
-  val park: Park = Park(cityTest)
+  val park: Park = Park(cityTest, openedInLockdown = false)
 
   var people: Seq[Person] = (0 to 150).map(_ => Worker(randomBirthDate(18, 70), cityTest))
 
@@ -50,18 +49,6 @@ class MovementsTest {
     println(discoRoom.dimension)
 
     val pathsSampling = randomPath(discoRoom.dimension, discoRoom.obstacles, Speed.FAST, 1)
-    val paths = pathsSampling((groupsOfTwo.slice(0, 5) ++ groupsOfThree.slice(0, 5)).toSet)
-    println(paths)
-  }
-
-  @Test
-  def testRandomMovementFunctionInBeach(): Unit = {
-    (0 until 5).foreach(i => beach.enter(groupsOfTwo(i), time))
-    (0 until 5).foreach(i => beach.enter(groupsOfThree(i), time))
-    beach.currentGroups.flatten.foreach(_.position = Coordinates.randomOnBorder(beach.dimension))
-    println(beach.dimension)
-
-    val pathsSampling = randomPath(beach.dimension, beach.obstacles, Speed.FAST, 6)
     val paths = pathsSampling((groupsOfTwo.slice(0, 5) ++ groupsOfThree.slice(0, 5)).toSet)
     println(paths)
   }
