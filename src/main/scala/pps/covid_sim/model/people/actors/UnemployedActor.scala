@@ -1,11 +1,10 @@
 package pps.covid_sim.model.people.actors
 
+import pps.covid_sim.model.scheduling.GoingOutTimes.{GoingOutTimes, GoingOutTimesMap}
 import pps.covid_sim.parameters.GoingOutParameters
 import pps.covid_sim.util.RandomGeneration
-import pps.covid_sim.util.scheduling.GoingOutTimes.{GoingOutTimes, GoingOutTimesMap}
 import pps.covid_sim.util.time.DaysInterval
 import pps.covid_sim.util.time.Time.{Day, Month, Season}
-import pps.covid_sim.util.time.TimeIntervalsImplicits._
 
 class UnemployedActor() extends PersonActor {
 

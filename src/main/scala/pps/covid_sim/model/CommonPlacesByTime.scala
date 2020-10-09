@@ -1,4 +1,4 @@
-package pps.covid_sim.util
+package pps.covid_sim.model
 
 import java.util.Calendar
 

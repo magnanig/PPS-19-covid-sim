@@ -8,18 +8,13 @@ import pps.covid_sim.model.places.Locality.Province
  */
 private[creation] object ProvinceCreation {
 
-  private var created: Boolean = false
-
   /**
    * Create all the entities of the domain
    * for the entire province.
    */
   def create(province: Province): Unit = {
-    if (!created) {
-      ProvincePlacesCreation.create(province)
-      ProvinceLinesCreation.create(province)
-      created = true
-    }
+    ProvincePlacesCreation.create(province)
+    ProvinceLinesCreation.create(province)
   }
 
 }

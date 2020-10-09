@@ -160,6 +160,7 @@ class GuiImpl() extends View {
       fieldCheckbox -> classOf[Field],
       gymCheckbox -> classOf[Gym]
     )
+    placeAndCheckMap.keySet.foreach(_.selected = true)
 
     var selectedRegion : Option[Region] = Option.empty
     var selectedProvince : Option[Province] = Option.empty

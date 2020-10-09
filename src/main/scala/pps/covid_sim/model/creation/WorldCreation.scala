@@ -1,6 +1,6 @@
 package pps.covid_sim.model.creation
 
-import pps.covid_sim.model.container.{CitiesContainer, PeopleContainer, PlacesContainer}
+import pps.covid_sim.model.container.{CitiesContainer, PeopleContainer, PlacesContainer, TransportLinesContainer}
 import pps.covid_sim.model.creation.province.ProvinceCreation
 import pps.covid_sim.model.creation.region.RegionCreation
 import pps.covid_sim.model.places.Locality._
@@ -25,6 +25,7 @@ private[model] object WorldCreation {
     CitiesContainer.reset()
     PeopleContainer.reset()
     PlacesContainer.reset()
+    TransportLinesContainer.reset()
   }
 
   /**
@@ -41,7 +42,6 @@ private[model] object WorldCreation {
         regionsCreation()
         regions.values.foreach(RegionCreation.create)
     }
-    //PeopleContainer.checkAssignedWork()
   }
 
   private def regionsCreation(): Unit = {

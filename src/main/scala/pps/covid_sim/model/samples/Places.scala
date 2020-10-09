@@ -3,7 +3,7 @@ package pps.covid_sim.model.samples
 import pps.covid_sim.model.places.FreeTime.Bar
 import pps.covid_sim.model.places.OpenPlaces.Park
 import pps.covid_sim.model.places.rooms.TablesRoom
-import pps.covid_sim.util.scheduling.TimeTable
+import pps.covid_sim.model.scheduling.TimeTable
 import pps.covid_sim.util.time.Time.{Day, Month}
 import pps.covid_sim.util.time.TimeIntervalsImplicits._
 import pps.covid_sim.util.time.{DaysInterval, HoursInterval}

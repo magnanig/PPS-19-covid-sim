@@ -4,7 +4,7 @@ import java.util.Calendar
 
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.Locations.Location
-import pps.covid_sim.util.scheduling.TimeTable
+import pps.covid_sim.model.scheduling.TimeTable
 import pps.covid_sim.util.time.DatesInterval
 import pps.covid_sim.util.time.Time.Day.Day
 

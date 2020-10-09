@@ -2,7 +2,7 @@ package pps.covid_sim.model.places.rooms
 
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.clinical.Masks.Mask
-import pps.covid_sim.model.movements.MovementFunctions
+import pps.covid_sim.model.movement.MovementFunctions
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.{DelimitedSpace, MovementSpace}
 import pps.covid_sim.parameters.CreationParameters.{maxNumDiscoObstacles, minNumDiscoObstacles}

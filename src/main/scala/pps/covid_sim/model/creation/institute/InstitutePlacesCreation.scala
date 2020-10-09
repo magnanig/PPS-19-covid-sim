@@ -1,10 +1,10 @@
 package pps.covid_sim.model.creation.institute
 
+import pps.covid_sim.model.Statistic
 import pps.covid_sim.model.people.People.{Student, Teacher}
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.parameters.CreationParameters
-import pps.covid_sim.util.Statistic
 
 private[creation] case class InstitutePlacesCreation() {
 

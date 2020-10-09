@@ -9,7 +9,7 @@ import scala.util.Random
 
 private[creation] case class HabitationsCreation(){
 
-  private val averageNumPeople = 4
+  private val averageNumPeople = 2
 
   def create(city: City, people: List[Person]): List[Place] = {
     var habitations: List[Place] = List()
@@ -17,7 +17,7 @@ private[creation] case class HabitationsCreation(){
     while (remainingPeople.hasNext) {
       val habitation = Habitation(city)
       remainingPeople
-        .take(RandomGeneration.randomIntFromGaussian(averageNumPeople, 3, 1))
+        .take(RandomGeneration.randomIntFromGaussian(averageNumPeople, 1, 1))
         .foreach(person => {
           person.setHabitation(habitation)
           habitation.addMember(person)

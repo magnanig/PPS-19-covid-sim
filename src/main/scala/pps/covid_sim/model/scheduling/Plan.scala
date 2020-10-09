@@ -1,7 +1,7 @@
-package pps.covid_sim.util.scheduling
+package pps.covid_sim.model.scheduling
 
 import pps.covid_sim.model.places.Locations.Location
-import pps.covid_sim.util.scheduling.Planning.DayPlan
+import pps.covid_sim.model.scheduling.Planning.DayPlan
 import pps.covid_sim.util.time.Time.Day.Day
 import pps.covid_sim.util.time.{DaysInterval, HoursInterval}
 

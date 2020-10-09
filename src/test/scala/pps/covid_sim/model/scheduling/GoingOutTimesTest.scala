@@ -1,8 +1,8 @@
-package pps.covid_sim.util.scheduling
+package pps.covid_sim.model.scheduling
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import pps.covid_sim.util.scheduling.GoingOutTimes.{GoingOutTimes, GoingOutTimesMap}
+import pps.covid_sim.model.scheduling.GoingOutTimes.{GoingOutTimes, GoingOutTimesMap}
 import pps.covid_sim.util.time.{DaysInterval, MonthsInterval}
 
 class GoingOutTimesTest {

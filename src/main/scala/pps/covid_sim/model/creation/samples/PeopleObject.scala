@@ -1,12 +1,12 @@
 package pps.covid_sim.model.creation.samples
 
+import pps.covid_sim.model.Statistic
 import pps.covid_sim.model.creation.CitiesObject
-import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.people.People._
 import pps.covid_sim.model.people.Person
+import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.parameters.CreationParameters._
 import pps.covid_sim.util.RandomGeneration._
-import pps.covid_sim.util.Statistic
 
 import scala.util.Random
 

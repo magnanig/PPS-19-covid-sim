@@ -6,8 +6,8 @@ import pps.covid_sim.model.places.Education.{Classroom, School}
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.{Place, SchoolClass}
 import pps.covid_sim.model.samples.Places
+import pps.covid_sim.model.scheduling.Planning.{StudentPlan, WorkPlan}
 import pps.covid_sim.parameters.CreationParameters
-import pps.covid_sim.util.scheduling.Planning.{StudentPlan, WorkPlan}
 import pps.covid_sim.util.time.Time.{Day, Month}
 import pps.covid_sim.util.time.TimeIntervalsImplicits._
 

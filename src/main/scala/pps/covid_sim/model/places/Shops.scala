@@ -4,14 +4,14 @@ import java.util.Calendar
 
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.clinical.Masks.Mask
-import pps.covid_sim.model.movements.MovementFunctions
+import pps.covid_sim.model.movement.MovementFunctions
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.rooms.Room
+import pps.covid_sim.model.scheduling.TimeTable
 import pps.covid_sim.parameters.CreationParameters.{clothesShopFillFactor, supermarketFillFactor}
 import pps.covid_sim.util.RandomGeneration
 import pps.covid_sim.util.geometry._
-import pps.covid_sim.util.scheduling.TimeTable
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer

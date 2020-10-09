@@ -11,7 +11,7 @@ import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.arranging.Tables.TablesArrangement
 import pps.covid_sim.model.places.rooms.{Room, TablesRoom}
 import pps.covid_sim.model.samples.Cities
-import pps.covid_sim.util.scheduling.TimeTable
+import pps.covid_sim.model.scheduling.TimeTable
 import pps.covid_sim.util.time.Time.{Day, ScalaCalendar}
 import pps.covid_sim.util.time.TimeIntervalsImplicits._
 

@@ -1,4 +1,4 @@
-package pps.covid_sim.util.scheduling
+package pps.covid_sim.model.scheduling
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

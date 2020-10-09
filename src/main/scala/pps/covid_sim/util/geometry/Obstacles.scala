@@ -6,7 +6,6 @@ import scala.annotation.tailrec
 
 object Obstacles {
 
-
   /**
    * Randomly generates the coordinates of an obstacle to be placed inside a room.
    * @return  a Rectangle representing a general obstacle inside the room

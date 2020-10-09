@@ -1,5 +1,6 @@
 package pps.covid_sim.model.creation
 
+import pps.covid_sim.model.Statistic
 import pps.covid_sim.model.container.CitiesContainer
 import pps.covid_sim.model.people.People.{Student, Teacher, Unemployed, Worker}
 import pps.covid_sim.model.people.Person
@@ -7,7 +8,6 @@ import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.parameters.CreationParameters
 import pps.covid_sim.parameters.CreationParameters.{studentsPercentage, teachersPercentage, unemployedPercentage, workersPercentage}
 import pps.covid_sim.util.RandomGeneration.randomBirthDate
-import pps.covid_sim.util.Statistic
 
 private[creation] abstract class PeopleCreation {
 

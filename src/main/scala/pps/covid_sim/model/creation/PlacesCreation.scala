@@ -1,16 +1,16 @@
 package pps.covid_sim.model.creation
 
+import pps.covid_sim.model.Statistic
 import pps.covid_sim.model.container.{PeopleContainer, PlacesContainer}
-import pps.covid_sim.model.creation.institute.InstitutePlacesCreation
 import pps.covid_sim.model.creation.freetime.FreeTimePlacesCreation
 import pps.covid_sim.model.creation.hobbies.HobbyPlacesCreation
+import pps.covid_sim.model.creation.institute.InstitutePlacesCreation
 import pps.covid_sim.model.creation.work.WorkPlacesCreation
-import pps.covid_sim.parameters.CreationParameters._
 import pps.covid_sim.model.people.People.{Student, Teacher, Worker}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
-import pps.covid_sim.util.Statistic
+import pps.covid_sim.parameters.CreationParameters._
 
 import scala.util.Random
 
@@ -67,7 +67,6 @@ private[creation] abstract class PlacesCreation {
 
     allPlace = allPlace ::: HabitationsCreation().create(entry._1, entry._2)
 
-    println("totale dei places creati: " + allPlace.size)
     allPlace.foreach(place => PlacesContainer.add(place.city, place))
     allPlace
   }

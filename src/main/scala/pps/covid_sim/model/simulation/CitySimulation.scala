@@ -2,10 +2,10 @@ package pps.covid_sim.model.simulation
 
 import java.util.Calendar
 
+import pps.covid_sim.model.Statistic
 import pps.covid_sim.model.container.PeopleContainer
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Locations.Location
-import pps.covid_sim.util.Statistic
 
 import scala.collection.SortedMap
 

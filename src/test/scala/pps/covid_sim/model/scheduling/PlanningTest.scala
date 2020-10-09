@@ -1,10 +1,10 @@
-package pps.covid_sim.util.scheduling
+package pps.covid_sim.model.scheduling
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.samples.Places
-import pps.covid_sim.util.scheduling.Planning.CustomPlan
+import pps.covid_sim.model.scheduling.Planning.CustomPlan
 import pps.covid_sim.util.time.Time.Day
 import pps.covid_sim.util.time.{DaysInterval, HoursInterval}
 

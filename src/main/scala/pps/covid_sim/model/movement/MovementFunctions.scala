@@ -1,8 +1,8 @@
-package pps.covid_sim.model.movements
+package pps.covid_sim.model.movement
 
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.util.geometry.{Coordinates, Dimension, Direction, Rectangle, Speed}
+import pps.covid_sim.util.geometry._
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -30,7 +30,6 @@ object MovementFunctions {
                  speed: Speed = Speed.MIDDLE,
                  partitions: Int): Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]] = {
     groups => {
-
       def _nextPosition(leader: Person): Coordinates = {
         val nextPos: Coordinates = Coordinates.randomClose(dimension, leader.position, speed)
         if (obstacles.exists(r => nextPos.inside(r)) || nextPos.outOfDimension(dimension)) {
@@ -80,7 +79,7 @@ object MovementFunctions {
             nextPos = Coordinates.followBorder(leader.position, speed, nextTarget.get)
             if (nextPos.onCorner(nextTarget.get)) turns += 1 // increase turns when a corner is reached
           } else {
-            direction = if (leader.position == (nextTarget.get.topLeftCorner.x,
+            direction = if (leader.position == Coordinates(nextTarget.get.topLeftCorner.x,
                                                 nextTarget.get.bottomRightCorner.y)) Direction.SOUTH_WEST
                         else Direction.NORTH_EAST
             nextPos = Coordinates.directionClose(leader.position, speed, direction)

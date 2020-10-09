@@ -5,7 +5,7 @@ import pps.covid_sim.model.places.Place
 import pps.covid_sim.util.time.DatesInterval
 
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
+import scala.collection.parallel.ParSeq
 import scala.collection.parallel.mutable.ParMap
 
 /**
@@ -180,13 +180,13 @@ object PlacesContainer {
 
   private class PlacesCreationPlan() {
 
-    val planMap: ParMap[Class[_ <: Place], ListBuffer[Place]] = mutable.Map().par
+    val planMap: ParMap[Class[_ <: Place], ParSeq[Place]] = mutable.Map().par
 
     def add(placeClass: Class[_ <: Place], place: Place): PlacesCreationPlan = {
       if (planMap.contains(placeClass))
-        planMap(placeClass).insert(0, place)
+        planMap.put(placeClass, planMap(placeClass) :+ place)
       else
-        planMap.put(placeClass, ListBuffer(place))
+        planMap.put(placeClass, ParSeq(place))
       this
     }
 

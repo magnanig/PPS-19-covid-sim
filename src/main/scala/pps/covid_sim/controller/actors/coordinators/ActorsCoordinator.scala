@@ -5,11 +5,11 @@ import java.util.Calendar
 import akka.actor.{Props, ReceiveTimeout}
 import pps.covid_sim.controller.actors.CoordinatorCommunication.{Init, SetProvince, SetRegion}
 import pps.covid_sim.controller.actors.coordinators.ActorsCoordination._
+import pps.covid_sim.model.Statistic
 import pps.covid_sim.model.container.{CitiesContainer, PeopleContainer}
 import pps.covid_sim.model.people.actors.Communication.{Acknowledge, HourTick, Lockdown, Stop}
 import pps.covid_sim.model.places.Locality
-import pps.covid_sim.model.places.Locality.{Province, Region}
-import pps.covid_sim.util.Statistic
+import pps.covid_sim.model.places.Locality.{City, Province, Region}
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
 import scala.collection.parallel.immutable.ParSet
@@ -27,6 +27,7 @@ case class ActorsCoordinator() extends Coordinator {
   override def receive: Receive = {
     case Init(area, di) =>
       area match {
+        case city: City => this.createProvinceActors(city.province) // create province from city
         case province: Province => this.createProvinceActors(province) //Create directly only the province coordinator
         case region: Region => this.createActors(Set(region)) //Create only one region coordinator
         case Locality.Italy() => this.createActors(CitiesContainer.getRegions) //Create all the regions

@@ -1,10 +1,10 @@
 package pps.covid_sim.model.creation.work
 
+import pps.covid_sim.model.Statistic
 import pps.covid_sim.model.people.People.Worker
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Place
 import pps.covid_sim.parameters.CreationParameters.{clothesShopPercentage, superMarketPercentage}
-import pps.covid_sim.util.Statistic
 
 import scala.util.Random
 

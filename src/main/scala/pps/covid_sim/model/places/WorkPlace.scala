@@ -5,7 +5,7 @@ import java.util.Calendar
 import pps.covid_sim.model.people.People.Employed
 import pps.covid_sim.model.people.PeopleGroup.{Group, Single}
 import pps.covid_sim.model.places.Locations.Location
-import pps.covid_sim.util.scheduling.Planning.WorkPlan
+import pps.covid_sim.model.scheduling.Planning.WorkPlan
 
 trait WorkPlace[T <: Location] extends Place {
 

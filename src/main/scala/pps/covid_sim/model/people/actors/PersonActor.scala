@@ -3,6 +3,7 @@ package pps.covid_sim.model.people.actors
 import java.util.Calendar
 
 import akka.actor.{Actor, ActorRef}
+import pps.covid_sim.model.CommonPlacesByTime.randomPlaceWithPreferences
 import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.clinical.Masks.Mask
@@ -15,13 +16,12 @@ import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.OpenPlaces.OpenPlace
 import pps.covid_sim.model.places.Shops.SuperMarket
 import pps.covid_sim.model.places.{Habitation, LimitedHourAccess, Place}
+import pps.covid_sim.model.scheduling.GoingOutTimes.{GoingOutTimes, GoingOutTimesMap}
+import pps.covid_sim.model.scheduling.{Agenda, Appointment}
 import pps.covid_sim.model.transports.PublicTransports.{BusLine, PublicTransport}
 import pps.covid_sim.parameters.GoingOutParameters
 import pps.covid_sim.parameters.GoingOutParameters.maxNumShopPerWeek
-import pps.covid_sim.util.CommonPlacesByTime.randomPlaceWithPreferences
 import pps.covid_sim.util.RandomGeneration
-import pps.covid_sim.util.scheduling.GoingOutTimes.{GoingOutTimes, GoingOutTimesMap}
-import pps.covid_sim.util.scheduling.{Agenda, Appointment}
 import pps.covid_sim.util.time.Time.ScalaCalendar
 import pps.covid_sim.util.time.{DatesInterval, DaysInterval, MonthsInterval}
 
@@ -225,11 +225,13 @@ abstract class PersonActor extends Actor {
     val interval = agenda.firstNextFreeTime(time + 1)
     val preferences = if(!lockdown) placesPreferences else placesPreferences
       .filter(e => !covidInfectionParameters.placesToClose.contains(e._1))
-    if (preferences.nonEmpty) randomPlaceWithPreferences(preferences, interval) match {
-      case Some(placeClass) => requestPlaces(person.residence, placeClass, Some(interval))
-        requestType = Request.LOOKING_FOR_PLACES
-        pendingRequest = interval
-      case _ =>
+    if (preferences.nonEmpty) {
+      randomPlaceWithPreferences(preferences, interval) match {
+        case Some(placeClass) => requestPlaces(person.residence, placeClass, Some(interval))
+          requestType = Request.LOOKING_FOR_PLACES
+          pendingRequest = interval
+        case _ =>
+      }
     }
   }
 
@@ -261,10 +263,10 @@ abstract class PersonActor extends Actor {
     wantsToGoOutToday = Random.nextDouble() < maxGoingOutTimes.probability(time.month, time.day)
   }
 
-  private def mayAcceptProposal(goOutProposal: GoOutProposal): Boolean = mayGoOut() &&
-    wantsToGoOutWith(goOutProposal.leader, goOutProposal.place)
+  private def mayAcceptProposal(goOutProposal: GoOutProposal): Boolean = (!lockdown ||
+    Random.nextDouble() < notRespectingIsolation) && mayGoOut() && wantsToGoOutWith(goOutProposal.leader, goOutProposal.place)
 
-  private def mayGoOut(): Boolean = wantsToGoOutToday && (!person.isInfected ||
+  private def mayGoOut(): Boolean = wantsToGoOutToday && ((!person.isInfected && !lockdown) ||
     Random.nextDouble() < notRespectingIsolation)
 
   private def wantsToGoOutWith(person: Person, at: Place): Boolean = {

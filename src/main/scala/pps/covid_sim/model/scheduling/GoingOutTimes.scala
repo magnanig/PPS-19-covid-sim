@@ -1,4 +1,4 @@
-package pps.covid_sim.util.scheduling
+package pps.covid_sim.model.scheduling
 
 import pps.covid_sim.util.time.Time.Day.Day
 import pps.covid_sim.util.time.Time.Month.Month

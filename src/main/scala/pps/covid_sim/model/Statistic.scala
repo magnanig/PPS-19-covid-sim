@@ -1,4 +1,4 @@
-package pps.covid_sim.util
+package pps.covid_sim.model
 
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{Area, City, Province, Region}

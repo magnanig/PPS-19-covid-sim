@@ -5,7 +5,7 @@ import org.junit.Test
 import pps.covid_sim.model.container.PlacesContainer
 import pps.covid_sim.model.places.FreeTime.{Bar, Restaurant}
 import pps.covid_sim.model.samples.{Cities, Places, Provinces}
-import pps.covid_sim.util.scheduling.TimeTable
+import pps.covid_sim.model.scheduling.TimeTable
 import pps.covid_sim.util.time.Time.Day
 
 class PlacesContainerTest {

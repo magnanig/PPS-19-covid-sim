@@ -6,7 +6,7 @@ import akka.actor.{Props, ReceiveTimeout}
 import pps.covid_sim.controller.actors.CoordinatorCommunication.{SetProvince, SetRegion}
 import pps.covid_sim.controller.actors.coordinators.ActorsCoordination.{actorsCoordinator, system}
 import pps.covid_sim.model.container.CitiesContainer
-import pps.covid_sim.model.people.actors.Communication.{Acknowledge, HourTick, Stop}
+import pps.covid_sim.model.people.actors.Communication.{Acknowledge, HourTick, Lockdown, Stop}
 import pps.covid_sim.model.places.Locality.{Province, Region}
 
 /** *
@@ -25,6 +25,7 @@ case class RegionCoordinator() extends Coordinator {
     case Acknowledge() if this.waitingAck.contains(sender) => this.waitingAck -= sender
       if (this.waitingAck.isEmpty) sendAck()
     case ReceiveTimeout => sendAck(); println("WARNING: Timeout! Sono un sotto coordinatore: Region:" + _region)
+    case Lockdown(enabled) => subordinatedActors.foreach(_ ! Lockdown(enabled))
     case Stop() => this.endSimulation()
     case msg => println(s"Not expected [Region]: $msg")
   }

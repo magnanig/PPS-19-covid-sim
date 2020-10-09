@@ -3,12 +3,11 @@ package pps.covid_sim.model.creation.institute
 import pps.covid_sim.model.creation.WorldCreation.closedPlaceInLockdown
 import pps.covid_sim.model.people.People.{Student, Teacher}
 import pps.covid_sim.model.places.Education.{Classroom, University}
-import pps.covid_sim.model.places.FreeTime.Bar
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.{Course, Place}
 import pps.covid_sim.model.samples.Places
+import pps.covid_sim.model.scheduling.Planning.{StudentPlan, WorkPlan}
 import pps.covid_sim.parameters.CreationParameters
-import pps.covid_sim.util.scheduling.Planning.{StudentPlan, WorkPlan}
 import pps.covid_sim.util.time.Time.{Day, Month}
 import pps.covid_sim.util.time.TimeIntervalsImplicits._
 

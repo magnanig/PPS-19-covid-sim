@@ -4,12 +4,12 @@ import java.util.Calendar
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import pps.covid_sim.model
 import pps.covid_sim.model.creation.CitiesObject
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality._
-import pps.covid_sim.model.samples
 import pps.covid_sim.model.samples.{Cities, PersonTmp}
-import pps.covid_sim.util
+import pps.covid_sim.model.{Statistic, samples}
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
 class StatisticTest {
@@ -61,7 +61,7 @@ class StatisticTest {
     CitiesObject.getCities(Region.TRENTINO_ALTO_ADIGE)
       .foreach(city => people = samples.PersonTmp(date, city) :: people)
 
-    val statistic: Statistic = util.Statistic(people.par)
+    val statistic: Statistic = Statistic(people.par)
 
     assertEquals(CitiesObject.getCities(Region.FRIULI_VENEZIA_GIULIA).size, statistic.numCurrentPositive)
 
@@ -86,7 +86,7 @@ class StatisticTest {
     CitiesObject.getCities(Region.TRENTINO_ALTO_ADIGE)
       .foreach(city => people = samples.PersonTmp(date, city) :: people)
 
-    val statistic: Statistic = util.Statistic(people.par)
+    val statistic: Statistic = model.Statistic(people.par)
 
     assertEquals(CitiesObject.getCities(Region.EMILIA_ROMAGNA).size, statistic.numRecovered)
 
@@ -109,7 +109,7 @@ class StatisticTest {
     CitiesObject.getCities(Region.CAMPANIA).foreach(city => people = samples.PersonTmp(date, city, death = true) :: people)
     CitiesObject.getCities(Region.TRENTINO_ALTO_ADIGE).foreach(city => people = samples.PersonTmp(date, city) :: people)
 
-    val statistic: Statistic = util.Statistic(people.par)
+    val statistic: Statistic = model.Statistic(people.par)
 
     assertEquals(CitiesObject.getCities(Region.CAMPANIA).size, statistic.numDeaths)
 
@@ -135,7 +135,7 @@ class StatisticTest {
     CitiesObject.getCities(Region.VENETO).foreach(city => people = samples.PersonTmp(date, city, recovered = true) :: people)
     CitiesObject.getCities(Region.MOLISE).foreach(city => people = samples.PersonTmp(date, city, death = true) :: people)
 
-    val statistic: Statistic = util.Statistic(people.par)
+    val statistic: Statistic = model.Statistic(people.par)
 
     assertEquals(CitiesObject.getCities(Region.CALABRIA).size + CitiesObject.getCities(Region.VENETO).size +
       CitiesObject.getCities(Region.MOLISE).size, statistic.numConfirmedCases)

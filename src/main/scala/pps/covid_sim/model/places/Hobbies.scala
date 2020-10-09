@@ -5,7 +5,7 @@ import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.OpenPlaces.Field
 import pps.covid_sim.model.places.rooms.{GymRoom, MultiRoom}
-import pps.covid_sim.util.scheduling.TimeTable
+import pps.covid_sim.model.scheduling.TimeTable
 
 object Hobbies {
 

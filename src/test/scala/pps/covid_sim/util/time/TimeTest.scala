@@ -4,7 +4,7 @@ import java.util.Calendar
 
 import org.junit.Assert._
 import org.junit.Test
-import pps.covid_sim.util.scheduling.TimeTable
+import pps.covid_sim.model.scheduling.TimeTable
 import pps.covid_sim.util.time.Time.{Day, Month, ScalaCalendar}
 
 class TimeTest {

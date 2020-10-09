@@ -4,7 +4,7 @@ import pps.covid_sim.controller.ControllerImpl
 import pps.covid_sim.model.ModelImpl
 import pps.covid_sim.view.GuiImpl
 
-object Main {
+object CovidSimulator {
   def main(args: Array[String]): Unit = {
     val g = new GuiImpl()
     val c = new ControllerImpl(new ModelImpl,g)

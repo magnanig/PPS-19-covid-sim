@@ -32,7 +32,6 @@ class ModelImpl extends Model {
     initPeopleFriends(people)
     println(s"Created ${people.size} people")
     PlacesContainer.getPlaces.groupBy(_.getClass.getSimpleName).mapValues(_.size).foreach(println)
-    //System.exit(0)
   }
 
   override def initSimulation(area: Area, from: Calendar, until: Calendar, runs: Int): Unit = {

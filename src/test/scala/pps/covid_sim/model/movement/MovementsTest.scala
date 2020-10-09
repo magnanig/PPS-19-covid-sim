@@ -1,9 +1,9 @@
-package pps.covid_sim.model.movements
+package pps.covid_sim.model.movement
 
 import java.util.Calendar
 
 import org.junit.Test
-import pps.covid_sim.model.movements.MovementFunctions.{linearPathWithWallFollowing, randomPath}
+import pps.covid_sim.model.movement.MovementFunctions.{linearPathWithWallFollowing, randomPath}
 import pps.covid_sim.model.people.People.Worker
 import pps.covid_sim.model.people.PeopleGroup.{Group, Multiple}
 import pps.covid_sim.model.people.Person
@@ -12,9 +12,9 @@ import pps.covid_sim.model.places.OpenPlaces.Park
 import pps.covid_sim.model.places.Shops.SuperMarket
 import pps.covid_sim.model.places.rooms.{DiscoRoom, GymRoom}
 import pps.covid_sim.model.samples.Cities
+import pps.covid_sim.model.scheduling.TimeTable
 import pps.covid_sim.util.RandomGeneration.randomBirthDate
 import pps.covid_sim.util.geometry.{Coordinates, Speed}
-import pps.covid_sim.util.scheduling.TimeTable
 import pps.covid_sim.util.time.MonthsInterval
 import pps.covid_sim.util.time.Time.{Month, ScalaCalendar}
 

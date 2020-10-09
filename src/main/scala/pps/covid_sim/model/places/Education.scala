@@ -12,10 +12,10 @@ import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.arranging.Arrangeable
 import pps.covid_sim.model.places.arranging.SchoolDesks.{Desk, DeskGroup, DesksArrangement}
 import pps.covid_sim.model.places.rooms.{MultiRoom, Room}
+import pps.covid_sim.model.scheduling.Planning.StudentPlan
+import pps.covid_sim.model.scheduling.TimeTable
 import pps.covid_sim.util.RandomGeneration
 import pps.covid_sim.util.geometry.{Dimension, Rectangle}
-import pps.covid_sim.util.scheduling.Planning.StudentPlan
-import pps.covid_sim.util.scheduling.TimeTable
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
 object Education {

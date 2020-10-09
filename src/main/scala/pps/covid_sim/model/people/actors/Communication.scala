@@ -8,8 +8,8 @@ import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.{Area, City}
 import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.Place
+import pps.covid_sim.model.scheduling.Plan
 import pps.covid_sim.model.transports.PublicTransports.{Line, PublicTransport}
-import pps.covid_sim.util.scheduling.Plan
 import pps.covid_sim.util.time.DatesInterval
 
 object Communication {

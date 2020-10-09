@@ -2,7 +2,7 @@ package pps.covid_sim.util.time
 
 import java.util.Calendar
 
-import pps.covid_sim.util.scheduling.TimeTable
+import pps.covid_sim.model.scheduling.TimeTable
 import pps.covid_sim.util.time.Time.ScalaCalendar
 
 /**

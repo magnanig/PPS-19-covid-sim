@@ -9,12 +9,12 @@ import pps.covid_sim.model.container.PlacesContainer.{getPlaces, placesInCityOrE
 import pps.covid_sim.model.container.{PeopleContainer, PlacesContainer, TransportLinesContainer}
 import pps.covid_sim.model.people.People.{Employed, Student, Worker}
 import pps.covid_sim.model.people.Person
-import pps.covid_sim.model.people.actors.Communication.{Acknowledge, ActorsFriendsMap, AddPlan, GetBusLines, GetPlacesInArea, GetTrainLines, HourTick, RequestedLines, RequestedPlaces, SetCovidInfectionParameters, SetPerson, Stop}
+import pps.covid_sim.model.people.actors.Communication.{Acknowledge, ActorsFriendsMap, AddPlan, GetBusLines, GetPlacesInArea, GetTrainLines, HourTick, Lockdown, RequestedLines, RequestedPlaces, SetCovidInfectionParameters, SetPerson, Stop}
 import pps.covid_sim.model.people.actors.{EmployedActor, StudentActor, UnemployedActor}
 import pps.covid_sim.model.places.FreeTime.Disco
 import pps.covid_sim.model.places.Locality.{City, Province}
 import pps.covid_sim.model.places.Place
-import pps.covid_sim.util.scheduling.Planning.CustomPlan
+import pps.covid_sim.model.scheduling.Planning.CustomPlan
 import pps.covid_sim.util.time.Time.Day
 import pps.covid_sim.util.time.TimeIntervalsImplicits._
 import pps.covid_sim.util.time.{DatesInterval, HoursInterval}
@@ -45,6 +45,7 @@ case class ProvinceCoordinator() extends Coordinator {
     case GetPlacesInArea(province: Province, placeClass, datesInterval) => this.genericGetPlaceByProvince(province, placeClass, datesInterval, sender)
     case GetBusLines(from, time) => sender ! RequestedLines(TransportLinesContainer.getBusLines(from, time))
     case GetTrainLines(from, time) => sender ! RequestedLines(TransportLinesContainer.getTrainLines(from, time))
+    case Lockdown(enabled) => subordinatedActors.foreach(_ ! Lockdown(enabled))
     case msg => println(s"Not expected [Province]: $msg" + "is sender in peoples: " + waitingAck.contains(sender) + " " + sender.toString());
   }
 
