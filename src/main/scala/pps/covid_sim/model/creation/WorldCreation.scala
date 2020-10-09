@@ -7,6 +7,7 @@ import pps.covid_sim.model.places.Locality._
 import pps.covid_sim.model.places.Place
 
 import scala.collection.mutable
+import scala.io.Source
 
 /**
  * It takes care of creating the entire application domain
@@ -45,7 +46,7 @@ private[model] object WorldCreation {
   }
 
   private def regionsCreation(): Unit = {
-  val bufferedSource = io.Source.fromFile("res/italy_regions.csv")
+  val bufferedSource = Source.fromResource("italy_regions.csv")
     for (line <- bufferedSource.getLines) {
       val Array(id_region, name, _, num_residents, _, _) = line.split(";")
       regions += (id_region.toInt -> Region(id_region.toInt, name, num_residents.toInt))

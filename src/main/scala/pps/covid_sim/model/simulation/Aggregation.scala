@@ -24,9 +24,9 @@ object Aggregation {
 
     override def deaths: SortedMap[Calendar, Int] = aggregateValues(_.deaths)
 
-    override def takeScreenshot(time: Calendar): Unit = { simulations.foreach(_.takeScreenshot(time)) }
+    private[model] override def takeScreenshot(time: Calendar): Unit = { simulations.foreach(_.takeScreenshot(time)) }
 
-    override def close(): Unit = simulations.foreach(_.close())
+    private[model] override def close(): Unit = simulations.foreach(_.close())
 
     private def aggregateValues(parameterSelection: Simulation => SortedMap[Calendar, Int]): SortedMap[Calendar, Int] = {
       SortedMap[Calendar, Int]() ++ simulations

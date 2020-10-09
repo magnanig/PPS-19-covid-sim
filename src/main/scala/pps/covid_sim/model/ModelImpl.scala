@@ -39,13 +39,13 @@ class ModelImpl extends Model {
     Random.shuffle(people.seq).take(5).foreach(_.infects(Places.BAR, from, 0)(covidInfectionParameters))
     _simulationsManager = area match {
       case city: City =>  SimulationsManager[CitySimulation]((1 to runs)
-        .map(_ => CitySimulation(city)),area, from -> until)
+        .map(_ => CitySimulation(city)), area, from -> until)
       case province: Province => SimulationsManager[ProvinceSimulation]((1 to runs)
-        .map(_ => ProvinceSimulation(province)),area, from -> until)
+        .map(_ => ProvinceSimulation(province)), area, from -> until)
       case region: Region => SimulationsManager[RegionSimulation]((1 to runs)
-        .map(_ => RegionSimulation(region)),area, from -> until)
+        .map(_ => RegionSimulation(region)), area, from -> until)
       case _ => SimulationsManager[NationSimulation]((1 to runs)
-        .map(_ => NationSimulation()),area, from -> until)
+        .map(_ => NationSimulation()), area, from -> until)
     }
   }
 

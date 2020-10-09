@@ -20,3 +20,5 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.3" % Runtime
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.1.1"
+
+test in assembly := {}

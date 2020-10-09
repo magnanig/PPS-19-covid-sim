@@ -11,6 +11,7 @@ import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.parameters.CreationParameters
 
 import scala.collection.SortedMap
+import scala.io.Source
 import scala.swing.Dimension
 
 /**
@@ -18,7 +19,7 @@ import scala.swing.Dimension
  */
 class HeatMap() {
 
-  private val italyOutlineMap: BufferedImage = ImageIO.read(new File("./res/italy_outline_map.png"))
+  private val italyOutlineMap: BufferedImage = ImageIO.read(getClass.getClassLoader.getResource("italy_outline_map.png"))
 
   /**
    * Method that draws a heat map representing the situation of the epidemic spread at a certain time.

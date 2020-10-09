@@ -3,6 +3,7 @@ package pps.covid_sim.model.creation
 import pps.covid_sim.model.places.Locality.{City, Province, Region}
 
 import scala.collection.mutable
+import scala.io.Source
 
 /**
  * Represents a singleton object, unique in the whole program.
@@ -86,7 +87,7 @@ private class CitiesObject {
   def create(): Set[City] = {
     regionsCreation()
     provincesCreation()
-    val bufferedSource = io.Source.fromFile("res/italy_cities.csv")
+    val bufferedSource = Source.fromResource("italy_cities.csv")
     for (line <- bufferedSource.getLines) {
       val Array(istat, name, abbreviation, _, _, _, num_residents, longitude, latitude) = line.split(";")
       cities += City(istat.toInt, name, num_residents.toInt, provinces(abbreviation),
@@ -97,7 +98,7 @@ private class CitiesObject {
   }
 
   private def provincesCreation(): Unit = {
-    val bufferedSource = io.Source.fromFile("res/italy_provinces.csv")
+    val bufferedSource = Source.fromResource("italy_provinces.csv")
     for (line <- bufferedSource.getLines) {
       val Array(abbreviation, istat, name, id_region, longitude, latitude) = line.split(";")
       provinces += (abbreviation -> Province(istat.toInt, name, abbreviation, regions(id_region.toInt),
@@ -107,7 +108,7 @@ private class CitiesObject {
   }
 
   private def regionsCreation(): Unit = {
-    val bufferedSource = io.Source.fromFile("res/italy_regions.csv")
+    val bufferedSource = Source.fromResource("italy_regions.csv")
     for (line <- bufferedSource.getLines) {
       val Array(id_region, name, _, num_residents, _, _) = line.split(";")
       regions += (id_region.toInt -> Region(id_region.toInt, name, num_residents.toInt))
