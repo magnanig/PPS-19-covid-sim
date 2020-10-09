@@ -4,7 +4,9 @@ import pps.covid_sim.model.scheduling.GoingOutTimes.{GoingOutTimes, GoingOutTime
 import pps.covid_sim.parameters.GoingOutParameters
 import pps.covid_sim.util.RandomGeneration
 import pps.covid_sim.util.time.DaysInterval
+import pps.covid_sim.util.time.TimeIntervalsImplicits._
 import pps.covid_sim.util.time.Time.{Day, Month, Season}
+
 
 class UnemployedActor() extends PersonActor {
 

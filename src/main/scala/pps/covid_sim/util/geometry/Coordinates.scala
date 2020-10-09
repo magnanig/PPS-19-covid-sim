@@ -119,6 +119,7 @@ object Coordinates {
       case Direction.SOUTH_EAST => (point.x + (Direction.SOUTH_EAST.deltaX * speed.delta), point.y + (Direction.SOUTH_EAST.deltaY * speed.delta))
       case Direction.NORTH_WEST => (point.x + (Direction.NORTH_WEST.deltaX * speed.delta), point.y + (Direction.NORTH_WEST.deltaY * speed.delta))
       case Direction.SOUTH_WEST => (point.x + (Direction.SOUTH_WEST.deltaX * speed.delta), point.y + (Direction.SOUTH_WEST.deltaY * speed.delta))
+      case _ => point
     }
 
   /**
@@ -138,6 +139,7 @@ object Coordinates {
       case Direction.SOUTH_EAST => (rectangle.topLeftCorner.x, rectangle.topLeftCorner.y)
       case Direction.NORTH_WEST => (rectangle.bottomRightCorner.x, rectangle.bottomRightCorner.y)
       case Direction.SOUTH_WEST => (rectangle.bottomRightCorner.x, rectangle.topLeftCorner.y)
+      case _ => point
   }
 
   /**
@@ -180,6 +182,7 @@ object Coordinates {
       val nextPoint = directionClose(point, speed, Direction.WEST)
       if (nextPoint.x < rectangle.topLeftCorner.x) Coordinates(rectangle.topLeftCorner.x, rectangle.topLeftCorner.y)
       else nextPoint
+    case _ => point
   }
 
 }
