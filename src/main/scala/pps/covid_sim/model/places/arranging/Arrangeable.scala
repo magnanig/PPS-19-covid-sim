@@ -4,14 +4,15 @@ import java.util.Calendar
 
 import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.people.PeopleGroup.Group
+import pps.covid_sim.model.places.DelimitedSpace
 import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.arranging.Placement.{Arrangement, ItemGroup, Placeholder}
 import pps.covid_sim.model.places.rooms.Room
-import pps.covid_sim.model.places.{DelimitedSpace, Place}
 
 /**
  * Represents a delimited space with some type of disposition (e.g. tables disposition)
  * @tparam T  the type of a group of items to be positioned (e.g. tables group in a restaurant)
+ * @tparam A  the type of the item assignee
  */
 trait Arrangeable[A, T <: ItemGroup] extends DelimitedSpace {
 
@@ -29,11 +30,6 @@ trait Arrangeable[A, T <: ItemGroup] extends DelimitedSpace {
       .foreach(_.propagateVirus(place, time)(covidInfectionParameters))
   }
 
-  override def clear(): Unit = {
-    super.clear()
-    arrangement.rows.flatMap(_.itemGroups).foreach(_.release())
-  }
-
   /**
    * Find an accommodation for the specified group
    * @param group   the desired group
@@ -41,4 +37,9 @@ trait Arrangeable[A, T <: ItemGroup] extends DelimitedSpace {
    *                if any
    */
   protected[places] def findAccommodation(group: Group): Option[(Room, Seq[Placeholder[A]])]
+
+  private[model] override def clear(): Unit = {
+    super.clear()
+    arrangement.rows.flatMap(_.itemGroups).foreach(_.release())
+  }
 }

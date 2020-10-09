@@ -27,8 +27,11 @@ trait Person {
   val birthDate: Calendar
   lazy val age: Int = Calendar.getInstance() -- birthDate
 
+  /**
+   * Get the habitation where person lives.
+   * @return  the habitation of current person
+   */
   def habitation: Habitation = _habitation
-
 
   /**
    * Get all friends.
@@ -37,25 +40,17 @@ trait Person {
    */
   def friends: Set[Person] = _friends
 
+  /**
+   * Get the position of person in the current space.
+   * @return  the person position
+   */
   def position: Coordinates = _coordinates
-
-  def position_=(coordinates: Coordinates): Unit = {
-    _coordinates = coordinates
-  }
 
   /**
    * Get the social distance that this person is keeping.
    * @return  the actual social distance, in meters
    */
   def socialDistance: Double = _socialDistance
-
-  def socialDistance_=(distance: Double): Unit = {
-    _socialDistance = distance
-  }
-
-  def setMask(mask: Option[Mask]): Unit = {
-    _wornMask = mask
-  }
 
   /**
    * Get the mask worn by current person.
@@ -92,22 +87,23 @@ trait Person {
    */
   def isDeath: Boolean = false
 
-  def infectionPlaceInstance: Option[Location] = covidInfection.map(_.at)
-
-  def infectionPlace: Option[Class[_ <: Location]] = infectionPlaceInstance.map(_.getClass)
-
-  def covidStage: Option[Int] = covidInfection.map(_.stage)
+  /**
+   * Get the type of place where person got infected.
+   * @return  the optional type of place where person got infected
+   */
+  def infectionPlaceClass: Option[Location] = covidInfection.map(_.at)
 
   /**
-   * Infects current person.
-   * @param place   the place where infection has happened
-   * @param time    the time when infection has happened
+   * Get the specific place where person got infected.
+   * @return  the optional place where person got infected
    */
-  def infects(place: Location, time: Calendar, stage: Int)(covidInfectionParameters: CovidInfectionParameters): Unit = {
-    synchronized {
-      covidInfection = Some(CovidInfection(time, place, stage, covidInfectionParameters, this))
-    }
-  }
+  def infectionPlace: Option[Class[_ <: Location]] = infectionPlaceClass.map(_.getClass)
+
+  /**
+   * Get the covid stage, taken by current person.
+   * @return  the covid stage held by current person
+   */
+  def covidStage: Option[Int] = covidInfection.map(_.stage)
 
   /**
    * Check whether current person can be infected, considering multiple infection
@@ -118,35 +114,9 @@ trait Person {
   def canBeInfected(multipleInfectionProbability: Double): Boolean = covidInfection.isEmpty ||
       (isRecovered && Random.nextDouble() < multipleInfectionProbability)
 
-  /**
-   * Get the set of infected people that current person has met.
-   * @return  the set of infected people met by current person
-   */
-  def infectedPeopleMet: Set[Person] = _infectedPeopleMet
-
-  /**
-   * Add the specified infected person to the set of infected people met.
-   * @param person  the infected person to be added
-   */
-  def metInfectedPerson(person: Person): Unit = {
-    _infectedPeopleMet += person
-  }
-
-  def clearInfectedPeopleMet(): Unit = {
-    _infectedPeopleMet = Set.empty
-  }
-
-  def setHabitation(habitation: Habitation): Unit = {
-    _habitation = habitation
-  }
-
   override def equals(obj: Any): Boolean = obj match {
     case person: Person => this eq person
     case _ => false
-  }
-
-  private[model] def hourTick(time: Calendar): Unit = {
-    if (covidInfection.isDefined) covidInfection.get.hourTick(time)
   }
 
   /**
@@ -158,9 +128,39 @@ trait Person {
     if (!_friends.contains(friend)) _friends = _friends + friend
   }
 
+  /**
+   * Infects current person.
+   * @param place   the place where infection has happened
+   * @param time    the time when infection has happened
+   */
+  private[model] def infects(place: Location, time: Calendar, stage: Int)(covidInfectionParameters: CovidInfectionParameters): Unit = {
+    synchronized {
+      covidInfection = Some(CovidInfection(time, place, stage, covidInfectionParameters, this))
+    }
+  }
+
+  private[model] def hourTick(time: Calendar): Unit = {
+    if (covidInfection.isDefined) covidInfection.get.hourTick(time)
+  }
+
+  private[model] def position_=(coordinates: Coordinates): Unit = {
+    _coordinates = coordinates
+  }
+
+  private[model] def socialDistance_=(distance: Double): Unit = {
+    _socialDistance = distance
+  }
+
+  private[model] def setMask(mask: Option[Mask]): Unit = {
+    _wornMask = mask
+  }
+
+  private[model] def setHabitation(habitation: Habitation): Unit = {
+    _habitation = habitation
+  }
+
   private[model] def resetState(): Unit = {
     covidInfection = None
-    clearInfectedPeopleMet()
   }
 }
 

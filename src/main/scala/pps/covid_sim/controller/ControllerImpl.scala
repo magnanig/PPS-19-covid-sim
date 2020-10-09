@@ -39,6 +39,10 @@ class ControllerImpl(model: Model, view: View) extends Controller {
 
   override def endLockdown(time: Calendar, infections: Int): Unit = view.endLockdown(time,infections) //lineChart.drawLockDownEnd(time, infections)
 
+  override def covidInfectionParameters: CovidInfectionParameters = model.covidInfectionParameters
+
+  override def simulationInterval: DatesInterval = model.simulationsManager.period
+
   override def setSimulationParameters(safeZone: Double,
                                        minRecoverTime: Int, maxRecoverTime: Int,
                                        minInfectionDetectionTime: Int, maxInfectionDetectionTime: Int,
@@ -58,10 +62,6 @@ class ControllerImpl(model: Model, view: View) extends Controller {
       averageSocialDistance,
       notRespectingIsolationMaxProbability, lockDownStart, lockDownEnd, closedPlaceSet)
   }
-
-  override def covidInfectionParameters: CovidInfectionParameters = model.covidInfectionParameters
-
-  override def simulationInterval: DatesInterval = model.simulationsManager.period
 
   private def startActors(simulationsManager: SimulationsManager[Simulation]): Unit = {
     ActorsCoordination.create(simulationsManager.area, this, simulationsManager.period)

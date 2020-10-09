@@ -6,16 +6,21 @@ import akka.actor.{ActorRef, Props, ReceiveTimeout}
 import pps.covid_sim.controller.actors.CoordinatorCommunication.SetProvince
 import pps.covid_sim.controller.actors.coordinators.ActorsCoordination.{controller, system}
 import pps.covid_sim.model.container.PlacesContainer.{getPlaces, placesInCityOrElseInProvince}
-import pps.covid_sim.model.container.{PeopleContainer, TransportLinesContainer}
-import pps.covid_sim.model.people.People.{Student, Worker}
+import pps.covid_sim.model.container.{PeopleContainer, PlacesContainer, TransportLinesContainer}
+import pps.covid_sim.model.people.People.{Employed, Student, Worker}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.people.actors.Communication.{Acknowledge, ActorsFriendsMap, AddPlan, GetBusLines, GetPlacesInArea, GetTrainLines, HourTick, RequestedLines, RequestedPlaces, SetCovidInfectionParameters, SetPerson, Stop}
-import pps.covid_sim.model.people.actors.{StudentActor, UnemployedActor, WorkerActor}
+import pps.covid_sim.model.people.actors.{EmployedActor, StudentActor, UnemployedActor}
+import pps.covid_sim.model.places.FreeTime.Disco
 import pps.covid_sim.model.places.Locality.{City, Province}
 import pps.covid_sim.model.places.Place
-import pps.covid_sim.util.time.DatesInterval
+import pps.covid_sim.util.scheduling.Planning.CustomPlan
+import pps.covid_sim.util.time.Time.Day
+import pps.covid_sim.util.time.TimeIntervalsImplicits._
+import pps.covid_sim.util.time.{DatesInterval, HoursInterval}
 
 import scala.collection.parallel.ParSeq
+import scala.util.Random
 
 /** *
  * A Coordinator of the level 2. It manage a subSet of PersonActors
@@ -45,10 +50,10 @@ case class ProvinceCoordinator() extends Coordinator {
 
   private def createActors(people: ParSeq[Person]): Unit = {
     val numPerson = people.size
-    var numWorker = 0
+    val discoProbability = 0.4
     val peopleActors = people.par.map {
       case student@Student(_, _) => system.actorOf(Props[StudentActor]) -> student
-      case worker@Worker(_, _) => numWorker = numWorker + 1; system.actorOf(Props[WorkerActor]) -> worker
+      case employed: Employed => system.actorOf(Props[EmployedActor]) -> employed
       case person => system.actorOf(Props[UnemployedActor]) -> person
     }.toMap
 
@@ -61,10 +66,20 @@ case class ProvinceCoordinator() extends Coordinator {
       actor ! SetCovidInfectionParameters(controller.covidInfectionParameters)
       actor ! ActorsFriendsMap(peopleActors.collect({ case (a, p) if person.friends.contains(p) => p -> a }).seq)
       person match {
-        case worker: Worker if worker.workPlace == null => numWorker = numWorker + 1
-        case worker: Worker => actor ! AddPlan(worker.workPlace.getWorkPlan(worker).get)
-        case student: Student if student.institute != null && student.lesson != null =>
-          actor ! AddPlan(student.institute.getStudentPlan(student.lesson).get)
+        case employed: Worker if employed.workPlace != null =>
+          actor ! AddPlan(employed.workPlace.getWorkPlan(employed).get)
+        case student: Student => if(student.institute != null && student.lesson != null)
+            actor ! AddPlan(student.institute.getStudentPlan(student.lesson).get)
+          if(Random.nextDouble() < discoProbability) {
+            val interval: HoursInterval = 22 -> 4
+            PlacesContainer.getPlaces.collectFirst({ case disco: Disco if (disco.city == student.residence ||
+              disco.city.province == student.residence.province) &&
+              disco.timeTable.isDefinedOn(Day.SATURDAY, interval) => disco
+            }) match {
+              case Some(disco: Disco) => actor ! AddPlan(CustomPlan(disco.openedInLockdown).add(disco, Day.SATURDAY, interval))
+              case _ =>
+            }
+          }
         case _ =>
       }
     })

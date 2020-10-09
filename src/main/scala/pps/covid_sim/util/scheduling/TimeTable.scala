@@ -99,7 +99,7 @@ case class TimeTable(period: MonthsInterval = MonthsInterval.ALL_YEAR,
   override def isDefinedOn(day: Day): Boolean = timeTable.get(day).exists(_.nonEmpty)
 
   override def isDefinedOn(day: Day, hoursInterval: HoursInterval): Boolean = timeTable.get(day)
-    .exists(_.exists(h => HoursInterval(h.from, if(h.until < h.from) 0 else h.until).overlaps(hoursInterval)))
+    .exists(_.exists(_.overlaps(hoursInterval)))
 
   /**
    * Check whether current place is opened at specified time.

@@ -1,9 +1,9 @@
 package pps.covid_sim.model.creation
 
-import pps.covid_sim.model.container.{CitiesContainer, PeopleContainer, PlacesContainer, TransportLinesContainer}
+import pps.covid_sim.model.container.{CitiesContainer, PeopleContainer, PlacesContainer}
 import pps.covid_sim.model.creation.province.ProvinceCreation
 import pps.covid_sim.model.creation.region.RegionCreation
-import pps.covid_sim.model.places.Locality.{Area, City, Italy, Province, Region}
+import pps.covid_sim.model.places.Locality._
 import pps.covid_sim.model.places.Place
 
 import scala.collection.mutable
@@ -25,7 +25,6 @@ private[model] object WorldCreation {
     CitiesContainer.reset()
     PeopleContainer.reset()
     PlacesContainer.reset()
-    TransportLinesContainer.reset()
   }
 
   /**

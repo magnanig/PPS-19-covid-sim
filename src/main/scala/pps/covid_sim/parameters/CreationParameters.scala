@@ -2,7 +2,7 @@ package pps.covid_sim.parameters
 
 object CreationParameters {
 
-  val citizensPercentage = 1//0.001 //0.001 italy
+  val citizensPercentage = 0.002 //0.001 italy
   val minCitizens = 100
 
   val oneHundredPercent = 100.0
@@ -10,7 +10,7 @@ object CreationParameters {
   val daysInYear = 365
 
   val minResidencesToSchool = 3000
-  val minResidencesToUni = 80.000
+  val minResidencesToUni = 80000
   val studentsPerClass = 20
   val studentsUniPerClass = 60
   val classesPerSchool = 30

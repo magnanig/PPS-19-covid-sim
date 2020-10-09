@@ -5,15 +5,15 @@ import java.util.Calendar
 import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.Locations.Location
-import pps.covid_sim.model.places.Place
 
 object Placement {
 
   /**
    * Represents a place where group can be assigned to (e.g. a school desk,
    * group of tables in a bar, ecc).
+   * @tparam A  the type of the placeholder assignee
    */
-  trait Placeholder[T] extends Ordered[Placeholder[T]] {
+  trait Placeholder[A] extends Ordered[Placeholder[A]] {
 
     /**
      * The max capacity.
@@ -26,16 +26,20 @@ object Placement {
      */
     def isFree: Boolean
 
-    def assign(assignee: T): Boolean
+    /**
+     * Assign current placeholder to the specified assignee.
+     * @param assignee  the assignee of current placeholder
+     * @return
+     */
+    def assign(assignee: A): Boolean
 
     /**
      * Releases current placeholder.
      */
     def release(): Unit
 
-    override def compare(that: Placeholder[T]): Int = this.capacity.compareTo(that.capacity)
+    override def compare(that: Placeholder[A]): Int = this.capacity.compareTo(that.capacity)
   }
-
 
   /**
    * Represents the arrangement (i.e. disposition) of some item groups inside a location.

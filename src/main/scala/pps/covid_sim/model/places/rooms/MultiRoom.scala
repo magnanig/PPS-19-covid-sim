@@ -17,11 +17,11 @@ abstract class MultiRoom[R <: Room](override val city: City,
 
   override lazy val capacity: Int = rooms.map(_.capacity).sum
 
-  def addRooms(rooms: Seq[R]): Unit = {
+  private[model] def addRooms(rooms: Seq[R]): Unit = {
     this.rooms = this.rooms ++ rooms
   }
 
-  def addRoom(room: R): Unit = {
+  private[model] def addRoom(room: R): Unit = {
     this.rooms :+ room
   }
 
@@ -31,7 +31,7 @@ abstract class MultiRoom[R <: Room](override val city: City,
     rooms.foreach(_.propagateVirus(time, place)(covidInfectionParameters))
   }
 
-  override def clear(): Unit = {
+  override private[model] def clear(): Unit = {
     super.clear()
     rooms.foreach(_.clear())
   }

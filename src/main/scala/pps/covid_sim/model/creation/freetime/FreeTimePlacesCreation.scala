@@ -35,7 +35,7 @@ private[creation] case class FreeTimePlacesCreation() {
 
     freeTimePlaces = freeTimePlaces ::: DiscoCreation().create(city,
       worker.slice(index, index + workerPerFreeTimePlace(3)),
-      roomsRange = (2, 6),
+      roomsRange = (1,1), //(2, 4),
       capacityRange = (20, 180),
       staffRange = (4, 10), random)
     index += workerPerFreeTimePlace(3)
@@ -44,7 +44,6 @@ private[creation] case class FreeTimePlacesCreation() {
       worker.slice(index, index + workerPerFreeTimePlace.last),
       staffRange = (10, 40), random)
 
-    println("freeTimePlaces creati in totale: " + freeTimePlaces.size)
     freeTimePlaces
   }
 

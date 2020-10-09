@@ -1,7 +1,8 @@
-package pps.covid_sim.model.people
+package pps.covid_sim.model.samples
 
 import java.util.Calendar
 
+import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.City
 
 case class PersonTmp(override val birthDate: Calendar,

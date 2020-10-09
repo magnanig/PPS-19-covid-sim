@@ -33,14 +33,15 @@ class TimeTableTest {
   @Test
   def testCyclicInterval(): Unit = {
     val timeTable = TimeTable()
-      .add(Day.SATURDAY, 22 -> 4)
+      .add(Day.SATURDAY, 22 -> 6)
     assert(timeTable.isDefinedOn(Day.SATURDAY))
     assert(timeTable.isDefinedOn(Day.SUNDAY))
     assert(timeTable.isDefinedOn(Day.SATURDAY, 20 -> 23))
+    assert(timeTable.isDefinedOn(Day.SATURDAY, 22 -> 4))
     assert(timeTable.isDefinedOn(Day.SATURDAY, 20 -> 0))
     assert(timeTable.isDefinedOn(Day.SUNDAY, 0 -> 4))
     assert(!timeTable.isDefinedOn(Day.SATURDAY, 0 -> 22))
-    assert(!timeTable.isDefinedOn(Day.SUNDAY, 4 -> 0))
+    assert(!timeTable.isDefinedOn(Day.SUNDAY, 6 -> 0))
   }
 
   @Test

@@ -93,7 +93,7 @@ abstract class PersonActor extends Actor {
         case _ if places.nonEmpty => currentCommitment = Some(currentCommitment.get._1,
           Random.shuffle(places).head.enter(currentCommitment.get._3.get, currentCommitment.get._1.from),
           currentCommitment.get._3)
-        case _ => println("ADVICE: No places found!")
+        case _ =>
       }
       waitingResponses -= coordinator
       sendAckIfReady()
@@ -110,12 +110,11 @@ abstract class PersonActor extends Actor {
         case _: LimitedHourAccess => sender ! GoOutResponse(response = false, p)
         case _ => sender ! GoOutResponse(response = false, p, GoOutProposal(newInterval, place, leader))
       }
-    case msg: GoOutResponse /*if waitingResponses.contains(sender)*/ =>
-      if ((msg.request.leader eq person) && waitingResponses.contains(sender)) {
+    case response: GoOutResponse => if ((response.request.leader eq person) && waitingResponses.contains(sender)) {
         waitingResponses -= sender
         sendAckIfReady()
       }
-      msg match {
+      response match {
         case GoOutResponse(response, request, _, from) if response && (request.leader eq person) =>
           goingOutConfirmed(request, from)
         case GoOutResponse(response, request, _, _) if response =>
@@ -175,7 +174,7 @@ abstract class PersonActor extends Actor {
         requestPlaces(person.residence, classOf[SuperMarket], Some(interval))
         pendingRequest = interval
         None
-      case _ if time.hour > 8 && mayGoOut() && !friendsFound => tryOrganizeGoingOut(time); None
+      case _ if time.hour > 8 && mayGoOut() && !friendsFound => tryOrganizeGoingOut(); None
       case _ => None
     }
 
@@ -222,11 +221,10 @@ abstract class PersonActor extends Actor {
 
   private def randomOpenPlaces(): Unit = requestPlaces(person.residence, classOf[OpenPlace])
 
-  private def tryOrganizeGoingOut(time: Calendar): Unit = {
+  private def tryOrganizeGoingOut(): Unit = {
     val interval = agenda.firstNextFreeTime(time + 1)
-    val preferences = /*if(!lockdown) placesPreferences else*/ placesPreferences
+    val preferences = if(!lockdown) placesPreferences else placesPreferences
       .filter(e => !covidInfectionParameters.placesToClose.contains(e._1))
-    //println(s"Valid places: ${preferences.keySet.map(_.getSimpleName).mkString(", ")}")
     if (preferences.nonEmpty) randomPlaceWithPreferences(preferences, interval) match {
       case Some(placeClass) => requestPlaces(person.residence, placeClass, Some(interval))
         requestType = Request.LOOKING_FOR_PLACES
@@ -249,6 +247,14 @@ abstract class PersonActor extends Actor {
       })
   }
 
+  private def chooseTransport(): Unit = {
+    if(Random.nextDouble() < transportProbability) {
+      waitingResponses += coordinator
+      coordinator ! GetBusLines(person.residence, time)
+      //GetTrainLines(person.residence, time)
+    }
+  }
+
   private def updateDaysParameters(time: Calendar): Unit = {
     friendsFound = false
     hasToDoShopping = Random.nextDouble() < 1.0 / numShopPerWeek
@@ -269,14 +275,6 @@ abstract class PersonActor extends Actor {
     }
     probability = probability + (1 - probability) * placesPreferences.getOrElse(at.getClass, 0.0)
     new Random().nextFloat() < probability
-  }
-
-  private def chooseTransport(): Unit = {
-    if(Random.nextDouble() < transportProbability) {
-      waitingResponses += coordinator
-      coordinator ! GetBusLines(person.residence, time)
-      //GetTrainLines(person.residence, time)
-    }
   }
 
   private def randomFriends: Set[ActorRef] = Random.shuffle(person.friends)

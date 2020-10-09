@@ -8,7 +8,7 @@ import pps.covid_sim.util.time.Time.{Day, Month, Season}
 import pps.covid_sim.util.time.TimeIntervalsImplicits._
 
 
-class WorkerActor() extends PersonActor {
+class EmployedActor() extends PersonActor {
 
   override protected lazy val maxGoingOutTimes: GoingOutTimes = GoingOutTimesMap()
     .byMonthsInterval(Month.SEPTEMBER -> Month.MAY)

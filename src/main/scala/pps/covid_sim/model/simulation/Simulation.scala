@@ -43,11 +43,11 @@ trait Simulation {
    * infection, recovered people and deaths.
    * @param time  current time
    */
-  def takeScreenshot(time: Calendar): Unit
+  private[model] def takeScreenshot(time: Calendar): Unit
 
   /**
    * Close current simulation, saving main information.
    */
-  def close(): Unit
+  private[model] def close(): Unit
 
 }

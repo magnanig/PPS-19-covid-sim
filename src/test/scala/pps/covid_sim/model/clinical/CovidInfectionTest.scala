@@ -35,7 +35,7 @@ class CovidInfectionTest {
   @Test
   def testEveryoneRecoversAfterMaxTime(): Unit = {
     Iterator.iterate(infectionBegin)(_ + 1)
-      .take(maxRecoverTime + 1)
+      .take(24 * maxRecoverTime + 1)
       .foreach(time => covidInfections.foreach(_.hourTick(time)))
     assert(covidInfections.forall(_.isRecovered))
   }
@@ -56,7 +56,7 @@ class CovidInfectionTest {
   def testAsymptomaticDetectionPercentage(): Unit = {
     val asymptomaticDetectionProbability = asymptomaticProbability(student.age) * asymptomaticDetectionCondProbability
     Iterator.iterate(infectionBegin)(_ + 1) // let time for all infection detection
-      .take(maxInfectionDetectionTime + 1)
+      .take(24 * maxInfectionDetectionTime + 1)
       .foreach(time => covidInfections.foreach(_.hourTick(time)))
     assertEquals(asymptomaticDetectionProbability,
       covidInfections.count(c => c.isAsymptomatic && c.infectionKnown) / asymptomaticNumber.toDouble, tolerance)

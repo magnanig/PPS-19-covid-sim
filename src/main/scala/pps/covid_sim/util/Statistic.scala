@@ -138,7 +138,7 @@ case class Statistic(people: ParSeq[Person]) {
    */
   def getInfectionsPerPlace: Map[Class[_ <: Location], Int] = people
     .filter(p => p.isInfected || p.isRecovered)
-    .groupBy(_.infectionPlaceInstance.get.getClass)
+    .groupBy(_.infectionPlaceClass.get.getClass)
     .mapValues(_.size).toMap.seq
 
   /**

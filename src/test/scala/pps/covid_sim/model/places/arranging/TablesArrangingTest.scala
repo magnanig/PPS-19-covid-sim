@@ -33,33 +33,38 @@ class TablesArrangingTest {
 
   @Test
   def testCorrectAssignment(): Unit = {
-    import TablesArrangingTest.locationToRoom
 
     val openTime = ScalaCalendar(2020, 1, 1, 12)
-    var assignedRoom: TablesRoom = bar.enter(mario, openTime).get // note: optional must be defined at this time
+    assert(bar.enter(mario, openTime).isDefined)
+    var assignedRoom: TablesRoom = bar.getRooms.find(_.getTableGroup(mario).isDefined).get
     assertEquals(1, bar.numCurrentPeople)
     assertEquals(1, assignedRoom.getTableGroup(mario).get.capacity)
 
-    assignedRoom = bar.enter(luigi, openTime).get
+    assert(bar.enter(luigi, openTime).isDefined)
+    assignedRoom = bar.getRooms.find(_.getTableGroup(luigi).isDefined).get
     assertEquals(2, bar.numCurrentPeople)
     assertEquals(1, assignedRoom.getTableGroup(luigi).get.capacity)
 
-    assignedRoom = bar.enter(fabio, openTime).get
+    assert(bar.enter(fabio, openTime).isDefined)
+    assignedRoom = bar.getRooms.find(_.getTableGroup(fabio).isDefined).get
     assertEquals(3, bar.numCurrentPeople)
     assertEquals(2, assignedRoom.getTableGroup(fabio).get.capacity)
 
     assert(bar.enter(luca, openTime).isEmpty) // people capacity would be 4 but tables are only 3...
 
     bar.exit(fabio)
+    assert(!bar.getRooms.exists(_.getTableGroup(fabio).isDefined))
 
-    assignedRoom = bar.enter(group, openTime).get
+    assert(bar.enter(group, openTime).isDefined)
+    assignedRoom = bar.getRooms.find(_.getTableGroup(group).isDefined).get
     assertEquals(4, bar.numCurrentPeople)
     assertEquals(2, assignedRoom.getTableGroup(group).get.capacity)
 
     bar.exit(group)
     assertEquals(2, bar.numCurrentPeople)
 
-    assignedRoom = bar.enter(luca, openTime).get
+    assert(bar.enter(luca, openTime).isDefined)
+    assignedRoom = bar.getRooms.find(_.getTableGroup(luca).isDefined).get
     assertEquals(3, bar.numCurrentPeople)
     assertEquals(2, assignedRoom.getTableGroup(luca).get.capacity)
 

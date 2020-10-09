@@ -5,7 +5,7 @@ import java.util.Calendar
 import pps.covid_sim.model.places.FreeTime._
 import pps.covid_sim.model.places.OpenPlaces.{Field, Park, Square}
 import pps.covid_sim.model.places.Place
-import pps.covid_sim.util.time.Time.Day.{Day, FRIDAY, SATURDAY, SUNDAY}
+import pps.covid_sim.util.time.Time.Day.{Day, SATURDAY, SUNDAY, THURSDAY}
 import pps.covid_sim.util.time.Time.ScalaCalendar
 import pps.covid_sim.util.time.TimeIntervalsImplicits._
 import pps.covid_sim.util.time.{DatesInterval, DaysInterval, HoursInterval}
@@ -25,7 +25,7 @@ object CommonPlacesByTime {
         (21 -> 4) -> Seq(classOf[Pub])
       ))
     }).toMap
-    DaysInterval(FRIDAY, SATURDAY).foreach(day => {
+    DaysInterval(THURSDAY, SATURDAY).foreach(day => {
       map = map + ((day, map(day) + ((22 -> 0) -> Seq(classOf[Disco], classOf[OpenDisco]))))
     })
     DaysInterval(SATURDAY, SUNDAY).foreach(day => {

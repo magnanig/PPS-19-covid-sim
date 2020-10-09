@@ -5,8 +5,7 @@ import pps.covid_sim.model.people.People.{Student, Teacher, Unemployed, Worker}
 import pps.covid_sim.model.people.Person
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.parameters.CreationParameters
-import pps.covid_sim.parameters.CreationParameters.{ studentsPercentage,
-  teachersPercentage, unemployedPercentage, workersPercentage}
+import pps.covid_sim.parameters.CreationParameters.{studentsPercentage, teachersPercentage, unemployedPercentage, workersPercentage}
 import pps.covid_sim.util.RandomGeneration.randomBirthDate
 import pps.covid_sim.util.Statistic
 
@@ -36,7 +35,7 @@ private[creation] abstract class PeopleCreation {
   }
 
   private def computeProportions(city: City): List[Int] = {
-    if (city.numResidents > CreationParameters.minResidencesToSchool) {
+    if (city.numResidents > Math.max(100, CreationParameters.minResidencesToSchool * CreationParameters.citizensPercentage)) {
       Statistic.totalPercentageToInt(city.numResidents,
         workersPercentage, teachersPercentage, studentsPercentage, unemployedPercentage)
     } else {

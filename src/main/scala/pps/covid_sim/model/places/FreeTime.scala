@@ -1,5 +1,7 @@
 package pps.covid_sim.model.places
 
+import java.util.Calendar
+
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.movements.MovementFunctions
@@ -7,7 +9,8 @@ import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.OpenPlaces.OpenPlace
-import pps.covid_sim.model.places.rooms.{DiscoRoom, MultiRoom, TablesRoom}
+import pps.covid_sim.model.places.arranging.Placement.Placeholder
+import pps.covid_sim.model.places.rooms.{DiscoRoom, MultiRoom, Room, TablesRoom}
 import pps.covid_sim.parameters.CreationParameters.{maxNumOpenDiscoObstacles, maxNumPubObstacles, minNumOpenDiscoObstacles, minNumPubObstacles}
 import pps.covid_sim.util.RandomGeneration
 import pps.covid_sim.util.geometry._
@@ -46,6 +49,13 @@ object FreeTime {
                    override val openedInLockdown: Boolean,
                    private var rooms: Seq[DiscoRoom] = Seq())
     extends MultiRoom[DiscoRoom](city, rooms) with FreeTimePlace[Disco] {
+
+    override protected[places] def freeRoom(group: Group, time: Calendar): Option[(Room, Seq[Placeholder[Group]])] = {
+      rooms.find(_.canEnter(group, time)) match {
+        case Some(room) =>  Some((room, Seq.empty))
+        case _ => None
+      }
+    }
 
     override val mask: Option[Mask] = Some(Masks.Surgical)
   }

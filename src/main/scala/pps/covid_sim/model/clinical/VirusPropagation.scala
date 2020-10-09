@@ -27,16 +27,13 @@ case class VirusPropagation(covidInfectionParameters: CovidInfectionParameters) 
     if (p1.canInfect != p2.canInfect && !inSafeZone(socialDistance)) {
       val infectedPerson = if (p1.canInfect) p1 else p2
       val healthyPerson = if (infectedPerson eq p1) p2 else p1
-      if (!healthyPerson.infectedPeopleMet.contains(infectedPerson) &&
-        healthyPerson.canBeInfected(covidInfectionParameters.multipleInfectionProbability)) {
+      if (healthyPerson.canBeInfected(covidInfectionParameters.multipleInfectionProbability)) {
         val contagionProbability = covidInfectionParameters.contagionProbability *
           infectionReducingFactor(socialDistance) *
           (1 - infectedPerson.wornMask.map(_.outgoingFiltering).getOrElse(0.0)) *
           (1 - healthyPerson.wornMask.map(_.incomingFiltering).getOrElse(0.0))
         if (new Random().nextDouble() < contagionProbability){
           healthyPerson.infects(place, time, infectedPerson.covidStage.get + 1)(covidInfectionParameters)
-        } else {
-          healthyPerson.metInfectedPerson(infectedPerson)
         }
       }
     }

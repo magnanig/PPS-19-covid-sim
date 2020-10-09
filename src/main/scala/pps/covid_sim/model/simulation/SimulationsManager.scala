@@ -27,14 +27,6 @@ case class SimulationsManager[+S <: Simulation](simulations: Seq[S],
   def apply(index: Int): S = simulations(index)
 
   /**
-   * Notify the current run has been completed.
-   */
-  def runCompleted(): Unit = {
-    simulations(current).close()
-    current = current + 1
-  }
-
-  /**
    * Compute the average of the specified list of maps.
    * @param values  the list of map whose values average is needed
    * @tparam A      the type of map values
@@ -71,19 +63,6 @@ case class SimulationsManager[+S <: Simulation](simulations: Seq[S],
   def currentSimulation: S = simulations(current)
 
   /**
-   * Take a screenshot for the specified time, saving the number of
-   * infection, recovered people and deaths.
-   * @param time  current time
-   */
-  def takeScreenshot(time: Calendar, people: ParSeq[Person]): Unit = {
-    simulations(current).takeScreenshot(time)
-    if(current == 0) {
-      covidStages += (time -> Statistic(people).covidStages())
-      _citiesInfection += (time -> Statistic(people).cityPositives(CitiesContainer.getCities(area)))
-    }
-  }
-
-  /**
    * Get the number of infected for each city, obtained in the first simulation (i.e. control run)
    * @return  the number of infected for each city
    */
@@ -97,11 +76,11 @@ case class SimulationsManager[+S <: Simulation](simulations: Seq[S],
    */
   def weeklyCovidStages: SortedMap[Calendar, Map[Int, Int]] = SortedMap[Calendar, Map[Int, Int]]() ++
     covidStages.toList.grouped(7)
-    .map(weekCovidStages => (weekCovidStages.last._1, weekCovidStages
-      .flatMap(_._2)
-      .groupBy(_._1)
-      .mapValues(_.map(_._2).max)
-    )).toMap
+      .map(weekCovidStages => (weekCovidStages.last._1, weekCovidStages
+        .flatMap(_._2)
+        .groupBy(_._1)
+        .mapValues(_.map(_._2).max)
+      )).toMap
 
   /**
    * Computes the evolution day by day of each covid stage.
@@ -109,10 +88,31 @@ case class SimulationsManager[+S <: Simulation](simulations: Seq[S],
    *          (i.e. the number of people who contracted the virus at that stage)
    */
   def dayCovidStages: Map[Int, SortedMap[Calendar, Int]] = covidStages.values.flatten.toMap.keySet
-      .map(stage => stage -> (SortedMap[Calendar, Int]() ++
-        covidStages.map(e => e._1 -> e._2.getOrElse(stage, 0)))).toMap
+    .map(stage => stage -> (SortedMap[Calendar, Int]() ++
+      covidStages.map(e => e._1 -> e._2.getOrElse(stage, 0)))).toMap
 
   override def iterator: Iterator[S] = simulations.iterator
+
+  /**
+   * Take a screenshot for the specified time, saving the number of
+   * infection, recovered people and deaths.
+   * @param time  current time
+   */
+  private[model] def takeScreenshot(time: Calendar, people: ParSeq[Person]): Unit = {
+    simulations(current).takeScreenshot(time)
+    if(current == 0) {
+      covidStages += (time -> Statistic(people).covidStages())
+      _citiesInfection += (time -> Statistic(people).cityPositives(CitiesContainer.getCities(area)))
+    }
+  }
+
+  /**
+   * Notify the current run has been completed.
+   */
+  private[model] def runCompleted(): Unit = {
+    simulations(current).close()
+    current = current + 1
+  }
 
 }
 

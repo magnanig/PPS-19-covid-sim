@@ -5,10 +5,10 @@ import java.util.Calendar
 import pps.covid_sim.model.CovidInfectionParameters
 import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.people.PeopleGroup.Group
+import pps.covid_sim.model.places.DelimitedSpace
 import pps.covid_sim.model.places.Locations.Location
 import pps.covid_sim.model.places.arranging.Arrangeable
 import pps.covid_sim.model.places.arranging.Tables.{TablesArrangement, TablesGroup}
-import pps.covid_sim.model.places.{DelimitedSpace, Place}
 import pps.covid_sim.util.geometry.{Dimension, Rectangle}
 
 case class TablesRoom(private val minCapacity: Int,
@@ -65,7 +65,7 @@ case class TablesRoom(private val minCapacity: Int,
 
   private[places] def enter(group: Group, time: Calendar, tableGroup: TablesGroup): Option[Room] = {
     if (canEnter(group, time) && tableGroup.assign(group)) {
-      super.onEntered(group)
+      super.addGroup(group)
       Some(this)
     } else None
   }

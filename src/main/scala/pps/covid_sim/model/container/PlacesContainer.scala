@@ -5,7 +5,7 @@ import pps.covid_sim.model.places.Place
 import pps.covid_sim.util.time.DatesInterval
 
 import scala.collection.mutable
-import scala.collection.parallel.ParSeq
+import scala.collection.mutable.ListBuffer
 import scala.collection.parallel.mutable.ParMap
 
 /**
@@ -41,7 +41,7 @@ object PlacesContainer {
    * @return  list of all the places that have been created in the
    *          entire application domain.
    */
-  lazy val getPlaces: List[Place] = _places.cityMap.flatMap(_._2.planMap.flatMap(_._2)).toList
+  def getPlaces: List[Place] = _places.cityMap.flatMap(_._2.planMap.flatMap(_._2)).toList
 
   /**
    * Finds all places of a specific type that have been created in
@@ -180,13 +180,13 @@ object PlacesContainer {
 
   private class PlacesCreationPlan() {
 
-    val planMap: ParMap[Class[_ <: Place], ParSeq[Place]] = mutable.Map().par
+    val planMap: ParMap[Class[_ <: Place], ListBuffer[Place]] = mutable.Map().par
 
     def add(placeClass: Class[_ <: Place], place: Place): PlacesCreationPlan = {
       if (planMap.contains(placeClass))
-        planMap(placeClass) :+ place
+        planMap(placeClass).insert(0, place)
       else
-        planMap.put(placeClass, ParSeq(place).par)
+        planMap.put(placeClass, ListBuffer(place))
       this
     }
 

@@ -5,7 +5,6 @@ import java.util.Calendar
 import pps.covid_sim.model.clinical.Masks
 import pps.covid_sim.model.clinical.Masks.Mask
 import pps.covid_sim.model.movements.MovementFunctions
-import pps.covid_sim.model.people.PeopleGroup
 import pps.covid_sim.model.people.PeopleGroup.Group
 import pps.covid_sim.model.places.Locality.City
 import pps.covid_sim.model.places.rooms.Room
@@ -21,13 +20,15 @@ object Shops {
 
   sealed trait Shop extends Room with ClosedWorkPlace[Shop] with LimitedHourAccess with MovementSpace {
 
+    implicit val shelfCreation: (Dimension, Int, Int) => Rectangle = Obstacles.shopObstacle
+
     override val mask: Option[Mask] = Some(Masks.Surgical)
 
-    override protected[places] def canEnter(group: PeopleGroup.Group, time: Calendar): Boolean = {
+    override protected[places] def canEnter(group: Group, time: Calendar): Boolean = {
       super[ClosedWorkPlace].canEnter(group, time) && super[LimitedHourAccess].canEnter(group, time)
     }
-
   }
+
 
   case class SuperMarket(override val city: City,
                          override val capacity: Int,
@@ -43,6 +44,7 @@ object Shops {
     override protected val pathSampling: Set[Group] => Set[mutable.Seq[Map[Group, ArrayBuffer[Coordinates]]]] =
       MovementFunctions.linearPathWithWallFollowing(dimension, obstacles, Speed.SLOW, 3)
   }
+
 
   case class ClothesShop(override val city: City,
                          override val capacity: Int,

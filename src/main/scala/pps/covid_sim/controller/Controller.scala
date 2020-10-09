@@ -29,9 +29,31 @@ trait Controller {
    */
   def notifyRunEnded(): Unit
 
+  /**
+   * Notify the start of lockdown.
+   * @param time          the actual time
+   * @param infections    the number of infections when lockdown started
+   */
   def startLockdown(time: Calendar, infections: Int): Unit
 
+  /**
+   * Notify the end of lockdown.
+   * @param time          the actual time
+   * @param infections    the number of infections when lockdown ended
+   */
   def endLockdown(time: Calendar, infections: Int): Unit
+
+  /**
+   * Get covid infection parameters.
+   * @return  the covid infection parameters
+   */
+  def covidInfectionParameters: CovidInfectionParameters
+
+  /**
+   * Get the interval of which simulation refers to.
+   * @return  the simulation interval
+   */
+  def simulationInterval: DatesInterval
 
   /**
    * Set the main simulation parameters.
@@ -47,17 +69,5 @@ trait Controller {
                               notRespectingIsolationMaxProbability: Double,
                               lockDownStart:Double, lockDownEnd: Double,
                               closedPlaceSet: Set[Class[_ <: Place]]): Unit
-
-  /**
-   * Get covid infection parameters.
-   * @return  the covid infection parameters
-   */
-  def covidInfectionParameters: CovidInfectionParameters
-
-  /**
-   * Get the interval of which simulation refers to.
-   * @return  the simulation interval
-   */
-  def simulationInterval: DatesInterval
 
 }

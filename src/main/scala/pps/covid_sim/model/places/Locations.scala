@@ -55,15 +55,56 @@ object Locations {
         println(s"WARNING: ${group.leader} Already entered in the ${getClass.getSimpleName}!")
         Some(this)
       } else if(canEnter(group, time)) preEnter(group, time) match {
-        case location @ Some(_) => onEntered(group)
-          //println(s"Entered in ${getClass.getSimpleName}")
-          _currentGroups += group
-          _numCurrentPeople = _numCurrentPeople + group.size
+        case Some(_) => addGroup(group)
+          onEntered(group)
           Some(this) //location
-        case _ => println(s"WARNING: $group cannot enter to the ${getClass.getSimpleName} at ${time.getTime}"); None
+        case _ => None //println(s"WARNING: $group cannot enter to the ${getClass.getSimpleName} at ${time.getTime}"); None
       } else {
         None
       }
+    }
+
+    /**
+     * Lets group exit from current location.
+     * @param group   the group that wants to exit
+     */
+    final def exit(group: Group): Unit = synchronized {
+      if(currentGroups.contains(group)) {
+        preExit(group)
+        _currentGroups -= group
+        _numCurrentPeople = _numCurrentPeople - group.size
+      }
+    }
+
+    /**
+     * Propagates virus inside the current location. The default implementation propagates the
+     * virus inside each group, trying to infect every pair of people where neither of them
+     * is keeping safety distance from the other. Furthermore, each person looks for his/her friends
+     * and, if present, may infect them as well. Subclasses can override this method as needed.
+     * @param time  current time
+     * @param place current place
+     */
+    def propagateVirus(time: Calendar, place: Location)(covidInfectionParameters: CovidInfectionParameters): Unit = synchronized {
+      _currentGroups
+        .foreach(group => {
+          if (group.size > 1) inGroupVirusPropagation(group, place, time)(covidInfectionParameters)
+          lookForFriends(group, place, time)(covidInfectionParameters)
+        })
+    }
+
+    /**
+     * The optional needed mask in current location.
+     * @return  the optional needed mask
+     */
+    def mask: Option[Mask]
+
+    /**
+     * Add the group to groups set.
+     * @param group   the group to be added
+     */
+    protected final def addGroup(group: Group): Unit = {
+      _currentGroups += group
+      _numCurrentPeople = _numCurrentPeople + group.size
     }
 
     /**
@@ -84,40 +125,11 @@ object Locations {
     protected def onEntered(group: Group): Unit = { }
 
     /**
-     * Lets group exit from current location.
-     * @param group   the group that wants to exit
-     */
-    final def exit(group: Group): Unit = synchronized {
-      if(currentGroups.contains(group)) {
-        preExit(group)
-        //println(s"${group.leader} Exited from ${getClass.getSimpleName}!")
-        _currentGroups -= group
-        _numCurrentPeople = _numCurrentPeople - group.size
-      }
-    }
-
-    /**
      * In this method it is possible to specify all operations that must be done before
      * group exits from location. Default implementation is empty.
      * @param group   the group that is going to exit
      */
     protected def preExit(group: Group): Unit = {}
-
-    /**
-     * Propagates virus inside the current location. The default implementation propagates the
-     * virus inside each group, trying to infect every pair of people where neither of them
-     * is keeping safety distance from the other. Furthermore, each person looks for his/her friends
-     * and, if present, may infect them as well. Subclasses can override this method as needed.
-     * @param time  current time
-     * @param place current place
-     */
-    def propagateVirus(time: Calendar, place: Location)(covidInfectionParameters: CovidInfectionParameters): Unit = synchronized {
-      _currentGroups
-        .foreach(group => {
-          if (group.size > 1) inGroupVirusPropagation(group, place, time)(covidInfectionParameters)
-          lookForFriends(group, place, time)(covidInfectionParameters)
-        })
-    }
 
     /**
      * Propagates virus inside a group, trying to infect each pair of people.
@@ -172,15 +184,9 @@ object Locations {
     protected[places] def canEnter(group: Group, time: Calendar): Boolean = true
 
     /**
-     * The optional needed mask in current location.
-     * @return  the optional needed mask
-     */
-    def mask: Option[Mask]
-
-    /**
      * Clear current location, removing all groups.
      */
-    def clear(): Unit = synchronized {
+    private[model] def clear(): Unit = synchronized {
       _numCurrentPeople = 0
       _currentGroups = Set()
     }
